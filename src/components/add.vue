@@ -81,7 +81,7 @@ export default{
  button{
 	border-radius: 5px!important;
 	margin-left: 5px!important;
-	};
+	}
 .danger{
 	background:rgba(221,79,67,.9);
 }

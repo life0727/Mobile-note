@@ -58,10 +58,10 @@ export default {
 
   	},
   	save () {
-  		let oitem=JSON.parse(window.localStorage.getItem('sj'));
-  		let addtype;
-  		let otext=$('#title').val() ? $('#title').val() : 'notitle';
-  		let otextarea=$('#textarea').val() ? $('#textarea').val() : 'notext';  		
+  		let oitem=JSON.parse(window.localStorage.getItem('sj')),
+  		    addtype,
+  		    otext=$('#title').val() ? $('#title').val() : 'notitle',
+  		    otextarea=$('#textarea').val() ? $('#textarea').val() : 'notext';  		
   		for(let t=0;t<oitem.length;t++){
   			//console.log(oitem[t][0].danger);
   			if(oitem[t][0].danger==true){
