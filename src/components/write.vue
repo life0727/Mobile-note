@@ -14,7 +14,6 @@
 	    <textarea class="form-control" id="textarea" v-model="otextarea"></textarea>  
 	  </div>	  
 	</form>
-	
 </div>	
 </template>
 <script >

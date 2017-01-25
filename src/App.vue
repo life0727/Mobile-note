@@ -41,7 +41,7 @@ export default {
  	//this.itype =JSON.parse(window.localStorage.getItem('ootype'));
   	//console.log(this.itype);
   },
-  data: function () {
+  data () {
   	return {
   		item:JSON.parse(window.localStorage.getItem('sj'))||[
                 [{'type':'apple','danger':false},{'content':[{'title':'apppp','text':'bbbll'},{'title':'1111','text':'2222'}]}],
@@ -87,7 +87,8 @@ export default {
   		let otextarea=$('#textarea').val() ? $('#textarea').val() : 'notext';
   		for(let t=0;t<oitem.length;t++){
   			if(oitem[t][0].danger==true){
-  				oitem[t][1].content.push({
+  				//console.log(oitem[t][1].content);
+  				oitem[t][1].content.splice(0,1,{
 	  				title:otext,
 	  				text:otextarea
   				});
