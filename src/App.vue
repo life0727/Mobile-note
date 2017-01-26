@@ -88,10 +88,16 @@ export default {
   		for(let t=0;t<oitem.length;t++){
   			if(oitem[t][0].danger==true){
   				//console.log(oitem[t][1].content);
-  				oitem[t][1].content.splice(0,1,{
-	  				title:otext,
-	  				text:otextarea
-  				});
+  				for(let i=0;i<oitem[t][1].content.length;i++){
+  					if(oitem[t][1].content[i].title==JSON.parse(window.localStorage.getItem('detail')).title){
+  						//console.log(oitem[t][1].content[i].title)
+		   				oitem[t][1].content.splice(i,1,{
+			  				title:otext,
+			  				text:otextarea
+		  				}); 						
+  					}
+  				}
+
   				window.localStorage.setItem('type',JSON.stringify(oitem[t][0].type));  
 			    window.localStorage.setItem('title',JSON.stringify(oitem[t][1].content));  				
   				window.localStorage.setItem('sj',JSON.stringify(oitem))
