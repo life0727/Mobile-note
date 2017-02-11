@@ -1,6 +1,6 @@
 # my-route
 
-> A Vue.js project
+> A Vue.js project(这是对上个note的改进，主要体现在可以增加类型，删除类型,代码耦合度优化了很多)
 
 ## Build Setup
 
