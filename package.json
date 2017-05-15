@@ -1,5 +1,5 @@
 {
-  "name": "my-route",
+  "name": "RS",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "life0727 <mmlife0727@gmail.com>",
@@ -12,10 +12,16 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
+    "axios": "^0.16.1",
+    "echarts": "^3.5.3",
+    "element-ui": "^1.0.0",
     "glyphicons": "^0.2.0",
+    "node-sass": "^4.5.0",
+    "sass-loader": "^4.1.1",
     "vue": "^2.1.0",
-    "vue-router": "^2.0.0",
-    "vue-hot-reload-api": "^2.0.8"
+    "vue-hot-reload-api": "^2.0.8",
+    "vue-popper": "^0.3.8",
+    "vue-router": "^2.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
@@ -68,6 +74,7 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "vue-loader": "^10.0.0",
+    "vue-popper": "^0.3.8",
     "vue-style-loader": "^1.0.0",
     "vue-template-compiler": "^2.1.0",
     "webpack": "^1.13.2",
