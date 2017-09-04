@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="./static/css/animate.min.css"/>
     <link rel="shortcut icon" href="./static/img/p8.jpg">
     <title>RS-舆情</title>
+    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> -->
+    <!-- <script type="text/javascript" src="http://html2canvas.hertzen.com/build/html2canvas.js"></script>   -->
     <script src="./static/js/jquery-1.11.3.js"></script>
      <script src="./static/js/bootstrap.js"></script>
 
@@ -25,15 +27,17 @@
         .container{
           width: 1250px;
         }
-        #dropdown_item{
-          left:392px !important;
-        }
-        #dropdown_item .fa-times{
+        
+        #dropdown_item img{
           color:red;
           display: none;
         }
-        #dropdown_item>li:hover .fa-times{
+        #dropdown_item>li:hover img{
             display: inline-block;
+        }
+        .el-dropdown-menu .clearfix .el-badge__content{
+          padding: 1px 6px;
+          border: none;
         }
      </style>
   </head>
@@ -47,6 +51,10 @@
       window.sessionStorage.setItem('Rs_item',JSON.stringify($(this).text().substring(24,42).trim()));
       window.location.reload();
     })*/
-
+$('.el-dropdown-menu .el-dropdown-menu__item').hover(function(){
+  $(this).css('background-color','rgba(0, 179, 138,.1)')
+},function(){
+  $(this).css('background-color','white')
+})
   </script>
 </html>

@@ -12,11 +12,11 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
-    "axios": "^0.16.1",
     "echarts": "^3.5.3",
     "element-ui": "^1.0.0",
     "glyphicons": "^0.2.0",
     "node-sass": "^4.5.0",
+    "promise-polyfill": "^6.0.2",
     "sass-loader": "^4.1.1",
     "vue": "^2.1.0",
     "vue-hot-reload-api": "^2.0.8",
@@ -77,6 +77,7 @@
     "vue-popper": "^0.3.8",
     "vue-style-loader": "^1.0.0",
     "vue-template-compiler": "^2.1.0",
+    "vuex": "^2.3.1",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.3",
     "webpack-hot-middleware": "^2.12.2",

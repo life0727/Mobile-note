@@ -1,6 +1,9 @@
-export function test () {
-	        var session = '${user.id}'
-        console.log('1111111111111111111111-------------------------')
-        console.log(session)
-}
+export function Sort(property){
+                            return function(a,b){
+                                var value1 = a[property];
+                                var value2 = b[property];
+                                return value2 - value1;
+                            }
+                          };  
+
 

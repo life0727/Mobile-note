@@ -14,6 +14,9 @@ import List from './components/main/list.vue'
 import Keyword from './components/main/keyword.vue'
 import Position from './components/main/position.vue'
 import Indexnumber from './components/main/indexnumber.vue'
+import Event from './components/main/event.vue'
+import Org from './components/main/org.vue'
+import Media from './components/main/media.vue'
 
 
 
@@ -69,6 +72,15 @@ export default new VueRouter({
 			},
 			{path:'/main/keyword',
 			component:Keyword
+			},
+			{path:'/main/event',
+			component:Event
+			},
+			{path:'/main/org',
+			component:Org
+			},
+			{path:'/main/media',
+			component:Media
 			},
 			{path:'/main/position',
 			component:Position

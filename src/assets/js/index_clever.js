@@ -1,8 +1,6 @@
 export function index_clever () {
     let arr = [
-            [0, 1, 2, 3],
-            [4, 5, 6, 7],
-            [8, 9, 10, 11]
+            [0, 1, 2]
         ];
 
     function Moving() {
@@ -64,11 +62,11 @@ export function index_clever () {
         this.content = function(j) {
             switch (j) {
                 case 0:
-                    return [ '企业','(注：所选信息来源为 微信,新闻。)'];
+                    return [ '全部','(注：所选信息来源为 全部。)',0];
                 case 1:
-                    return [ '银行','(注：所选信息来源为 新闻。)'];
+                    return [ '&nbsp;&nbsp 汽&nbsp;&nbsp;&nbsp; 车','(注：所选信息来源为 汽车。)',1];
                 case 2:
-                    return [ '明星','(注：所选信息来源为 新闻。)'];
+                    return [ '银行','(注：所选信息来源为 银行。)',2];
                 case 3:
                     return [ '医院','(注：所选信息来源为 新闻。)'];
                 case 4:
@@ -91,6 +89,8 @@ export function index_clever () {
         }
        $(this).find("span").addClass('animated flip')
         $('#source').html(this.content(this.index)[1]);
+        let simpleModelId=this.content(this.index)[2];
+        window.sessionStorage.setItem('simpleModelId',JSON.stringify(simpleModelId));
         $(this).find("span").html(this.content(this.index)[0]);
     }
     $('.icons').hover(Moving, function() {
@@ -103,7 +103,6 @@ export function index_clever () {
         $('#source').html('');
     });
     $('.icons').click(function(){
-        console.log(this.index);
         //$('#choose-lable').html(this.content(this.index)[0]);
         //onsole.log(this.$router)
         //this.$router.go('/index/clever/clever_content_next');

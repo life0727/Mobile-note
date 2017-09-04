@@ -1,168 +1,255 @@
 <template>
-  <div class="list" style="padding:0 10px;">
-    <div class="filter">
-    <!-- 监测时间 start -->
-  	   <div class="btn-group" role="group" aria-label="..." style="margin-top:20px;" id="filter_time" >
-          <button class="btn btn-default filter_name" style="border:none;background: snow;">监测时间：</button>
-          <button class="btn btn-default warning"  @click="time=[new Date(new Date().getTime()-604800000), new Date()]">一周</button>
-          <button class="btn btn-default " @click="time=[new Date(new Date().getTime()-86400000), new Date()]">一天</button>
-          <button class="btn btn-default " @click="time=[new Date(new Date().getTime()-172800000), new Date()]">两天</button>
-          <div class="block" style="padding-left:35%;" >
-            <el-date-picker v-model="time" type="datetimerange" placeholder="选择日期时间" style="float: left;margin-top:-5px;width:330px;"></el-date-picker>
-          </div>
-          <el-button type="success" size="large" style="margin-top:-2px;margin-left:4% !important;padding:3px 18px;display: none;" id="search_top" @click="search_start">搜索</el-button>
+<div class="" style="padding:0;">
+  <div class="list container" style="padding-left: 20px;padding-right: 20px;background-color:white;">
+    <div class="filter" style="border-radius: 4px;">
+    <!-- 包含关键词 start -->
+        <div class="btn-group " role="group" aria-label="..." style="height: 50px;">
+          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;margin-top:16px;margin-left: 30px !important;"><b style="font-size: 16px;">关键词：</b></button>
+          <el-input v-model="allkeyword" placeholder="必须包含关键词(且)" size="small" style="width: 14% !important;margin-top:16px;margin-left: 20px;"></el-input>
+          <el-input v-model="keywordyoulike" placeholder="包含任一关键词(或)" size="small" style="width: 14% !important;margin-left: 20px;margin-top:16px"></el-input>
+          <el-input v-model="nokeyword" placeholder="不包含关键词" size="small" style="width: 14% !important;margin-left: 20px;margin-top:16px"></el-input>
+          <el-button type="success" size="large" class="search_start" @click="search_start" style="background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;">搜索</el-button>
+          <!-- <div style="display: inline-block;width:28%;">
+                            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">包含以下全部关键词：</button>
+                            <el-input v-model="allkeyword" placeholder="多个关键词以逗号分割" size="small"></el-input>
+                          </div>  
+                          <div style="display: inline-block;width:28%;">
+                            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">包含以下任一关键词：</button>
+                            <el-input v-model="keywordyoulike" placeholder="多个关键词以逗号分割" size="small"></el-input>  
+                          </div> 
+                          <div style="display: inline-block;width:28%;">
+                            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">不包含以下关键词：</button>
+                            <el-input v-model="nokeyword" placeholder="多个关键词以逗号分割" size="small"></el-input>  
+                          </div>  -->                
        </div>
-       <hr>
-    <!-- 监测时间 end -->
+        <hr>   
+    <!-- 包含关键词 end -->
+   
     <!-- 类型 start -->
-       <div class="btn-group" role="group" aria-label="..." >
-          <button class="btn btn-default filter_name" style="border:none;background: snow;width:76px;">文章类型：</button>
+       <div class="btn-group" role="group" aria-label="..." style="margin-top:20px">
+          <button class="btn btn-default filter_name" style="border:none;background:#f7f7f7;width:76px;font-size: 14px;"><b>文章类型：</b></button>
           <button class="btn btn-default warning" @click="echarts_show=0;articleType=0">全部</button>
-          <button class="btn btn-default" @click="echarts_show=1;articleType=1">新闻</button>
-          <button class="btn btn-default" @click="echarts_show=2;articleType=2">微信</button>
+          <button class="btn btn-default" @click="echarts_show=1;articleType=1" id="filter_xinwen" >新闻</button>
+          <button class="btn btn-default" @click="echarts_show=2;articleType=2" id="filter_weixin">微信</button>
        </div>
-       <hr>  
+       <!-- <hr> -->  
     <!-- 类型 end -->
     <!-- 文章调性 start -->
-        <div class="btn-group" role="group" aria-label="..." id="polar">
-          <button class="btn btn-default filter_name" style="border:none;background: snow;" >文章调性：</button>
+        <div class="btn-group" role="group" aria-label="..." id="polar" style="margin-top:40px">
+          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;width:76px;" ><b>文章调性：</b></button>
           <button  :class="polar_arr.length==3 ? 'btn polar warning' : 'btn polar'" id="filter_polar_all">全部</button>
           <button class="btn polar warning" v-for="i in polar">{{i}}</button>
        </div>
-       <hr>  
+       <!-- <hr> -->  
     <!-- 文章调性 end -->
     <!-- 关键词位置 start -->
-        <div class="btn-group" role="group" aria-label="..." >
-          <button class="btn btn-default filter_name" style="border:none;background: snow;">检索位置：</button>
+        <div class="btn-group" role="group" aria-label="..." style="margin-top:40px;padding-bottom: 20px;border-bottom:1px solid #dcdcdc;">
+          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;width:76px;"><b>检索位置：</b></button>
           <button class="btn btn-default warning" style="margin-left:2.0% !important;" @click="queryType=0">全文</button>
           <button class="btn btn-default" @click="queryType=1">仅标题</button>
-          <button class="btn btn-default filter_name" style="border:none;background: snow;margin-left:30%;">排序方式：</button>
+          <!-- <button class="btn btn-default filter_name" style="border:none;background: snow;margin-left:30%;">排序方式：</button>
               <el-dropdown id="filter_sort_dropdown" @command="sort_dropdown">
                     <el-button>{{current_sort}}<i class="el-icon-caret-bottom el-icon--right"></i></el-button>                  
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
                     </el-dropdown-menu>
-              </el-dropdown> 
+              </el-dropdown>  -->
        </div>
-       <hr>   
+       <!-- <hr>   --> 
     <!-- 关键词位置 end -->
-    <!-- 包含关键词 start -->
-        <div class="btn-group " role="group" aria-label="...">
-          <div style="display: inline-block;width:28%;">
-            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">包含以下全部关键词：</button>
-            <el-input v-model="allkeyword" placeholder="多个关键词以逗号分割" size="small"></el-input>
-          </div>  
-          <div style="display: inline-block;width:28%;">
-            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">包含以下任一关键词：</button>
-            <el-input v-model="keywordyoulike" placeholder="多个关键词以逗号分割" size="small"></el-input>  
-          </div> 
-          <div style="display: inline-block;width:28%;">
-            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">不包含以下关键词：</button>
-            <el-input v-model="nokeyword" placeholder="多个关键词以逗号分割" size="small"></el-input>  
-          </div>                 
+    
+       <!--  <el-button type="success" size="large" class="search_start" @click="search_start">搜索</el-button> -->
+        <!-- <button  class="btn btn-default filter_button"  id="hide_button" @click="hide_filter">隐藏筛选条件<i class="fa fa-chevron-up" style="margin-left:5px;"></i></button>
+        <button  class="btn btn-default filter_button" id="show_button"  @click="show_filter">显示筛选条件<i class="fa fa-chevron-down" style="margin-left:5px;"></i></button> -->
+
+         <!-- 监测时间 start -->
+        <div id="div_tianbu" style="height:20px;background: #ffffff;width: 1210px;margin-left: -1px;"></div> 
+       <div class="btn-group" role="group" aria-label="..." style="" id="filter_time" style="height: 40px;position: relative;border-top: 1px solid #dcdcdc;">
+          <!-- <button class="btn btn-default filter_name" style="border:none;background: snow;">监测时间：</button> -->
+          <button class="btn btn-default warning" style="font-size: 14px;margin-top: 9px;" @click="time=[new Date(new Date().getTime()-604800000), new Date()]">一周</button>
+          <button class="btn btn-default " style="font-size: 14px;margin-top: 9px;margin-left: 0px !important;" @click="time=[new Date(new Date().getTime()-86400000), new Date()]">今天</button>
+          <button class="btn btn-default " style="font-size: 14px;margin-top: 9px;margin-left: 0px !important;" @click="time=[new Date(new Date().getTime()-172800000), new Date()]">两天</button>
+          <!-- <div class="block" style="padding-left:18%;margin-top: 11px;" >
+            <el-date-picker v-model="time" @change="date_change" type="datetimerange" placeholder="选择日期时间" style="float: left;margin-top:-5px;width:290px;font-size: 12px"></el-date-picker>
+          </div> -->
+          <div class="block" style="display: inline-block;margin-top: 9px;">
+              <el-date-picker
+              style="position: relative;width:170px;font-size: 12px;"
+              @change="date_change"
+              :editable="edit"
+              :clearable="edit"
+                v-model="time[0]"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
+          </div>
+          <div class="block" style="display: inline-block">
+              <span class="demonstration">至</span>
+              <el-date-picker
+              @change="date_change"
+              :editable="edit"
+              :clearable="edit"
+              style="position: relative;width:170px;font-size: 12px;"
+                v-model="time[1]"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
+          </div>
+          <span style="position: absolute;left: 47%;color: #dcdcdc;margin-top:8px">|</span>
+          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;margin-top: -1px;position:absolute;top:9px;"><b>排序方式：</b></button>
+            <el-dropdown id="filter_sort_dropdown" @command="sort_dropdown" style="padding-left: 115px;">
+                  <el-button>{{current_sort}}<i class="el-icon-caret-bottom el-icon--right" style="margin-left: 12px;"></i></el-button>                  
+                  <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
+                  </el-dropdown-menu>
+            </el-dropdown>
+          <button  class="btn btn-default filter_button" style="width: 120px ;border:none;margin-left: 19% !important;margin-top:8px" id="hide_button" @click="hide_filter">隐藏筛选条件<i class="fa fa-angle-up" style="font-size:18px;margin-left:5px;"></i></button>
+          <button  class="btn btn-default filter_button" id="show_button" style="width: 120px ;border:none;margin-left: 19% !important;margin-top:8px" @click="show_filter">显示筛选条件<i class="fa fa-angle-down" style="margin-left:5px;font-size:18px;"></i></button>  
+          <!-- <el-button type="success" size="large" style="margin-top:-2px;margin-left:4% !important;padding:3px 18px;display: none;" id="search_top" @click="search_start">搜索</el-button> -->
+          <div style="position: absolute;right: 85px;width: 20px;height: 42px;background: #ffffff;top: -1px;border-left:1px solid #dcdcdc; "></div>
+          <div style="position: absolute;right: -1px;width: 86px;height: 42px;background: #ffffff;top: -1px;">
+            <!-- <el-button   style="background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;">图表<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> -->
+          </div>
        </div>
-       <hr>  
-    <!-- 包含关键词 end -->
-        <el-button type="success" size="large" class="search_start" @click="search_start">搜索</el-button>
-        <button  class="btn btn-default filter_button"  id="hide_button" @click="hide_filter">隐藏筛选条件<i class="fa fa-chevron-up" style="margin-left:5px;"></i></button>
-        <button  class="btn btn-default filter_button" id="show_button"  @click="show_filter">显示筛选条件<i class="fa fa-chevron-down" style="margin-left:5px;"></i></button>
+       <!-- <hr> -->
+    <!-- 监测时间 end -->
       </div> 
-      <hr style="border-color:green;margin-top:5%;">
     <!-- 信息显示与图表部分start  --> 
       <div id="carousel-example-generic" class="carousel slide" style="position:relative;">
-          <ol class="carousel-indicators" style="width:100%;left:0;margin-left:0;top:0px;height:10px;">
-            <li class="active"><img data-target="#carousel-example-generic" data-slide-to="1" src="../../assets/pic.jpg" style="cursor:pointer;width:83px;height:21px;position:absolute;right:10px;" @click="show_echarts"></li>
-            <li ><img data-target="#carousel-example-generic" data-slide-to="0" src="../../assets/img/table.jpg" style="cursor:pointer;width:84px;height:20px;position:absolute;left:2px;" ></li>
+          <ol class="carousel-indicators" style="width:100%;left:0;margin:0;top:0px;height:10px;">
+            <li class="active">
+             <!--  <img data-target="#carousel-example-generic" data-slide-to="1" src="../../assets/pic.jpg" style="cursor:pointer;width:83px;height:21px;position:absolute;right:10px;" @click="show_echarts"> -->
+              <!-- <el-button data-target="#carousel-example-generic" data-slide-to="1"  style="background-color:#6ebbf3;border-color:  #6ebbf3;border-radius: 4px !important;font-size: 16px;width: 85px;height: 36px;color: white;position:fixed;top:450px;right: 15px;" @click="show_echarts">更多<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> -->
+              <el-button v-show="this.data.length!==0" data-target="#carousel-example-generic" data-slide-to="1"  style="background-color: #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;position:absolute;top:-40px;right: 0;;" @click="show_echarts">更多<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> 
+            </li>
+            <li >
+               <!-- <img data-target="#carousel-example-generic" data-slide-to="0" src="../../assets/img/table.jpg" @click="first_options=[];second_options=[];" style="cursor:pointer;width:84px;height:20px;position:absolute;left:2px;" >  -->
+               <el-button data-target="#carousel-example-generic" data-slide-to="0"  style="background-color: #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;position:absolute;top:-40px;right: 0;;" @click="hide_echarts">信息<i class="fa fa-angle-left" style="margin-left: 8px;"></i></el-button> 
+            </li>
           </ol>
           <div class="col-xs-1 left_type" >
                 <ul class="list-group">
-                    <li class="list-group-item" v-for="(i,$index) in classify" :class="{bgcolor:i.bg}" @click="classify_toggleclass(i)">
+                    <li class="list-group-item" v-for="(i,$index) in classify" :class="{bgcolor:i.bg}" @click="classify_toggleclass(i)" style="font-size: 16px;color: #666;">
                       <p style="height:13px;margin-bottom:0;"><i class="fa fa-pencil" @click.stop="write(i,$index)" :class="{display:i.fa}"></i><i class="fa fa-times" @click.stop="del_classify(i)" :class="{display:i.fa}"></i></p>
-                        {{i.name}}
+                        <span>{{i.name}}</span>
                     </li>
-                    </li>
-                    <li class="list-group-item" style="color:white;font-size:30px;background-color:rgb(74,179,255);border-color:rgb(74,179,255);"@click="addClassify">+</li>
+                    <li class="list-group-item" style="color: #666;font-size:30px;padding-top: 5px;"@click="addClassify">+</li>
                 </ul>
           </div> <!-- 左边侧栏——分类 -->
           <div class="carousel-inner " role="listbox" style="width: 97%;">
-          <div class="item active"  id="item_table" style="height:1250px">
-            <div class="carousel-caption"  >
+          <div class="item active"  id="item_table" style="height:1370px">
+            <div class="carousel-caption"  style="padding: 0;margin-top: -10px;">
 <!--      主要信息table start -->       
-            <p v-loading="this.data.length==0" element-loading-text="系统拼命加载中..." style="top:200px;" id="loading_table"></p>
-              <div style="padding: 0;"><!-- 右边table -->
-                <table width="100%" border="1" cellspacing="0" cellpadding="0" style="opacity:.8;border-color:#ccc;" id="table">        
-                  <tr >
-                    <th width="2%"></th>
-                    <th width="" >标题</th>
-                    <th width="6.5%">位置标记</th>
-                    <th width="4%">转发</th>
-                    <th width="14%">包含关键词</th>
-                    <th width="9%">媒体名称</th>
-                    <th width="11%">发布时间</th>
-                  </tr>
-                  <tr style="padding:0;" v-for="(a,$index) in tabledata" scope="scope">
-                    <td>{{($index+1)+(currentPage-1)*page_size}}</td>
-                    <td style="height:74px;">
-                      <p class="work_type" v-show="a.article.articleType==0">全部</p>  <!-- 文章分类 -->
-                      <p class="work_type" v-show="a.article.articleType==1">新闻</p>  <!-- 文章分类 -->
-                      <p class="work_type" v-show="a.article.articleType==2">微信</p>  <!-- 文章分类 -->
-                      <p class="title" ><b><a :href="a.article.url" target="_blank">{{a.article.title}}</a></b></p>
-                      <div class="title_bottom">
-                        <div><i class="fa fa-th-list"></i><span>{{a.article.category}}</span></div>
-                        <div><i class="fa fa-eye"></i><span>{{a.article.readCount}}</span></div>
-                        <div><i class="fa fa-bar-chart"></i><span>{{a.article.newsIndex}}</span></div>
-                        <div><i class="fa fa-thumbs-o-up"></i><span>{{a.article.likeCount}}</span></div>
-                        <div><i class="fa fa-user"></i><span style="font-size:12px;margin-left: 3%;">{{a.article.author}}</span></div>
-                        <div>
-                          <!--  调性弹出框  strat -->
-                          <el-popover trigger="click" placement="top"  :disabled="diaoxing_visible">
-                           <p>设置文章调性为:</p>
-                           <div>
-                              <el-button style="padding:2px 10px;" type="success" ref="btn" @click="zheng(a)">正</el-button>
-                              <el-button style="padding:2px 10px;background:gray;color:white;border-color:gray"  @click="zhong(a)">中</el-button>
-                              <el-button style="padding:2px 10px;" type="danger" @click="fu(a)">负</el-button>                           
-                            </div>
-                            <div slot="reference" class="name-wrapper">
-                              <el-button type="danger" v-show="a.article.polar==-1" @click="diaoxing_visible=false">负 </el-button>
-                              <el-button class="mid"  v-show="a.article.polar==0" @click="diaoxing_visible=false">中</el-button>
-                              <el-button type="success" v-show="a.article.polar==1" @click="diaoxing_visible=false">正</el-button>
-                            </div>                       
-                          </el-popover>                           
-                          <el-button type="danger" @click="wuguan(a)">无关</el-button>  
-                         <!--  调性弹出框  end -->                        
-                       </div>
-                      </div>
-                    </td>
-                    <td>
-                      <p v-show="a.article.locationLevel==1">普通新闻</p>
-                      <p v-show="a.article.locationLevel==2">频道首页</p>
-                      <p v-show="a.article.locationLevel==3">频道要闻</p>
-                      <p v-show="a.article.locationLevel==4">站点首页</p>
-                      <p v-show="a.article.locationLevel==5">站点要闻</p>
-                    </td>
-                    <td><p style="color:#337ab7;cursor:pointer" @click="dialog_ReprintList(a)">{{a.article.reprintList== 0 ? '' : a.article.reprintList.length}}</p></td>
-                    <td ><span v-for="b in a.includeKeywordList">{{b}}&nbsp;&nbsp;</span></td>
-                    <td>{{a.article.media}}</td>
-                    <td>{{a.article.publishTime}}</td>
-                  </tr>
-                </table>
+            <p v-loading="this.data.length==0" element-loading-text="系统拼命加载中..." style="top:200px;margin-bottom:0;" id="loading_table"></p>
+              <div style="padding: 0;position: relative;" class="row" id="table"><!-- 右边table -->
+                <div class="col-md-6 col-xs-12 "  @mouseover="Mover($index)" @mouseout="Mout($index)"  ref="list" style="width:575px;height:190px;border: 1px solid #dcdcdc;padding-left: 12px;padding-right: 8px;margin: 10px 5px 10px 15px;position: relative;border-radius: 4px;" v-for="(a,$index) in tabledata">
+                  <div style="width: 421px;height:80px;border-right: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;  position: absolute;top:10px;text-align: left;">
+                    <span v-show="a.article.articleType==0" style="width:40px;height: 18px;position: absolute;top:10px;border: 1px solid #f6a623;font-size: 14px;border-radius: 4px;padding: 0 5px;color:#f6a623;line-height: 16px;">全部</span>
+                    <span v-show="a.article.articleType==1" style="width:40px;height: 18px;position: absolute;top:10px;border: 1px solid #f46c6d;font-size: 14px;border-radius: 4px;padding: 0 5px;color:white;line-height: 16px;background-color:#f46c6d ">新闻</span>
+                    <span v-show="a.article.articleType==2" style="width:40px;height: 18px;position: absolute;top:10px;border: 1px solid #3dae36;font-size: 14px;border-radius: 4px;padding: 0 5px;color:white;line-height: 16px;background-color:rgba(61,174,54,.8);">微信</span>
+                    <span style="width:350px;font-size: 16px;height:18px;line-height: 16px;position: absolute;left:60px;top:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"><a style="color:black" :href="a.article.url" target="_blank">{{a.article.title}}</a></span>
+                    <p style="position: absolute;left:60px;top: 38px;">
+                      <span><img src="../../assets/icon/发布者(22x18px).png"></span>
+                      <span style="color: #cccccc;font-size: 14px;">{{a.article.author}}</span >&nbsp;<span style="color: #cccccc;font-size: 14px;">▪</span>&nbsp;<span style="color: #cccccc;font-size: 14px;">{{a.article.publishTime}}</span>
+                    </p>
+                  </div>
+                  <div style="width: 131px;height:80px;border-left: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;position: absolute;top:10px;right: 10px;text-align: center;">
+                    <span style="position: absolute;right: 0;cursor: pointer;" class="dropdown">
+                      <img src="../../assets/icon/列表里下拉(17x9px).png" class="dropdown-toggle" data-toggle="dropdown">
+                      <ul class="dropdown-menu" style="left:-60px;min-width: 80px" id="list_dropdown">         
+                        <li><a href="javascript:;" style="padding-left: 10px;font-size: 13px;color: #666666" @click="wuguan(a)">删除</a></li>
+                        <li><a href="javascript:;" style="padding-left: 10px;font-size: 13px;color: #666666">调性</a></li>
+                        <div class="el-radio-group" >  
+                          <label class="el-radio" style="margin-left: 20px;">
+                            <span class="el-radio__label" style="font-size:12px;color:#999999; ">正</span>
+                            <span :class="{'el-radio__input is-checked':a.article.polar==1}" style="white-space: nowrap;cursor: pointer; outline: 0;line-height: 1;vertical-align: middle;position: relative;display: inline-block;">
+                              <span class="el-radio__inner check_zheng" ></span>
+                              <input type="radio" class="el-radio__original"  @click="zheng(a)">
+                            </span>
+                          </label>
+                          <label class="el-radio" style="margin-left: 20px;">
+                            <span class="el-radio__label" style="font-size:12px;color:#999999; ">中</span>
+                            <span  :class="{'el-radio__input is-checked':a.article.polar==0}" style="white-space: nowrap;cursor: pointer; outline: 0;line-height: 1;vertical-align: middle;position: relative;display: inline-block;">
+                              <span class="el-radio__inner check_zhong" ></span>
+                              <input type="radio" class="el-radio__original" @click="zhong(a)">
+                            </span>
+                          </label>
+                          <label class="el-radio" style="margin-left: 20px;">
+                            <span class="el-radio__label" style="font-size:12px;color:#999999; ">负</span>
+                            <span :class="{'el-radio__input is-checked':a.article.polar==-1}" style="white-space: nowrap;cursor: pointer; outline: 0;line-height: 1;vertical-align: middle;position: relative;display: inline-block;">
+                              <span class="el-radio__inner check_fu" ></span>
+                              <input type="radio" class="el-radio__original" @click="fu(a)" >
+                            </span>
+                          </label>
+                        </div>  
+                      </ul>
+                    </span>
+                    <span style="position: absolute;top: 10px;left:60px;"><img src="../../assets/icon/媒体（26x26px）.png"></span>
+                    <p style="font-size: 14px;margin-top: 41px;">{{a.article.media}}</p>
+                  </div>
+                  <div style="width: 421px;height:60px;border-right: 1px solid #dcdcdc;position: absolute;top:90px;" id="keyword_div">
+                    <span v-for="b in a.includeKeywordList">{{b}}</span>
+                  </div>
+                  <div style="width: 131px;height:60px;border-left: 1px solid #dcdcdc;position: absolute;top:90px;right: 10px;">
+                    <span style="position: absolute;top: 10px;left: 52px;"><img src="../../assets/icon/指数（26x26px）.png"></span>
+                    <p style="font-size: 14px;margin-top: 41px;">{{a.article.newsIndex}}</p>
+                  </div>
+                  <div style="height:30px;width:100%;background-color:#f7f7f7;position: absolute;left: 0;bottom: 0;border-top: 1px solid #dcdcdc;" id="bottom_dev">
+                    <div style="width:114px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
+                      <span style="color:#999999;line-height:15px;">
+                        <img src="../../assets/icon/分类（17x17）.png" style="margin:-3px 3px 0 0;">
+                        <span style="font-size: 14px;line-height:30px">{{a.article.category}}</span>
+                      </span>
+                    </div>
+                    <div style="width:117px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
+                      <span style="color:#999999;line-height:25px;">
+                        <img src="../../assets/icon/标记位置（18x18px）.png" style="margin:0px 3px 0 0;">
+                        <span v-show="a.article.locationLevel==1" style="font-size: 14px;line-height:30px">普通新闻</span>
+                        <span v-show="a.article.locationLevel==2" style="font-size: 14px;line-height:30px">频道首页</span>
+                        <span v-show="a.article.locationLevel==3" style="font-size: 14px;line-height:30px">频道要闻</span>
+                        <span v-show="a.article.locationLevel==4" style="font-size: 14px;line-height:30px">站点首页</span>
+                        <span v-show="a.article.locationLevel==5" style="font-size: 14px;line-height:30px">站点要闻</span>
+                      </span>
+                    </div>
+                    <div style="width:114px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
+                      <span  @click="dialog_ReprintList(a)" style="color:#999999;cursor: pointer;" class="reprintList">
+                        <img src="../../assets/icon/转发（18x18px）.png" style="margin:-4px 3px 0 0;">
+                        <span  style="font-size: 14px;line-height:30px">{{a.article.reprintList== 0 ? '' : a.article.reprintList.length}}</span>
+                      </span>
+                    </div>
+                    <div style="width:114px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
+                      <span style="color:#999999;">
+                        <img src="../../assets/icon/点赞（18x18px）.png" style="margin:-4px 3px 0 0;">
+                        <span style="font-size: 14px;line-height:30px" >{{a.article.likeCount}}</span>
+                      </span>
+                    </div>
+                    <div style="width:114px;float: left;height: 100%;text-align: center;">
+                      <span style="color:#999999;">
+                        <img src="../../assets/icon/浏览（22x18px）.png" style="margin:-4px 3px 0 0;">
+                        <span style="font-size: 14px;line-height:30px">{{a.article.readCount}}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>                
+              </div>           
+<!--      主要信息table end -->
                 <!-- 回收站 strart -->
-                <el-button type="info" icon="delete2" style="float:left;margin-top: 10px" @click="dialog_Recycle" v-show="this.data.length!==0">回收站</el-button>
+                <el-button  icon="delete2" style="float:left;margin-top: 10px;background-color:#00b38a;border-color:#00b38a ;color: white;" @click="dialog_Recycle" v-show="this.data.length!==0">回收站</el-button>
                <!--  回收站 end -->
+               <span v-show="this.data.length!==0" id="data_size" style="color:#48576a;float: left;padding:14px 0 0 10px;">文章总量:{{reprintList_size+data.length}}</span>
      <!--    分页 strart -->
                 <el-pagination
+                    id="page"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page="currentPage"
-                    :page-sizes="[ 15, 20, 25]"
+                    :page-sizes="[ 12, 20, 25]"
                     :page-size="page_size"
-                    layout="total, sizes, prev, pager, next, jumper"
+                    layout="total,  prev, pager, next, jumper"
                     :total="this.data.length"
                     v-show="this.data.length!==0">
                 </el-pagination>
-     <!--    分页 end -->                  
-              </div>           
-<!--      主要信息table end -->
+     <!--    分页 end -->  
             </div>          
           </div>
      <!-- 信息显示与图表部分start -->
@@ -172,20 +259,41 @@
               <div class="second_card">
                 <el-button-group>
                   <a href="javascript:;"><el-button id="btn_hot">地域热图</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_more_media" >媒体声量top10</el-button></a>
                   <a href="javascript:;"><el-button id="btn_top">top20</el-button></a>
                   <a href="javascript:;"><el-button id="btn_diaoxing">正负性对比图</el-button></a>
                   <a href="javascript:;"><el-button id="btn_newsnumber">新闻指数走势图</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_user_defind_mdeia" :disabled="true">自定义媒体分析</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_more_direction" :disabled="true">多维度分析</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_user_defind_mdeia" >媒体类型分析</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_more_direction" >多维度分析</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_renwuzuzhi" >人物组织关系</el-button></a>
                 </el-button-group>
               </div>  
             <!--  二级选项卡 end-->
            <!--  echarts-图 strat -->
+           <p v-loading="this.data.length==0" element-loading-text="系统拼命加载中..." style="top:200px;" id="loading_echarts"></p>
               <div class="echarts_content">
                 <div class="opa" id="echarts-hot">
-                  <div id="echarts_hot_xinwen" v-show="echarts_show==0||echarts_show==1"></div>
-                  <div id="echarts_hot_weixin_article" v-show="echarts_show==0||echarts_show==2" ></div>
-                  <div id="echarts_hot__weixin_media" v-show="echarts_show==0||echarts_show==2"></div>
+                  <div style="position: absolute;width:150px;border:1px solid #ebebeb;left:720px;width: 300px;margin-top:15px;" v-show="echarts_show==0||echarts_show==1">
+                  <h4 style="margin: 10px auto 0 auto;">新闻省份地域top10</h4>
+                    <ul style="padding:0" >
+                     <li style="float: none;font-size: 12px;list-style: none;" v-for="(i,$index) in xinwen_province_top"  ><span style="width:60px;display:inline-block;">{{i.province}}</span><el-progress :stroke-width="14" :percentage="parseInt((i.num/xinwen_province_top_size)*100)" style="width: 78%;display: inline-block;line-height: 2.8"></el-progress></li>
+                   </ul>
+                  </div>
+                  <div id="echarts_hot_xinwen" v-show="echarts_show==0||echarts_show==1" style="width: 700px;margin-right: 0 !important;"> </div>
+                  <div style="position: absolute;width:150px;border:1px solid #ebebeb;left:720px;width: 300px;margin-top:8px;" v-show="echarts_show==0||echarts_show==2">
+                   <h4 style="margin: 10px auto 0 auto;">微信省份地域top10</h4>
+                    <ul style="padding:0" >
+                     <li style="float: none;font-size: 12px;list-style: none;" v-for="(i,$index) in wx_province_top"  ><span style="width:60px;display:inline-block;">{{i.province}}</span><el-progress :stroke-width="14" :percentage="parseInt((i.num/wx_province_top_size)*100)" style="width: 78%;display: inline-block;line-height: 2.8"></el-progress></li>
+                   </ul> 
+                  </div>
+                  <div id="echarts_hot_weixin_article" v-show="echarts_show==0||echarts_show==2" style="width: 700px;margin-right: 0 !important;"></div>
+                  <div style="position: absolute;width:150px;border:1px solid #ebebeb;left:720px;width: 300px;margin-top:8px;" v-show="echarts_show==0||echarts_show==2">
+                    <h4 style="margin: 10px auto 0 auto;">微信文章发布媒体省份地域top10</h4>
+                    <ul style="padding:0" >
+                     <li style="float: none;font-size: 12px;list-style: none;" v-for="(i,$index) in wx_media_province_top"  ><span style="width:60px;display:inline-block;">{{i.media_province}}</span><el-progress :stroke-width="14" :percentage="parseInt((i.num/wx_media_province_top_size)*100)" style="width: 78%;display: inline-block;line-height: 2.8"></el-progress></li>
+                   </ul>
+                  </div>
+                  <div id="echarts_hot__weixin_media" v-show="echarts_show==0||echarts_show==2" style="width: 700px;margin-right: 0 !important;"></div>
                 </div>
                 <div class="nopa" id="echarts-top">
                   <div id="echarts_top_xinwen" v-show="echarts_show==0||echarts_show==1" style="height:590px"></div>
@@ -199,19 +307,160 @@
                   <div id="echarts_newsnumber" v-show="echarts_show==0||echarts_show==1"></div> 
                 </div>                
                 <div class="nopa" id="echarts-user_defind_mdeia">
-                  <h1>我是自定义媒体分析</h1>
+                  <!-- <h1>我是自定义媒体分析</h1>
                   <div class="third_card">
                     <el-button-group>
                       <el-button v-for="i in third_card" :class="{bgcolor:i.bg}" @click="toggleclass(i)">{{i.name}}<i class="fa fa-times" @click.stop="del_third_card(i)"></i></el-button>
                       <el-button id="third_card_add" type="primary" icon="plus" @click="dialogVisible = true"></el-button>
                     </el-button-group>
-                  </div>
-
+                  </div> -->
+                  <el-tabs v-model="activeName3" >
+                    <el-tab-pane label="新闻" name="first">
+                     <span ><b>类型:</b> &nbsp;&nbsp;&nbsp;</span>
+                      <el-select v-model="first_schemeId">
+                        <el-option
+                          v-for="i in first_options"
+                          :label="i.schemeName"
+                          :value="i.schemeId">
+                        </el-option>
+                      </el-select> 
+                       <el-button type="success" @click="type_echarts_xinwen()" style="padding:5px 12px;margin-left: 20px;">确定</el-button>
+                       <div id="echarts_type_xinwen" style="width: 898px;height: 350px;margin-top: 20px;"></div>
+                    </el-tab-pane>
+                    <el-tab-pane label="微信" name="second">
+                    <span ><b>类型:</b> &nbsp;&nbsp;&nbsp;</span>
+                      <el-select v-model="wx_first_schemeId">
+                        <el-option
+                          v-for="i in wx_first_options"
+                          :label="i.schemeName"
+                          :value="i.schemeId">
+                        </el-option>
+                      </el-select> 
+                      <el-button type="success" @click="type_echarts_wx()" style="padding:5px 12px;margin-left: 20px;">确定</el-button>
+                      <div id="echarts_type_wx" style="width: 898px;height: 350px;margin-top: 20px;"></div>
+                    </el-tab-pane>
+                  </el-tabs> 
                 </div>
                 <div class="nopa" id="echarts-more_direction">
-                  <h1>我是多维度分析</h1>
-                </div>                              
+                  <div style="height: 40px;border: 0px;">
+                    <span style="margin-left: 90px"><b>新闻:</b> &nbsp;&nbsp;&nbsp;主交叉条件：</span>
+                      <el-select v-model="first_schemeId">
+                        <el-option
+                          v-for="i in first_options"
+                          :label="i.schemeName"
+                          :value="i.schemeId">
+                        </el-option>
+                      </el-select>  
+                      <span>副交叉条件：</span>
+                      <el-select v-model="second_schemeId">
+                        <el-option
+                          v-for="i in second_options"
+                          :label="i.schemeName"
+                          :value="i.schemeId">
+                        </el-option>
+                      </el-select>   
+                    <el-button type="success" @click="more_echarts()">确定</el-button>
+                  </div>
+                  <div id="echarts_more_direction_xinwen" v-show="echarts_show==0||echarts_show==1" style="height: 450px;"> </div> 
+                  <div style="height: 40px;border: 0px;">
+                    <span style="margin-left: 90px"><b>微信:</b> &nbsp;&nbsp;&nbsp;主交叉条件：</span>
+                      <el-select v-model="wx_first_schemeId">
+                        <el-option
+                          v-for="i in wx_first_options"
+                          :label="i.schemeName"
+                          :value="i.schemeId">
+                        </el-option>
+                      </el-select>  
+                      <span>副交叉条件：</span>
+                      <el-select v-model="wx_second_schemeId">
+                        <el-option
+                          v-for="i in wx_second_options"
+                          :label="i.schemeName"
+                          :value="i.schemeId">
+                        </el-option>
+                      </el-select>   
+                    <el-button type="success" @click="more_echarts_wx()">确定</el-button>
+                  </div>
+                  <div id="echarts_more_direction_wx" v-show="echarts_show==0||echarts_show==1" style="height: 450px;"> </div> 
+                </div>    
+                <div class="nopa" id="echarts-media-top">
+                  <div id="echarts_top_media_xinwen" v-show="echarts_show==0||echarts_show==1" style="height:590px"></div>
+                  <div id="echarts_top_media_weixin" v-show="echarts_show==0||echarts_show==2" style="height:590px">></div>
+                </div>   
+                <div class="nopa" id="echarts-renwuzuzhi">
+                <el-button type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;position:relative;right:0px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="renwuzuzhi_search">搜索</el-button>
+                    <div id="panel" style="position:relative;width:1200px;border:0px solid gray;margin-left:0px;">
+                        <div class="panel panel-default" id="panel_person" style="position:absolute;width:393px;height:360px;left:0;">
+                          <div class="panel-heading">
+                            <h3 class="panel-title" style="color: #333333;" >人物
+                              <span style="padding-left: 225px;font-size: 14px;">数量：</span>
+                              <el-dropdown  @command="sort_dropdown_per" style="">
+                                  <el-button style="padding: 2px 6px;">{{current_sort_per}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+                                  <el-dropdown-menu slot="dropdown">
+                                      <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
+                                  </el-dropdown-menu>
+                              </el-dropdown>
+                            </h3>
+                          </div>
+                          <div class="panel-body">
+                            <div class="person" style="color: white;">人物</div>
+                            <div class="line_first"></div>
+                            <div class="line_second"></div>
+                            <div class="line_last"></div> 
+                            <el-tooltip class="item" effect="light" :content="'数值:'+i.count" placement="top" v-for="(i,$index) in personSet">
+                              <div  class="ct"  @click="ct_click(i,1)" ref="ct" :style="[{width:styleData[$index].width},{height:styleData[$index].height},{top:styleData[$index].top},{left:styleData[$index].left}]"><span style="color: #666;width: 60px;display: inline-block;margin-top: 15px;font-size: 11px;">{{i.mention.slice(0,i.mention.indexOf('/'))}}</span></div>
+                            </el-tooltip>   
+                          </div>
+                        </div>
+                        <div class="panel panel-default" style="position:absolute;width:393px;height:360px;left:391px;">
+                          <div class="panel-heading">
+                            <h3 class="panel-title" style="color: #333333;">地点
+                              <span style="padding-left: 225px;font-size: 14px;">数量：</span>
+                              <el-dropdown  @command="sort_dropdown_loc" style="">
+                                  <el-button style="padding: 2px 6px;">{{current_sort_loc}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+                                  <el-dropdown-menu slot="dropdown">
+                                      <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
+                                  </el-dropdown-menu>
+                              </el-dropdown>
+                            </h3>
+                          </div>
+                          <div class="panel-body">
+                            <div class="person" style="color: white;">地点</div>
+                            <div class="line_first"></div>
+                            <div class="line_second"></div>
+                            <div class="line_last"></div>
+                            <el-tooltip class="item" effect="light" :content="'数值:'+i.count" placement="top" v-for="(i,$index) in locationSet">
+                              <div  class="ct"  @click="ct_click(i,2)" ref="ct_loc" :style="[{width:styleData[$index].width},{height:styleData[$index].height},{top:styleData[$index].top},{left:styleData[$index].left}]"><span style="color: #666;width: 60px;display: inline-block;margin-top: 15px;font-size: 11px;">{{i.mention.slice(0,i.mention.indexOf('/'))}}</span></div>
+                            </el-tooltip>  
+                          </div>
+                        </div>
+                        <div class="panel panel-default" style="position:absolute;width:393px;height:360px;left:783px;">
+                          <div class="panel-heading">
+                            <h3 class="panel-title" style="color: #333333;">组织
+                              <span style="padding-left: 225px;font-size: 14px;">数量：</span>
+                              <el-dropdown  @command="sort_dropdown_org" style="">
+                                  <el-button style="padding: 2px 6px;">{{current_sort_org}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+                                  <el-dropdown-menu slot="dropdown">
+                                      <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
+                                  </el-dropdown-menu>
+                              </el-dropdown>
+                            </h3>
+                          </div>
+                          <div class="panel-body">
+                            <div class="person" style="color: white;">组织</div>
+                            <div class="line_first"></div>
+                            <div class="line_second"></div>
+                            <div class="line_last"></div>
+                            <el-tooltip class="item" effect="light" :content="'数值:'+i.count" placement="top" v-for="(i,$index) in orgSet">
+                               <div  class="ct"  @click="ct_click(i,3)" ref="ct_org" :style="[{width:styleData[$index].width},{height:styleData[$index].height},{top:styleData[$index].top},{left:styleData[$index].left}]"><span style="color: #666;width: 60px;display: inline-block;margin-top: 15px;font-size: 11px;">{{i.mention.slice(0,i.mention.indexOf('/'))}}</span></div>
+                            </el-tooltip>
+                          </div>
+                        </div>
+                        <p v-loading="renwuzuzhi_loading"  element-loading-text="系统拼命加载中..." style="top:400px;width:200px;position:absolute;left:40%;" id="loading_renwuzuzhi"></p> 
+                    </div> 
+                    <!-- <div id="echarts_guanxi" v-show="this.personSet.length!==0" style="width:400px;height:400px;border:1px soild red;margin-top:-40px"></div>   -->                 
               </div>
+             </div>
            <!--  echarts-图 end -->
             </div>
           </div>
@@ -428,7 +677,7 @@
                 label="包含关键词"
                 width="150">
                 <template scope="scope">
-                  <span v-for="i in scope.row.keywordList">{{i}}&nbsp;&nbsp;</span>
+                  <span v-for="i in scope.row.includeKeywordList">{{i}}&nbsp;&nbsp;</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -512,10 +761,54 @@
           </div>  
     </el-dialog>
     <!--    回收站模态框 -end -->
+    <!-- 新闻地域省份模态框 start-->
+     <el-dialog title="相关文章" v-model="dialogEchart_xw_province" size="tiny" >
+      <div class="el-steps is-vertical" id="steps">
+        <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;" v-for="(i,$index) in dialog_xw_provinceMap" @mouseover="Mover_articleList($index)" @mouseout="Mout_articleList($index)">
+          <div class="el-step__head  is-text" style="color: white;">
+            <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
+            <span class="el-step__icon"><img src="../../assets/icon/xiangguanwenzhang.png"></span>
+          </div>
+          <div class="el-step__main" style="margin-left: 0">
+            <div class="el-step__title "  style="width: 480px;height: 32px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"><a :href="i.article.url"  target="_blank" style="font-weight: 700;color: #48576a;text-decoration: none" ref="dialog_xw_articlelist">标题：{{i.article.title}}</a>
+            </div>
+            <div class="el-step__description " style=" color: #8391a5;">{{i.article.publishTime}}&nbsp;&nbsp;&nbsp;<span >指数：{{i.article.newsIndex}}</span>&nbsp;&nbsp;&nbsp;<span >媒体名称：{{i.article.media}}</span></div>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer" ></span>
+    </el-dialog>
+    <!-- 新闻地域省份模态框 end-->
+   <!--  mention 图start -->
+   <!-- <el-dialog title="详情" v-model="dialogCt" size="tiny" id="dialog_ct" >
+       <p style="font-size: 16px;color: #333;"><img src="../../assets/icon/ev_shu.png" style="margin-top: -3px;display: inline-block;margin-right: 10px;"> 出现频次: <span style="color: #666;">{{ct_size}}</span></p>
+       <p style="font-size: 16px;color: #333;"><img src="../../assets/icon/ev_shu.png" style="margin-top: -3px;display: inline-block;margin-right: 10px;"> 知识图谱: <img src="../../assets/icon/ct_link.png" style="margin-top: -3px;display: inline-block;"> <a :href="ct_url" target="_blank" style="color: #fec330;text-decoration: none;">{{ct_name}}</a></p>
+       <p style="font-size: 16px;color: #333;"><img src="../../assets/icon/ev_shu.png" style="margin-top: -3px;display: inline-block;margin-right: 10px;"> 相关文章</p>
+       <div class="list-group" style="width: 531px;" id="dialog_ct_list">
+          <p v-loading="this.ct_data_list.length==0" element-loading-text="系统拼命加载中..."  id="loading_ct" style="margin-bottom: 0;"></p>
+          <div style="padding: 8px 5px;color: #999;cursor: pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;" class="list-group-item" ref="ct_list" @mouseover="Mover_ct_list($index)" @mouseout="Mout_ct_list($index)" @click="click_ct_list(i)" v-for="(i,$index) in ct_data_list">{{($index+1)+(currentPage_ct-1)*page_size_ct}}.&nbsp;{{i.article.title}}</div>
+      </div>
+      分页 strart
+        <el-pagination
+            id="page_ct"
+            @current-change="handleCurrentChange_ct"
+            :current-page="currentPage_ct"
+            :page-sizes="[ 12, 20, 25]"
+            :page-size="page_size_ct"
+            layout="total,  prev, pager, next, jumper"
+            :total="this.ct_data.length"
+            v-show="this.ct_data.length!==0">
+        </el-pagination>
+     分页 end
+   </el-dialog> -->
+   <!--  mention 图end -->
+
   </div>
+</div>  
 </template>
 <script>
 import echarts from 'echarts'
+import { Map }  from '../../assets/js/map.js'
 export default {
   mounted :function () {
   //判断是否初始化
@@ -525,31 +818,31 @@ export default {
       //页面加载完成判断项目及跳转
       $.ajax({
          type: "GET",
-         url: 'api/v1.1/project',
+         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
          traditional: true,
          data: {
              "method": 'get'
          },
          success: function(data){
-            console.log(JSON.stringify(data));
+            /*console.log(JSON.stringify(data));
             console.log(data.success);
-            console.log(data.message);
-            if(data.data.projectList.length<1){
+            console.log(data.message);*/
+            if(data.data==null){
               window.location.href='#/index/clever'
             }else{
-              alert('执行了else')
+              console.log('执行了else')
                _this.search_data(data.data.projectList[0].id,-1,0,[],[],[],0,[-1,0,1],0,_this.time[0],_this.time[1]);
                 window.sessionStorage.setItem('project_id',JSON.stringify(data.data.projectList[0].id))
                  //获取分类列表
                  $.ajax({
                    type: 'GET',
-                   url: 'api/v1.1/project/'+data.data.projectList[0].id+'/category',
+                   url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+data.data.projectList[0].id+'/category',
                    traditional: true,
                    data: {
                   'method': 'get',
                    },
                    success: function(data){
-                    if(data.data.categoryList!=null){
+                    if(data.data!=null){
                       for(let i=0;i<data.data.categoryList.length;i++){
                         data.data.categoryList[i].bg=false;
                         data.data.categoryList[i].fa=false;
@@ -569,13 +862,12 @@ export default {
       //获取分类列表
                  $.ajax({
                    type: 'GET',
-                   url: 'api/v1.1/project/'+project_id+'/category',
+                   url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
                    traditional: true,
                    data: {
                   'method': 'get',
                    },
                    success: function(data){
-                    console.log(data)
                     if(data.data!=null){
                       for(let i=0;i<data.data.categoryList.length;i++){
                         data.data.categoryList[i].bg=false;
@@ -589,27 +881,15 @@ export default {
               })
     }
 
-    //获取分类列表
-    
-    /*let newdata=[];
-                    if(this.data.length>15){
-                      for(let c=0;c<15;c++){
-                      newdata.push(this.data[c])
-                      }
-                    }else{
-                      for(let c=0;c<this.data.length;c++){
-                      newdata.push(this.data[c]);                      }
-                    }
-                    this.tabledata=newdata;*/
-
+      //搜索按钮hover样式
       $('.filter_button').hover(function(){
-        $(this).css('border-color','rgb(240,173,78)');
-        $(this).css('color','rgb(240,173,78)');
-        $('.filter').css('border-bottom-color','rgb(240,173,78)')
+        $(this).css('border-color','#00b38a');
+        $(this).css('color','#00b38a');
+        //$('.filter').css('border-bottom-color','rgb(240,173,78)')
       },function(){
         $(this).css('border-color','#ccc');
         $(this).css('color','black');
-        $('.filter').css('border-bottom-color','#ccc')        
+        //$('.filter').css('border-bottom-color','#ccc')        
       });
       /* echarts-一级选项卡*/
       $('.second_card button').click(function(){
@@ -642,6 +922,12 @@ export default {
       $('#btn_more_direction').click(function(){
         $('#echarts-more_direction').attr('class','opa').siblings().attr('class','nopa')
       });
+      $('#btn_more_media').click(function(){
+        $('#echarts-media-top').attr('class','opa').siblings().attr('class','nopa')
+      });
+      $('#btn_renwuzuzhi').click(function(){
+         $('#echarts-renwuzuzhi').attr('class','opa').siblings().attr('class','nopa')
+      })
       //ie?
       if (!!window.ActiveXObject || "ActiveXObject" in window){
         $('.carousel-indicators>li').not('.active').css('display','none');
@@ -650,7 +936,7 @@ export default {
         })
      }
       //搜索数据
-     $('.filter .btn').not('.filter_name').not('.polar').click(function(){
+     $('.filter .btn').not('.filter_name').not('.polar').not('.filter_button').click(function(){
       $(this).addClass('warning').siblings().removeClass('warning')
      });
      let _this=this;
@@ -680,25 +966,58 @@ export default {
       }
     })
     //点击筛选按钮直接搜索数据
-    let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
      $('.filter .btn').not('.filter_name').not('.filter_button').click(function(){
-       _this.data=[];
-      let cate_id='';
-      for(let i=0;i<_this.classify.length;i++){
-        if(_this.classify[i].bg==true){
-         cate_id=_this.classify[i].id;
+      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      if(_this.time[0]==undefined||_this.time[1]==undefined||_this.time[1].getTime()<_this.time[0].getTime()){
+      _this.$message({
+          message: '请检查您的时间格式',
+          type: 'warning'
+        });
+     }else{
+        //必须包含关键词回传数据 mustIncludeKeywordList
+       let allkeyword=_this.allkeyword;
+       if(allkeyword){
+        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+        _this.mustIncludeKeywordList=allkeyword.split(',')
+       }
+       //包含任意关键词回传数据 anyIncludeKeywordList
+       let keywordyoulike=_this.keywordyoulike;
+       if(keywordyoulike){
+        keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+        _this.anyIncludeKeywordList=keywordyoulike.split(',')
+       }
+       //必须不包含关键词回传数据 notIncludeKeywordList
+       let nokeyword=_this.nokeyword;
+       if(nokeyword){
+        nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+        _this.notIncludeKeywordList=nokeyword.split(',')
+       }
+        _this.first_options=[];
+        _this.second_options=[];
+        _this.data=[];
+        let cate_id='';
+        for(let i=0;i<_this.classify.length;i++){
+          if(_this.classify[i].bg==true){
+           cate_id=_this.classify[i].id;
+          }
         }
+        $('#table').css('display','none'); 
+        $('#loading_table').css('display','block');
+        $('.echarts_content').css('display','none')
+         _this.search_data(project_id,cate_id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);  
+          _this.mustIncludeKeywordList=null;
+          _this.anyIncludeKeywordList=null
+          _this.notIncludeKeywordList=null;
       }
-      $('#table').css('display','none'); 
-       _this.search_data(project_id,cate_id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1])
      })
+    
   },
   data () {
   	return {
       watch:JSON.parse(window.sessionStorage.getItem('start')),
       polar:['正面','中性','负面'],
       dropdown_sort:['时间降序','时间升序','阅读数降序','阅读数升序','新闻指数降序','新闻指数升序'],
-      current_sort:'默认',
+      current_sort:'时间降序',
       pickerOptions0: {},
       time: [new Date(new Date().getTime()-604800000), new Date()],
       allkeyword:'',
@@ -713,1188 +1032,27 @@ export default {
       mustIncludeKeywordList:[],
       anyIncludeKeywordList:[],
       notIncludeKeywordList:[],
-      data:''/*[  
-        {
-            "method": null,
-            "article": {
-                "id": 1111111,
-                "articleType": 1,
-                "title": "C罗戴帽，皇马3：0大胜马竞",
-                "locationLevel": 11,
-                "levelCounts": 1,
-                "media": "体育周报",
-                "category": "体育",
-                "author": "作者",
-                "newsIndex": 1111,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": -1,
-                "url": "https://g.hupu.com/soccer/report_10844780.html",
-                "isOriginal": 1,
-                "reprintList": null
-            },
-            "provinceMap": [
-                
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "includeKeywordList": ["关键词1","关键词2","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 222222,
-                "articleType": 1,
-                "title": "伊瓜因双响，尤文2:0摩纳哥",
-                "locationLevel": 2,
-                "levelCounts": 22222,
-                "media": "足球报",
-                "category": "欧冠",
-                "author": "作者",
-                "newsIndex": 22222,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": 0,
-                "url": "https://bbs.hupu.com/19118440.html",
-                "isOriginal": 1,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "includekeywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 333333,
-                "articleType": 1,
-                "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                "locationLevel": null,
-                "levelCounts": 0,
-                "media": "米兰体育报",
-                "category": "意甲",
-                "author": "作者",
-                "newsIndex": 33333,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": 1,
-                "url": "https://bbs.hupu.com/19092605.html",
-                "isOriginal": 0,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 44444,
-                "articleType": 1,
-                "title": "2017年一季度显卡出货量暴跌14％",
-                "locationLevel": null,
-                "levelCounts": null,
-                "media": "比吧测评室",
-                "category": "数码",
-                "author": "微信作者",
-                "newsIndex": null,
-                "readCount": 44444,
-                "likeCount": 44444,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": -1,
-                "url": "http://mp.weixin.qq.com",
-                "isOriginal": 1,
-                "reprintList": [
-                    {
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": 888,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 333333,
-                        "articleType": 1,
-                        "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                        "locationLevel": null,
-                        "levelCounts": 0,
-                        "media": "米兰体育报",
-                        "category": "意甲",
-                        "author": "作者",
-                        "newsIndex": 33333,
-                        "readCount": 1234,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 1,
-                        "url": "https://bbs.hupu.com/19092605.html",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212922128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 333333,
-                        "articleType": 1,
-                        "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                        "locationLevel": null,
-                        "levelCounts": 0,
-                        "media": "米兰体育报",
-                        "category": "意甲",
-                        "author": "作者",
-                        "newsIndex": 33333,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 1,
-                        "url": "https://bbs.hupu.com/19092605.html",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    }
-                ]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 55555,
-                "articleType": 1,
-                "title": "百度，全球第四大广告公司",
-                "locationLevel": null,
-                "levelCounts": null,
-                "media": "科技微讯",
-                "category": "科技",
-                "author": "微信作者",
-                "newsIndex": null,
-                "readCount": 55555,
-                "likeCount": 55555,
-                "publishTime": 1494212999128,
-                "crawlTime": null,
-                "polar": 1,
-                "url": "http://mp.weixin.qq.com",
-                "isOriginal": 0,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 1111111,
-                "articleType": 1,
-                "title": "C罗戴帽，皇马3：0大胜马竞",
-                "locationLevel": 11,
-                "levelCounts": 1,
-                "media": "体育周报",
-                "category": "体育",
-                "author": "作者",
-                "newsIndex": 1111,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": -1,
-                "url": "https://g.hupu.com/soccer/report_10844780.html",
-                "isOriginal": 1,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "includeKeywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 222222,
-                "articleType": 1,
-                "title": "伊瓜因双响，尤文2:0摩纳哥",
-                "locationLevel": 2,
-                "levelCounts": 22222,
-                "media": "足球报",
-                "category": "欧冠",
-                "author": "作者",
-                "newsIndex": 22222,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": 0,
-                "url": "https://bbs.hupu.com/19118440.html",
-                "isOriginal": 1,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "includekeywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 333333,
-                "articleType": 1,
-                "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                "locationLevel": null,
-                "levelCounts": 0,
-                "media": "米兰体育报",
-                "category": "意甲",
-                "author": "作者",
-                "newsIndex": 33333,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": 1,
-                "url": "https://bbs.hupu.com/19092605.html",
-                "isOriginal": 0,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 44444,
-                "articleType": 1,
-                "title": "2017年一季度显卡出货量暴跌14％",
-                "locationLevel": null,
-                "levelCounts": null,
-                "media": "比吧测评室",
-                "category": "数码",
-                "author": "微信作者",
-                "newsIndex": null,
-                "readCount": 44444,
-                "likeCount": 44444,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": -1,
-                "url": "http://mp.weixin.qq.com",
-                "isOriginal": 1,
-                "reprintList": [
-                    {
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 333333,
-                        "articleType": 1,
-                        "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                        "locationLevel": null,
-                        "levelCounts": 0,
-                        "media": "米兰体育报",
-                        "category": "意甲",
-                        "author": "作者",
-                        "newsIndex": 33333,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 1,
-                        "url": "https://bbs.hupu.com/19092605.html",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 333333,
-                        "articleType": 1,
-                        "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                        "locationLevel": null,
-                        "levelCounts": 0,
-                        "media": "米兰体育报",
-                        "category": "意甲",
-                        "author": "作者",
-                        "newsIndex": 33333,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 1,
-                        "url": "https://bbs.hupu.com/19092605.html",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    }
-                ]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 55555,
-                "articleType": 1,
-                "title": "百度，全球第四大广告公司",
-                "locationLevel": null,
-                "levelCounts": null,
-                "media": "科技微讯",
-                "category": "科技",
-                "author": "微信作者",
-                "newsIndex": null,
-                "readCount": 55555,
-                "likeCount": 55555,
-                "publishTime": 1494212999128,
-                "crawlTime": null,
-                "polar": 1,
-                "url": "http://mp.weixin.qq.com",
-                "isOriginal": 0,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 1111111,
-                "articleType": 1,
-                "title": "C罗戴帽，皇马3：0大胜马竞",
-                "locationLevel": 11,
-                "levelCounts": 1,
-                "media": "体育周报",
-                "category": "体育",
-                "author": "作者",
-                "newsIndex": 1111,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": -1,
-                "url": "https://g.hupu.com/soccer/report_10844780.html",
-                "isOriginal": 1,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "includeKeywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 222222,
-                "articleType": 1,
-                "title": "伊瓜因双响，尤文2:0摩纳哥",
-                "locationLevel": 2,
-                "levelCounts": 22222,
-                "media": "足球报",
-                "category": "欧冠",
-                "author": "作者",
-                "newsIndex": 22222,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": 0,
-                "url": "https://bbs.hupu.com/19118440.html",
-                "isOriginal": 1,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "includekeywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 333333,
-                "articleType": 1,
-                "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                "locationLevel": null,
-                "levelCounts": 0,
-                "media": "米兰体育报",
-                "category": "意甲",
-                "author": "作者",
-                "newsIndex": 33333,
-                "readCount": null,
-                "likeCount": null,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": 1,
-                "url": "https://bbs.hupu.com/19092605.html",
-                "isOriginal": 0,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 44444,
-                "articleType": 1,
-                "title": "2017年一季度显卡出货量暴跌14％",
-                "locationLevel": null,
-                "levelCounts": null,
-                "media": "比吧测评室",
-                "category": "数码",
-                "author": "微信作者",
-                "newsIndex": null,
-                "readCount": 44444,
-                "likeCount": 44444,
-                "publishTime": 1494212999128,
-                "crawlTime": 1494212999128,
-                "polar": -1,
-                "url": "http://mp.weixin.qq.com",
-                "isOriginal": 1,
-                "reprintList": [
-                    {
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 333333,
-                        "articleType": 1,
-                        "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                        "locationLevel": null,
-                        "levelCounts": 0,
-                        "media": "米兰体育报",
-                        "category": "意甲",
-                        "author": "作者",
-                        "newsIndex": 33333,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 1,
-                        "url": "https://bbs.hupu.com/19092605.html",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 333333,
-                        "articleType": 1,
-                        "title": "帕莱塔上帝之手，米兰1:1客平克罗托内",
-                        "locationLevel": null,
-                        "levelCounts": 0,
-                        "media": "米兰体育报",
-                        "category": "意甲",
-                        "author": "作者",
-                        "newsIndex": 33333,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 1,
-                        "url": "https://bbs.hupu.com/19092605.html",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    },
-                    {
-                        "id": 55555,
-                        "articleType": 2,
-                        "title": "百度，全球第四大广告公司",
-                        "locationLevel": null,
-                        "levelCounts": null,
-                        "media": "科技微讯",
-                        "category": "科技",
-                        "author": "微信作者",
-                        "newsIndex": null,
-                        "readCount": 55555,
-                        "likeCount": 55555,
-                        "publishTime": 1494212999128,
-                        "crawlTime": null,
-                        "polar": 1,
-                        "url": "http://mp.weixin.qq.com",
-                        "isOriginal": 0,
-                        "reprintList": null
-                    }
-                ]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        },
-        {
-            "method": null,
-            "article": {
-                "id": 55555,
-                "articleType": 1,
-                "title": "百度，全球第四大广告公司",
-                "locationLevel": null,
-                "levelCounts": null,
-                "media": "科技微讯",
-                "category": "科技",
-                "author": "微信作者",
-                "newsIndex": null,
-                "readCount": 55555,
-                "likeCount": 55555,
-                "publishTime": 1494212999128,
-                "crawlTime": null,
-                "polar": 1,
-                "url": "http://mp.weixin.qq.com",
-                "isOriginal": 0,
-                "reprintList": [{
-                        "id": 222222,
-                        "articleType": 1,
-                        "title": "伊瓜因双响，尤文2:0摩纳哥",
-                        "locationLevel": 2,
-                        "levelCounts": 22222,
-                        "media": "足球报",
-                        "category": "欧冠",
-                        "author": "作者",
-                        "newsIndex": 22222,
-                        "readCount": null,
-                        "likeCount": null,
-                        "publishTime": 1494212999128,
-                        "crawlTime": 1494212999128,
-                        "polar": 0,
-                        "url": "https://bbs.hupu.com/19118440.html",
-                        "isOriginal": 1,
-                        "reprintList": null
-                    }]
-            },
-            "provinceMap": [
-                "浙江",
-                "江苏",
-                "广东",
-                "山东",
-                "海南"
-            ],
-            "mediaProvinceMap": [
-                "重庆",
-                "天津",
-                "北京",
-                "上海",
-                "江苏"
-            ],
-            "keywordList": ["关键词1","关键词2"]
-        }      
-]*/ ,//总数据
+      data:'',//总数据
       recycle_data:[],//回收站数据
       reprintList_data:'',//转发的模态框的数据
       reprintList_id:'',//点击转发的相对应的总数据的id
       tabledata:[],//表格数据
+      fix_data:[],//右边固定fix地图数据
+      fix_media:'',//右边固定fix地图 媒体名称数据
+      fix_media_xinwen:'',//右边固定fix地图 媒体名称数据 xinwen
+      fix_media_wx:'',//右边固定fix地图 媒体名称数据 weixin
+      fix_media_size:'',
+      fix_media_xinwen_size:'',
+      fix_media_wx_size:'',
       currentPage: 1,
-      page_size:15,
+      page_size:12,
+      reprintList_size:'',
       dialogVisible: false,
       dialogReprintList: false,
       dialog_recycle:false,
       classify_dialog:false,
+      dialogEchart_xw_province:false,
+      dialogCt:false,
       classify:[{name:'全部','bg':true,'fa':true,id:-1}],
       third_card:[{name:'方案一','bg':false},{name:'方案二','bg':false},{name:'方案三','bg':false}],
       third_card_input:'',
@@ -1907,7 +1065,54 @@ export default {
       excludeKeywords:[],
       dialog_type:'',//分类模态框名称
       classify_index:'',//分类index
-      echarts_show:''//图标的文章类型显示过滤
+      echarts_show:'',//图标的文章类型显示过滤
+      more_data:'',
+      dialog_xw_provinceMap:[],
+      first_options:[],
+      first_schemeId:'' ,
+      second_options:[], 
+      second_schemeId:'',
+      wx_first_options:[],
+      wx_first_schemeId:'' ,
+      wx_second_options:[], 
+      wx_second_schemeId:'',
+      activeName:'first',
+      activeName2:'first',
+      activeName3:'first',
+      xinwen_province_top:[],
+      xinwen_province_top_size:'',
+      wx_province_top:[],
+      wx_province_top_size:'',
+      wx_media_province_top:[],
+      wx_media_province_top_size:'',
+      edit:false,//时间控件的属性booleran
+      styleData:[
+            {'width':'16px','height':'16px','top':'150px','left':'160px'},
+            {'width':'16px','height':'16px','top':'120px','left':'242px'},
+            {'width':'16px','height':'16px','top':'190px','left':'232px'},
+            {'width':'16px','height':'16px','top':'76px','left':'202px'},
+            {'width':'16px','height':'16px','top':'222px','left':'192px'},
+            {'width':'16px','height':'16px','top':'130px','left':'100px'},
+            {'width':'16px','height':'16px','top':'230px','left':'126px'},
+            {'width':'16px','height':'16px','top':'58px','left':'285px'},
+            {'width':'16px','height':'16px','top':'224px','left':'298px'},
+            {'width':'16px','height':'16px','top':'55px','left':'90px'}
+          ],
+      personSet:'',
+      locationSet:'',
+      orgSet:'',
+      ct_size:'',
+      ct_name:'',
+      ct_url:'',
+      ct_data:[],
+      ct_data_list:[],
+      currentPage_ct:1,
+      page_size_ct:10,
+      current_sort_loc:'5',
+      current_sort_per:'5',
+      current_sort_org:'5',
+      dropdown_sort_num:['2','3','4','5','6','7','8','9','10'],
+      renwuzuzhi_loading:false
   	}
   },
   methods: {
@@ -1940,10 +1145,27 @@ export default {
       this.tabledata=newdata;       
     },
     // 通过筛选条件搜索数据 this保存的前提下(_this)
-    search_data (proId,categoryId,articleType,mustIncludeKeywordList,anyIncludeKeywordList,notIncludeKeywordList,queryType,polar,timeType,startTime,endTime) {
+    search_data (proId,categoryId,articleType,mustIncludeKeywordList,anyIncludeKeywordList,notIncludeKeywordList,queryType,polar,timeType,startTime,endTime,echart,more_echarts,type_echarts) {
       let _this=this;
+      Map;
+      function Sort(property){
+                      return function(a,b){
+                          var value1 = a[property];
+                          var value2 = b[property];
+                          return value2 - value1;
+                      }
+                  };
+      function Sort_down(property,c){
+          return function(a,b){
+              var value1 = a[property][c];
+              var value2 = b[property][c];
+              return value2 - value1;
+          }
+        }             
+      // 数据时间戳  时间格式
+       _this.format_time ();            
       $.ajax({
-                url:'api/v1.1/project/'+123456+'/article',
+                url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+123456+'/article',
                 method:'GET',
                 traditional:true,
                 data:{
@@ -1961,45 +1183,175 @@ export default {
                   "endTime":endTime//截止时间  
                   },
                   success:function(data){
-                    //alert("成功回调函数-------------------")
+                    //console.log("成功回调函数-------------------")
                     if(data.data==null||data.data.length<=0){
                       $('#table').css('display','none');
                       _this.data=[];
                       $('#loading_table').css('display','none');
+                      $('#loading_echarts').html('');
                       _this.$message({
                             message: '木有数据哦',
                             type: 'warning'
-                          });                     
+                          });  
                     }else{
                       $('#table').css('display','block')
+                      $('.echarts_content').css('display','block')
+                      //时间降序
+                        for(let i=0;i<data.data.length;i++){
+                          data.data[i].article.publishTime=new Date(data.data[i].article.publishTime).getTime();  
+                        }
+                        data.data.sort(Sort_down('article','publishTime'));
+                        for(let i=0;i<data.data.length;i++){
+                          data.data[i].article.publishTime=new Date(data.data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");  
+                        }
                         _this.data=data.data;
-                      // 数据时间戳  时间格式
-                        _this.format_time ();
+                        //fix 右边固定数据
+                        //console.log(data.data)
+                        _this.fix_data=data.data;
+                        let media_map=[];
+                        let media_map_xinwen=[];
+                        let media_map_wx=[];
+                         for(let i=0;i<_this.data.length;i++){
+                          media_map.push(_this.data[i].article.media);
+                          if(_this.data[i].article.articleType==1){
+                            media_map_xinwen.push(_this.data[i].article.media)
+                          }else if(_this.data[i].article.articleType==2){
+                            media_map_wx.push(_this.data[i].article.media)
+                          }
+                        }
+                        //console.log(media_map_xinwen)
+                        //console.log(media_map_wx)
+                        let media_map_data=media_map;
+                        let media_map_data_xinwen=media_map_xinwen;
+                        let media_map_data_wx=media_map_wx;
+                        _this.fix_media_size=media_map.length;//总个数
+                        _this.fix_media_xinwen_size=media_map_xinwen.length;//总个数
+                        _this.fix_media_wx_size=media_map_wx.length;//总个数
+                        let fix_map=new Map()//生成{媒体名称：个数} 的map
+                        let fix_map_xinwen=new Map()//生成{媒体名称：个数} 的map
+                        let fix_map_wx=new Map()//生成{媒体名称：个数} 的map
+                        for(let t=0;t<media_map_data.length;t++){
+                            if(fix_map.get(media_map_data[t])==null){
+                              fix_map.put(media_map_data[t],1)
+                            }else{
+                              fix_map.put(media_map_data[t],fix_map.get(media_map_data[t])+1)
+                            }   
+                          }
+                        if(_this.articleType==0){
+                            for(let t=0;t<media_map_data_xinwen.length;t++){
+                            if(fix_map_xinwen.get(media_map_data_xinwen[t])==null){
+                              fix_map_xinwen.put(media_map_data_xinwen[t],1)
+                            }else{
+                              fix_map_xinwen.put(media_map_data_xinwen[t],fix_map_xinwen.get(media_map_data_xinwen[t])+1)
+                            }   
+                          };
+                          let media_map_arr_xinwen=[];
+                          let media_map_arr_big_xinwen=[];
+                          for(let k in fix_map_xinwen.data){
+                            let obj={};
+                            obj.name=k;
+                            obj.num=fix_map_xinwen.data[k];
+                            obj.fontbg=false;
+                            media_map_arr_xinwen.push(obj)
+                          }
+                          media_map_arr_xinwen.sort(Sort('num'))
+                          if(media_map_arr_xinwen.length<10){
+                            _this.fix_media_xinwen=media_map_arr_xinwen;
+                          }else{
+                            for(let i=0;i<10;i++){
+                              media_map_arr_big_xinwen.push(media_map_arr_xinwen[i])
+                            }
+                            _this.fix_media_xinwen=media_map_arr_big_xinwen;
+                          }
+                        
+                          for(let t=0;t<media_map_data_wx.length;t++){
+                            if(fix_map_wx.get(media_map_data_wx[t])==null){
+                              fix_map_wx.put(media_map_data_wx[t],1)
+                            }else{
+                              fix_map_wx.put(media_map_data_wx[t],fix_map_wx.get(media_map_data_wx[t])+1)
+                            }   
+                          };
+                          let media_map_arr_wx=[];
+                          let media_map_arr_big_wx=[];
+                          for(let k in fix_map_wx.data){
+                            let obj={};
+                            obj.name=k;
+                            obj.num=fix_map_wx.data[k];
+                            obj.fontbg=false;
+                            media_map_arr_wx.push(obj)
+                          }
+                          media_map_arr_wx.sort(Sort('num'))
+                          if(media_map_arr_wx.length<10){
+                            _this.fix_media_wx=media_map_arr_wx;
+                          }else{
+                            for(let i=0;i<10;i++){
+                              media_map_arr_big_wx.push(media_map_arr_wx[i])
+                            }
+                            _this.fix_media_wx=media_map_arr_big_wx;
+                          }
+                        
+                        }
+                          let media_map_arr=[];
+                          let media_map_arr_big=[];
+                          for(let k in fix_map.data){
+                            let obj={};
+                            obj.name=k;
+                            obj.num=fix_map.data[k];
+                            obj.fontbg=false;
+                            media_map_arr.push(obj)
+                          }
+                          media_map_arr.sort(Sort('num'))
+                          if(media_map_arr.length<10){
+                            _this.fix_media=media_map_arr;
+                          }else{
+                            for(let i=0;i<10;i++){
+                              media_map_arr_big.push(media_map_arr[i])
+                            }
+                            _this.fix_media=media_map_arr_big;
+                          }
+                          
+                         /* console.log(_this.fix_media)                
+                          console.log(_this.fix_media_wx)                
+                          console.log(_this.fix_media_xinwen) */               
                       //初始化总数据的publishTime转化
+                       let t=0;
                       for(let i=0;i<_this.data.length;i++){
                          _this.data[i].article.publishTime=new Date(_this.data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
                          //初始化数据的reprintList的publishTime转化
                          if(_this.data[i].article.reprintList){
                           for(let j=0;j<_this.data[i].article.reprintList.length;j++){
                             _this.data[i].article.reprintList[j].publishTime=new Date(_this.data[i].article.reprintList[j].publishTime).Format("yyyy-MM-dd hh:mm:ss");
+                            t++;
                           }
                          }
                       }
+                       _this.reprintList_size=t;
+                      if(echart){
+                          _this.show_echarts()
+                        }
+                      if(more_echarts){
+                        _this.more_echarts()
+                      } 
+                      if(type_echarts){
+                        _this.type_echarts_xinwen();
+                        _this.type_echarts_wx();
+                      } 
                       //初始表格数据
                       let newdata=[];
-                      if(_this.data.length>15){
-                        for(let c=0;c<15;c++){
+                      if(_this.data.length>12){
+                        for(let c=0;c<12;c++){
                         newdata.push(_this.data[c])
                         }
                       }else{
                         for(let c=0;c<_this.data.length;c++){
-                        newdata.push(_this.data[c]);                      }
+                        newdata.push(_this.data[c]);                  
+                        }
                       }
                       _this.tabledata=newdata;
                     }
                    },   
                   error:function(data){
-                    alert("失败回调函数-------------------")
+                    console.log("失败回调函数-------------------")
 
                   }
               });
@@ -2008,7 +1360,7 @@ export default {
       let _this=this;
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       $.ajax ({
-        url:'api/v1.1/project/'+project_id+'/article/'+article_id,
+        url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/article/'+article_id,
         type:'POST',
         data:{
           "method":"POST", //http请求为 POST
@@ -2016,8 +1368,8 @@ export default {
           "modifiedPolar":article_polar //修改后的调性
         },
         success:function(data){
-          //alert("调性修改-----成功回调函数-------------------");
-          //alert(JSON.stringify(data));
+          //console.log("调性修改-----成功回调函数-------------------");
+          //console.log(JSON.stringify(data));
           if(data.success==true){
             articlePolar.article.polar=article_polar;
             _this.diaoxing_visible=''
@@ -2025,51 +1377,53 @@ export default {
           
         },
         error:function(){
-          alert("调性修改-----失败回调函数-------------------");
+          console.log("调性修改-----失败回调函数-------------------");
         }
       });
     },
     hide_filter () {
       $('.filter').children().not('.filter_button').not('#filter_time').css('display','none');
-      $('.filter').css('padding','5px');
-      $('#hide_button').css({'margin-top':'5px','display':'none'});    
-      $('#show_button').css({'margin-top':'5px','display':'block'});
-      $('#search_top').css('display','inline-block');  
+      $('.filter').css('border-top','0px solid white')
+      $('#hide_button').css('display','none');    
+      $('#show_button').css('display','inline-block');
     },
-    show_filter () {
-      $('.filter').children().not('.filter_button').css('display','inline-block');
-      $('.filter hr').css('display','block');
-      $('.filter').css('padding-bottom','35px');      
-      $('#hide_button').css({'margin-top':'35px','display':'block'});    
-      $('#show_button').css({'margin-top':'35px','display':'none'});
-      $('#search_top').css('display','none')                  
+    show_filter () {  
+      $('.filter').children().not('.filter_button').not('#filter_time').css('display','inline-block');  
+      $('hr').css('display','block')
+      $('#div_tianbu').css('display','block')
+      $('.filter').css('border-top','1px solid #dcdcdc')
+      $('#hide_button').css('display','inline-block');    
+      $('#show_button').css('display','none');           
     },
     search_start () {
-     //必须包含关键词回传数据 mustIncludeKeywordList
-     let allkeyword=this.allkeyword;
-     if(allkeyword){
-      allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
-      this.mustIncludeKeywordList=allkeyword.split(',')
-     }
-     //包含任意关键词回传数据 anyIncludeKeywordList
-     let keywordyoulike=this.keywordyoulike;
-     if(keywordyoulike){
-      keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
-      this.anyIncludeKeywordList=keywordyoulike.split(',')
-     }
-     //必须不包含关键词回传数据 notIncludeKeywordList
-     let nokeyword=this.nokeyword;
-     if(nokeyword){
-      nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
-      this.notIncludeKeywordList=nokeyword.split(',')
-     }
-     //console.log(this.polar_arr)
-    // console.log(this.anyIncludeKeywordList)
-     //console.log(this.notIncludeKeywordList)
-      //this.show_echarts();
-      //搜索开始
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      this.search_data(project_id,-1,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1])
+        //必须包含关键词回传数据 mustIncludeKeywordList
+       let allkeyword=this.allkeyword;
+       if(allkeyword){
+        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+        this.mustIncludeKeywordList=allkeyword.split(',')
+       }
+       //包含任意关键词回传数据 anyIncludeKeywordList
+       let keywordyoulike=this.keywordyoulike;
+       if(keywordyoulike){
+        keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+        this.anyIncludeKeywordList=keywordyoulike.split(',')
+       }
+       //必须不包含关键词回传数据 notIncludeKeywordList
+       let nokeyword=this.nokeyword;
+       if(nokeyword){
+        nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+        this.notIncludeKeywordList=nokeyword.split(',')
+       }
+        //搜索开始
+        let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+        this.data=[];
+        $('#table').css('display','none'); 
+        $('#loading_table').css('display','block');
+        $('.echarts_content').css('display','none')
+        this.search_data(project_id,-1,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1],true,true);
+        this.mustIncludeKeywordList=null;
+        this.anyIncludeKeywordList=null
+        this.notIncludeKeywordList=null;
     },
     zheng (a) {
       console.log(this.data)
@@ -2085,25 +1439,23 @@ export default {
       let _this=this;
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       //数据库删除
-      let articleRecycleDto = {
-      "method":"POST",
-      "proId":project_id,
-      "articleDtoList":[
-        {
-          article:{
-            "articleType":a.article.articleType,
-            "id":a.article.id
-            }
+      let articleRecycleDtoList = [
+          {
+          "method":"post",
+          "proId":project_id,
+          "articleType":a.article.articleType,
+          "articleId":a.article.id
           }
         ]
-      }
+
+      console.log(JSON.stringify(articleRecycleDtoList))
       //console.log(articleRecycleDto.articleDtoList)
       $.ajax({
-      url:"api/v1.1/project/"+project_id+"/recycle/article",
+      url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/recycle/article",
       type:"POST",//此处只能选用POST请求
       dataType:"json",
       contentType:"application/json",
-      data:JSON.stringify(articleRecycleDto),
+      data:JSON.stringify(articleRecycleDtoList),
       success:function(data){
         if(data.success==true){
             //前台删除
@@ -2124,9 +1476,6 @@ export default {
       },
     handleCurrentChange(val) {
       this.currentPage = val;
-/*        console.log(`当前页: ${val}`);
-        console.log(this.page_size)
-        console.log(this.currentPage)*/
         this.format_tabledata();
       },
     //修改分类提示框
@@ -2136,7 +1485,7 @@ export default {
       //获取项目下关键词
       $.ajax({
            type: "GET",
-           url: 'api/v1.1/project/'+project_id+'/keyword',
+           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
            traditional: true,
            data: {
                "method": 'get'
@@ -2159,7 +1508,7 @@ export default {
       this.classify_index = j;
         $.ajax({
            type: 'GET',
-           url: 'api/v1.1/project/'+project_id+'/category/'+i.id+'',
+           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category/'+i.id+'',
            traditional: true,
            data: {
           'method': 'get',
@@ -2169,13 +1518,19 @@ export default {
             _this.kw=[];
               for(let i=0;i<data.data.keywordList.length;i++){
               if(data.data.keywordList[i].isIncluded==0){
-                _this.notkw.push(data.data.keywordList[i].name);            
+                _this.notkw.push(data.data.keywordList[i].name);  
+                _this.notags=_this.notags.filter(item => { return _this.notkw.indexOf(item) === -1; });          
               }else{
-               _this.kw.push(data.data.keywordList[i].name);   
+               _this.kw.push(data.data.keywordList[i].name);                
+                _this.tags=_this.tags.filter(item => { return _this.kw.indexOf(item) === -1; });
               }
              } 
            }
       })
+      this.kw=[];
+      this.notkw=[];
+      this.tags=[];
+      this.notags=[];
     },
     //添加分类提示框
     addClassify () {
@@ -2184,7 +1539,7 @@ export default {
       //获取项目下关键词
       $.ajax({
            type: "GET",
-           url: 'api/v1.1/project/'+project_id+'/keyword',
+           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
            traditional: true,
            data: {
                "method": 'get'
@@ -2212,6 +1567,22 @@ export default {
     }, 
     //删除分类   
     del_classify (i,j) {
+      let allkeyword=this.allkeyword;
+       if(allkeyword){
+        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+        this.mustIncludeKeywordList=allkeyword.split(',')
+       }
+        let keywordyoulike=this.keywordyoulike;
+         if(keywordyoulike){
+          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+          this.anyIncludeKeywordList=keywordyoulike.split(',')
+         }
+         //必须不包含关键词回传数据 notIncludeKeywordList
+         let nokeyword=this.nokeyword;
+         if(nokeyword){
+          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+          this.notIncludeKeywordList=nokeyword.split(',')
+         }
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       let _this=this;
       this.$confirm('是否删除'+' '+i.name+' '+'分类?', '提示', {
@@ -2221,7 +1592,7 @@ export default {
       }).then(() => {
         $.ajax({
                  type:'POST',
-                 url: 'api/v1.1/project/'+project_id+'/category',
+                 url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
                  traditional: true,
                  data: {
                 'method': 'delete',
@@ -2230,7 +1601,7 @@ export default {
                  success: function(data){
                     $.ajax({
                              type: 'GET',
-                             url: 'api/v1.1/project/'+project_id+'/category',
+                             url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
                              traditional: true,
                              data: {
                             'method': 'get',
@@ -2247,12 +1618,19 @@ export default {
                                   _this.classify=_this.classify.concat(data.data.categoryList);
                                   $('#table').css('display','none')
                                  _this.data=[];
-                                  _this.search_data(project_id,data.data.categoryList[data.data.categoryList.length-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1])
+                                  _this.search_data(project_id,data.data.categoryList[data.data.categoryList.length-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);
+                                  _this.mustIncludeKeywordList=null;
+                                _this.anyIncludeKeywordList=null
+                                _this.notIncludeKeywordList=null;
                               }else{
                                 _this.classify=[{name:'全部','bg':true,'fa':true,id:-1}];
+                                $('.echarts_content').css('display','none')
                                 $('#table').css('display','none')
                                 _this.data=[];
-                                _this.search_data(project_id,-1,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1])
+                                _this.search_data(project_id,-1,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1]);
+                                _this.mustIncludeKeywordList=null;
+                              _this.anyIncludeKeywordList=null
+                              _this.notIncludeKeywordList=null;
                               }   
                             }    
                         })
@@ -2274,6 +1652,23 @@ export default {
     },
     //添加分类
     add_classify () {
+      
+      let allkeyword=this.allkeyword;
+       if(allkeyword){
+        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+        this.mustIncludeKeywordList=allkeyword.split(',')
+       }
+        let keywordyoulike=this.keywordyoulike;
+         if(keywordyoulike){
+          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+          this.anyIncludeKeywordList=keywordyoulike.split(',')
+         }
+         //必须不包含关键词回传数据 notIncludeKeywordList
+         let nokeyword=this.nokeyword;
+         if(nokeyword){
+          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+          this.notIncludeKeywordList=nokeyword.split(',')
+         }
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       let _this=this;
       let inid=[],
@@ -2286,7 +1681,7 @@ export default {
       for(let i=0;i<this.excludeKeywords.length;i++){
         exid.push(this.excludeKeywords[i].id)
       }
-      if(inid.length==0&&exid.length==0){
+      if(inid.length==0){
         this.$message({
           message: '填写错误哦，请最少选择一条关键词或排除词',
           type: 'warning'
@@ -2295,7 +1690,7 @@ export default {
       }else{
         $.ajax({
          type: "POST",
-         url: 'api/v1.1/project/'+project_id+'/category',
+         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
          traditional: true,
          data: {
         'method': 'post',
@@ -2307,7 +1702,7 @@ export default {
           success: function(data){
                 $.ajax({
                        type: 'GET',
-                       url: 'api/v1.1/project/'+project_id+'/category',
+                       url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
                        traditional: true,
                        data: {
                       'method': 'get',
@@ -2318,13 +1713,17 @@ export default {
                             data.data.categoryList[i].bg=false;
                             data.data.categoryList[i].fa=false;
                            }
-                           console.log(data.data.categoryList)
                             data.data.categoryList[data.data.categoryList.length-1].bg=true;
                             _this.classify=[{name:'全部','bg':false,'fa':true,id:-1}];
                             _this.classify=_this.classify.concat(data.data.categoryList);
+                            $('.echarts_content').css('display','none')
                             $('#table').css('display','none')
                              _this.data=[];
-                            _this.search_data(project_id,data.data.categoryList[data.data.categoryList.length-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1])
+                             console.log(_this.mustIncludeKeywordList)
+                            _this.search_data(project_id,data.data.categoryList[data.data.categoryList.length-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);
+                            _this.mustIncludeKeywordList=null;
+                            _this.anyIncludeKeywordList=null
+                            _this.notIncludeKeywordList=null;
                         }else{
                         }   
                       }    
@@ -2333,13 +1732,28 @@ export default {
              }
         })
       }
-      
       this.classify_input='';
       this.kw=[];
       this.notkw=[];
     },
     //修改分类
     write_classify () {
+      let allkeyword=this.allkeyword;
+       if(allkeyword){
+        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+        this.mustIncludeKeywordList=allkeyword.split(',')
+       }
+        let keywordyoulike=this.keywordyoulike;
+         if(keywordyoulike){
+          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+          this.anyIncludeKeywordList=keywordyoulike.split(',')
+         }
+         //必须不包含关键词回传数据 notIncludeKeywordList
+         let nokeyword=this.nokeyword;
+         if(nokeyword){
+          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+          this.notIncludeKeywordList=nokeyword.split(',')
+         }
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       let _this=this; 
       let inid=[],
@@ -2352,15 +1766,35 @@ export default {
       for(let i=0;i<this.excludeKeywords.length;i++){
         exid.push(this.excludeKeywords[i].id)
       }
-      if(inid.length==0&&exid.length==0){
+      console.log(inid)
+      if(inid.length==0){
         this.$message({
-          message: '填写错误哦，请最少选择一条关键词或排除词',
+          message: '填写错误哦，请最少选择一条关键词',
           type: 'warning'
         });
+            $.ajax({
+               type: "GET",
+               url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
+               traditional: true,
+               data: {
+                   "method": 'get'
+               },
+               success: function(data){
+                console.log(data)
+                for(let i=0;i<data.data.keywordList.length;i++){
+                  if(data.data.keywordList[i].isIncluded==0){
+                      _this.excludeKeywords.push(data.data.keywordList[i]);
+
+                  }else{
+                    _this.includeKeywords.push(data.data.keywordList[i]);
+                  }
+                 } 
+                }
+              })
       }else{
            $.ajax({
            type: 'POST',
-           url: 'api/v1.1/project/'+project_id+'/category/'+this.classify[this.classify_index].id+'',
+           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category/'+this.classify[this.classify_index].id+'',
            traditional: true,
            data: {
           'method': 'put',
@@ -2372,7 +1806,7 @@ export default {
            success: function(data){
               $.ajax({
                        type: 'GET',
-                       url: 'api/v1.1/project/'+project_id+'/category',
+                       url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
                        traditional: true,
                        data: {
                       'method': 'get',
@@ -2386,9 +1820,13 @@ export default {
                             data.data.categoryList[_this.classify_index-1].bg=true;
                             _this.classify=[{name:'全部','bg':false,'fa':true,id:-1}];
                             _this.classify=_this.classify.concat(data.data.categoryList);
+                            $('.echarts_content').css('display','none')
                             $('#table').css('display','none')
                              _this.data=[];
-                            _this.search_data(project_id,data.data.categoryList[_this.classify_index-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1])
+                            _this.search_data(project_id,data.data.categoryList[_this.classify_index-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);
+                            _this.mustIncludeKeywordList=null;
+                            _this.anyIncludeKeywordList=null
+                            _this.notIncludeKeywordList=null;
                         }else{
 
                         }   
@@ -2397,8 +1835,7 @@ export default {
                 _this.classify_dialog = false;
             }
           })
-      }
-      
+     }
       /*console.log(this.classify[this.classify_index].id)
         this.classify[this.classify_index].kw = this.kw;
         this.classify[this.classify_index].notkw = this.notkw;
@@ -2424,10 +1861,33 @@ export default {
     },
     //切换分类
     classify_toggleclass (i) {
+       let allkeyword=this.allkeyword;
+       if(allkeyword){
+        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+        this.mustIncludeKeywordList=allkeyword.split(',')
+       }
+        let keywordyoulike=this.keywordyoulike;
+         if(keywordyoulike){
+          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+          this.anyIncludeKeywordList=keywordyoulike.split(',')
+         }
+         //必须不包含关键词回传数据 notIncludeKeywordList
+         let nokeyword=this.nokeyword;
+         if(nokeyword){
+          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+          this.notIncludeKeywordList=nokeyword.split(',')
+         }
+      this.first_options=[];
+      this.second_options=[];
+      $('.echarts_content').css('display','none')
       this.data=[];
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      $('#table').css('display','none')     
-      this.search_data(project_id,i.id,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1])
+      $('#table').css('display','none')   
+      $('#loading_table').css('display','block');  
+      this.search_data(project_id,i.id,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1],true,false,true);
+      this.mustIncludeKeywordList=null;
+      this.anyIncludeKeywordList=null
+      this.notIncludeKeywordList=null;
       $.each(this.classify,function(i,j){
         j.bg=false;
       })
@@ -2492,7 +1952,22 @@ export default {
       //格式表格数据
       this.format_tabledata();
     },
-    show_echarts () {
+    show_echarts (a) {
+      $('#echarts_more_direction_xinwen').css('display','none')
+       
+      //多纬度input的val
+      this.first_schemeId=[];
+      this.second_schemeId=[];
+      this.wx_first_schemeId=[];
+      this.wx_second_schemeId=[];
+      //初始化多维度下拉
+      this.first_options=[];
+      this.second_options=[];
+      this.wx_first_options=[];
+      this.wx_second_options=[];
+      if(a){
+        this.hide_filter();
+      }  
       let _this=this;
       this.format_time();
       // 新闻微信数据过滤
@@ -2501,30 +1976,12 @@ export default {
       for(let i=0;i<this.data.length;i++){
         if(this.data[i].article.articleType==1){
           newsData.push(this.data[i])
-
         }if(this.data[i].article.articleType==2){
           weixinData.push(this.data[i])
         }
       }
       //obj 格式
-      function Map() {
-              this.data = new Object();
-              this.put = function (key, value) {
-                  this.data[key] = value;
-              };
-              this.get = function (key) {
-                  return this.data[key];
-              };
-              this.remove = function (key) {
-                  this.data[key] = null;
-              };
-              this.isEmpty = function () {
-                  return this.data.length == 0;
-              };
-              this.size = function () {
-                  return this.data.length;
-              };
-          }
+      Map;
       //生成 总数据对象
       let map=new Map();
       let wxmap=new Map();
@@ -2534,7 +1991,6 @@ export default {
       //let newsIndex=new Map();
     //console.log(this.value1.getTime())
     //时间格式转化
-      //this.format_time();
        //判断时间 全部转化成每小时的数据
       let strat_time=this.time[0].getTime();
       while(strat_time<this.time[1].getTime()){
@@ -2543,7 +1999,6 @@ export default {
         strat_time=strat_time+3600000;
       }
       //遍历新闻数据
-      
       for(let i=0;i<newsData.length;i++){
         //生成 新闻省份地域热图数据
         for(let j=0;j<newsData[i].provinceMap.length;j++){
@@ -2554,7 +2009,7 @@ export default {
             map.put(province,map.get(province)+1)
           }   
         }
-        console.log(newsData[i].article)
+
         //新闻发布时间格式转化 生成每小时的newsIndex_map
           let news_time=newsData[i].article.publishTime.slice(0,13);
           let news_newsIndex=newsData[i].article.newsIndex+newsIndex_map.get(news_time);
@@ -2601,13 +2056,14 @@ export default {
               for(let k in newsIndex_max_map.data){
                 newsnumber_data.push(newsIndex_max_map.data[k]);
                 //console.log(k)
-                let k_time=k.slice(5,13)+'-08:00';
+                let k_time=k.slice(5,13)+' 08:00';
                 newsnumber_xdata.push(k_time);
               }
           }
-          console.log(newsnumber_data)
+         console.log(newsnumber_data)
           console.log(newsnumber_xdata)
-        // console.log(newsIndex_max_map.data)
+          /*console.log(newsIndex_map.data)
+          console.log(newsIndex_max_map.data)*/
       //遍历微信数据
       for(let i=0;i<weixinData.length;i++){
         //生成 微信省份地域热图数据
@@ -2627,7 +2083,7 @@ export default {
           }else{
             wx_media_map.put(media_province,wx_media_map.get(media_province)+1)
           }   
-        }        
+        }      
         // 微信正负性数据
         let polar;
         if(weixinData[i].article.polar==-1){
@@ -2644,7 +2100,6 @@ export default {
           } 
       }     
         //新闻省份地域热图数据生成数组对象格式
-
         let province = [];
         for( let l in map.data){
             let obj = new Object();
@@ -2666,11 +2121,11 @@ export default {
         }  
          //微信媒体省份地域热图数据生成数组对象格式
         let media_province = [];
-        for( let l in wxmap.data){
+        for( let l in wx_media_map.data){
             let obj = new Object();
             if(l !== '正'&&l !== '中'&&l !== '负'){
             obj.media_province=l;
-            obj.num=wxmap.data[l];
+            obj.num=wx_media_map.data[l];
             media_province.push(obj);
           }
         }     
@@ -2682,6 +2137,7 @@ export default {
             let obj = new Object();
             obj.title=newsData[t].article.title;
             obj.num=newsData[t].article.newsIndex;
+            obj.url=newsData[t].article.url;
             news_top.push(obj);
         }
         //微信top
@@ -2690,6 +2146,7 @@ export default {
             let obj = new Object();
             obj.title=weixinData[t].article.title;
             obj.num=weixinData[t].article.readCount;
+            obj.url=weixinData[t].article.url;
             weixin_top.push(obj);
         }
         //数组对象排序方法正序
@@ -2708,7 +2165,13 @@ export default {
               return value2 - value1;
           }
         }
-        console.log(province)
+        function Sort_top(property,c){
+          return function(a,b){
+              var value1 = a[property][c];
+              var value2 = b[property][c];
+              return value2 - value1;
+          }
+        } 
         //新闻省份地域热图数据排序
         province.sort(Sort('num'));
         //微信省份地域热图数据排序
@@ -2719,52 +2182,70 @@ export default {
         news_top.sort(Sort_down('num'));
        /*  console.log(news_top.length)*/
         //判断新闻top20有没有20个
-        let news_top_data=[];        
+        let news_top_data=[];  
         if(news_top.length<20){
           for( let i=0;i<news_top.length;i++){
-            news_top_data.push(news_top[i].num);
-            news_top_data.sort(function(a,b){return a-b})//柱状图数据格式
+            news_top_data.push(news_top[i]);
+            //news_top_data.sort(function(a,b){return a-b})//柱状图数据格式
           }
         }else{
           for( let i=0;i<20;i++){
-            news_top_data.push(news_top[i].num)
-            news_top_data.sort(function(a,b){return a-b})//柱状图数据格式
+            news_top_data.push(news_top[i])
+            //news_top_data.sort(function(a,b){return a-b})//柱状图数据格式
           }
+        }
+        //拿到20或者小于20个新闻数据后设置图标的展示数据
+        let news_top_data_title=[];
+        let news_top_data_num=[];
+        for( let i=0;i<news_top_data.length;i++){
+          news_top_data_num.push(news_top_data[i].num);
+          news_top_data_title.push(news_top_data[i].title)
+          news_top_data_num.sort(function(a,b){return a-b})
         }
         //微信top数据排序
         weixin_top.sort(Sort_down('num'));
         //判断微信top20有没有20个
-        let weixin_top_data=[];        
+        let weixin_top_data=[];              
         if(weixin_top.length<20){
           for( let i=0;i<weixin_top.length;i++){
-            weixin_top_data.push(weixin_top[i].num);
-            weixin_top_data.sort(function(a,b){return a-b})//柱状图数据格式
+            weixin_top_data.push(weixin_top[i]);
           }
         }else{
           for( let i=0;i<20;i++){
-            weixin_top_data.push(weixin_top[i].num);
-            weixin_top_data.sort(function(a,b){return a-b})//柱状图数据格式
+            weixin_top_data.push(weixin_top[i]);
           }
         }
-        //console.log(map.get('山东'))
+        //拿到20或者小于20个微信数据后设置图标的展示数据
+        let weixin_top_data_title=[];
+        let weixin_top_data_num=[];
+        for( let i=0;i<weixin_top_data.length;i++){
+          weixin_top_data_num.push(weixin_top_data[i].num);
+          weixin_top_data_title.push(weixin_top_data[i].title)
+          weixin_top_data_num.sort(function(a,b){return a-b})
+        }
           //地域热图开始 
       $.get('static/china.json', function (chinaJson) {
         echarts.registerMap('china', chinaJson);
         let echarts_hot_xinwen = echarts.init(document.getElementById('echarts_hot_xinwen'));
         let echarts_hot_weixin_article = echarts.init(document.getElementById('echarts_hot_weixin_article'));
         let echarts_hot__weixin_media = echarts.init(document.getElementById('echarts_hot__weixin_media'));
-        console.log('地域热图一长度'+province.length)
+        echarts_hot_xinwen.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
+        /*console.log('地域热图一长度'+province.length)
         console.log('地域热图二长度'+media_province.length)
-        console.log('地域热图三长度'+wx_province.length)
-        if(province!=0){
+        console.log('地域热图三长度'+wx_province.length)*/
+        if(province.length!=0){
           let option_hot_xinwen = {
              title: {
                     text: '新闻中地点出现的地域分布',
                     left: 'center'
                 },
                 tooltip: {
-                    trigger: 'item',
-                    position:'inside'
+                    trigger: 'item'
                 },
                 legend: {
                     orient: 'vertical',
@@ -2843,10 +2324,45 @@ export default {
                     }
                 ]
           };
-          echarts_hot_xinwen.setOption(option_hot_xinwen);   
+          echarts_hot_xinwen.hideLoading();
+          echarts_hot_xinwen.setOption(option_hot_xinwen); 
+          //新闻地图左侧top10
+          let province_top_size_xinwen=0;
+          for(let t=0;t<province.length;t++){
+            province_top_size_xinwen+=province[t].num;
+          }
+          _this.xinwen_province_top_size=province_top_size_xinwen;
+          province.sort(Sort_down('num'));
+          if(province.length<10){
+            _this.xinwen_province_top=province;
+          }else{
+            let arr=[];
+            for(let i=0;i<10;i++){
+              arr.push(province[i]);
+            }
+            _this.xinwen_province_top=arr;
+          } 
         }else{
-          $('#echarts_hot_xinwen').css('display','none')
+           $('#echarts_hot_xinwen').html(`<h4>新闻中地点出现的地域分布</h4><br><p>暂无数据</p>`)
         }
+        echarts_hot_xinwen.on('click', function (params) {
+          /*console.log(params.data.name);
+           console.log(newsData)*/
+           _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            for(let i=0;i<newsData.length;i++){
+                if(newsData[i].provinceMap.indexOf(params.data.name)!==-1){
+                  _this.dialog_xw_provinceMap.push(newsData[i])
+                };
+             };
+        });
+
+        echarts_hot_weixin_article.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
         if(wx_province.length!=0){
          let option_hot_xinwen_article = {
            title: {
@@ -2882,7 +2398,7 @@ export default {
               },
               series: [
                   {
-                      name: '新闻中地点出现的地域分布',
+                      name: '微信中地点出现的地域分布',
                       type: 'map',
                       mapType: 'china',
                       roam: false,
@@ -2933,10 +2449,43 @@ export default {
                   }
               ]
           };
+          echarts_hot_weixin_article.hideLoading();
           echarts_hot_weixin_article.setOption(option_hot_xinwen_article); 
+          //w微信地图左侧top10
+          let province_top_size_wx=0;
+          for(let t=0;t<wx_province.length;t++){
+            province_top_size_wx+=wx_province[t].num;
+          }
+          _this.wx_province_top_size=province_top_size_wx;
+          wx_province.sort(Sort_down('num'));
+          if(wx_province.length<10){
+            _this.wx_province_top=wx_province;
+          }else{
+            let arr=[];
+            for(let i=0;i<10;i++){
+              arr.push(wx_province[i]);
+            }
+            _this.wx_province_top=arr;
+          } 
         }else{
-          $('#echarts_hot_weixin_article').css('display','none')
+          $('#echarts_hot_weixin_article').html(`<h4>微信中地点出现的地域分布</h4><br><p>暂无数据</p>`)
         }
+        echarts_hot_weixin_article.on('click', function (params) {
+           _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            console.log(weixinData)
+            for(let i=0;i<weixinData.length;i++){
+                if(weixinData[i].provinceMap.indexOf(params.data.name)!==-1){
+                  _this.dialog_xw_provinceMap.push(weixinData[i])
+                };
+             };
+        })
+        echarts_hot__weixin_media.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
         if(media_province.length!=0){
            let option_hot_xinwen_media = {
              title: {
@@ -3023,170 +2572,434 @@ export default {
                     }
                 ]            
           }
+          echarts_hot__weixin_media.hideLoading();
           echarts_hot__weixin_media.setOption(option_hot_xinwen_media);
+          //w微信地图左侧top10
+          let province_top_size_wx_media=0;
+          for(let t=0;t<media_province.length;t++){
+            province_top_size_wx_media+=media_province[t].num;
+          }
+          _this.wx_media_province_top_size=province_top_size_wx_media;
+          media_province.sort(Sort_down('num'));
+          if(media_province.length<10){
+            _this.wx_media_province_top=media_province;
+          }else{
+            let arr=[];
+            for(let i=0;i<10;i++){
+              arr.push(media_province[i]);
+            }
+            _this.wx_media_province_top=arr;
+          } 
+          console.log(_this.wx_media_province_top)
         }else{
-          $('#echarts_hot__weixin_media').css('display','none')
+          $('#echarts_hot__weixin_media').html(`<h4>微信文章发布媒体所在地域分布</h4><br><p>暂无数据</p>`)
         }
-              
+         echarts_hot__weixin_media.on('click', function (params) {
+         _this.dialogEchart_xw_province=true;
+          _this.dialog_xw_provinceMap=[];
+          for(let i=0;i<weixinData.length;i++){
+              if(weixinData[i].mediaProvinceMap.indexOf(params.data.name)!==-1){
+                _this.dialog_xw_provinceMap.push(weixinData[i])
+              };
+           };
+          })   
         })   
           //地域热图结束
           // top20 开始
         let echarts_top_xinwen = echarts.init(document.getElementById('echarts_top_xinwen')); 
-        let echarts_top_weixin = echarts.init(document.getElementById('echarts_top_weixin')); 
-        let option_top_xinwen ={
-                title: {
-                    text: '新闻指数top20'
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+        let echarts_top_weixin = echarts.init(document.getElementById('echarts_top_weixin'));
+        echarts_top_xinwen.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
+        if(news_top_data.length!=0){
+          let option_top_xinwen ={
+                    title: {
+                        text: '新闻指数top20'
                 },
-                formatter: function (params, ticket, callback) {                                 
-                    return `新闻标题：${news_top[params[0].dataIndex].title};  新闻指数：${news_top[params[0].dataIndex].num} <br/>`                                                                 
-                }
-            },
-            legend: {
-                data: ['新闻']
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'value',
-                boundaryGap: [0, 0.01]
-            },
-            yAxis: {
-                type: 'category',
-                data: news_top_data
-            },
-            series: [
-                {
-                    name: '新闻',
-                    type: 'bar',
-                    data: news_top_data
-                }
-            ]
-        }
-        let option_top_weixin ={
-                title: {
-                  text: '微信阅读数top20'
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: function (params, ticket, callback) {   
+                        return `新闻标题：${news_top_data_title[news_top_data_title.length-1-(params[0].dataIndex)]}; 新闻指数：${news_top_data_num[params[0].dataIndex]} <br/>`                                                                 
+                    }
                 },
-                formatter: function (params, ticket, callback) {                                 
-                    return `标题：${weixin_top[params[0].dataIndex].title};  阅读数：${weixin_top[params[0].dataIndex].num} <br/>`                                                                 
-                }
-            },
-            legend: {
-                data: ['微信']
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'value',
-                boundaryGap: [0, 0.01]
-            },
-            yAxis: {
-                type: 'category',
-                data: weixin_top_data
-            },
-            series: [
-                {
-                    name: '微信',
-                    type: 'bar',
-                    data: weixin_top_data
-                }
-            ]
-        }        
-        echarts_top_xinwen.setOption(option_top_xinwen);
-        echarts_top_weixin.setOption(option_top_weixin);
+                legend: {
+                    data: ['新闻']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    boundaryGap: [0, 0.01]
+                },
+                yAxis: {
+                    type: 'category',
+                    data: news_top_data_num
+                },
+                series: [
+                    {
+                        name: '新闻',
+                        type: 'bar',
+                        data: news_top_data_num
+                    }
+                ]
+            }
+            echarts_top_xinwen.hideLoading();
+            echarts_top_xinwen.setOption(option_top_xinwen);
+        }else{
+            $('#echarts_top_xinwen').html(`<h4>新闻指数top20</h4><br><p>暂无数据</p>`)
+        } 
+        echarts_top_xinwen.on('click', function (params) {
+          window.open(news_top_data[news_top_data.length-1-(params.dataIndex)].url);
+          })  
+        echarts_top_weixin.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
+        //console.log(weixin_top_data)
+        if(weixin_top_data.length!=0){
+              let option_top_weixin ={
+                    title: {
+                      text: '微信阅读数top20'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: function (params, ticket, callback) {                                 
+                        return `标题：${weixin_top_data_title[weixin_top_data_title.length-1-(params[0].dataIndex)]};  阅读数：${weixin_top_data_num[params[0].dataIndex]} <br/>`                                                                 
+                    }
+                },
+                legend: {
+                    data: ['微信']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    boundaryGap: [0, 0.01]
+                },
+                yAxis: {
+                    type: 'category',
+                    data: weixin_top_data_num
+                },
+                series: [
+                    {
+                        name: '微信',
+                        type: 'bar',
+                        data: weixin_top_data_num
+                    }
+                ]
+            } 
+          echarts_top_weixin.hideLoading();
+          echarts_top_weixin.setOption(option_top_weixin);
+          }else{
+             $('#echarts_top_weixin').html(`<h4>微信阅读数top20</h4><br><p>暂无数据</p>`)
+          }
+          echarts_top_weixin.on('click', function (params) {
+             window.open(weixin_top_data[weixin_top_data.length-1-(params.dataIndex)].url);
+          }) 
         // top20 结束
+        //媒体声量top10 开始
+        let xinwen_top_media_data_num=[];
+        let xinwen_top_media_data_name=[];
+        if(_this.fix_media_xinwen.length!=0){
+          for(let i=0;i<_this.fix_media_xinwen.length;i++){
+            xinwen_top_media_data_num.push(_this.fix_media_xinwen[i].num);
+            xinwen_top_media_data_name.push(_this.fix_media_xinwen[i].name);
+          }
+        }
+          xinwen_top_media_data_num.sort(function(a,b){return a-b;})
+        let echarts_top_media_xinwen = echarts.init(document.getElementById('echarts_top_media_xinwen')); 
+        echarts_top_media_xinwen.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
+        if(_this.fix_media_xinwen.length!=0){
+          let option_top_media_xinwen ={
+                    title: {
+                        text: '新闻媒体声量top10'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: function (params, ticket, callback) {   
+                        return `媒体名称：${xinwen_top_media_data_name[params[0].dataIndex]}; 数量：${xinwen_top_media_data_num[params[0].dataIndex]} <br/>`                                                                 
+                    }
+                },
+                legend: {
+                    data: ['新闻']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    boundaryGap: [0, 0.01]
+                },
+                yAxis: {
+                    type: 'category',
+                    data: xinwen_top_media_data_name.reverse()
+                },
+                series: [
+                    {
+                        name: '新闻',
+                        type: 'bar',
+                        data: xinwen_top_media_data_num,
+                        label: {
+                            normal: {
+                            show: true,
+                            position: 'insideRight'
+                             }
+                          }
+                    }
+                ]
+            }
+            echarts_top_media_xinwen.hideLoading();
+            echarts_top_media_xinwen.setOption(option_top_media_xinwen);
+        }else{
+            $('#echarts_top_media_xinwen').html(`<h4>新闻媒体声量top10</h4><br><p>暂无数据</p>`)
+        } 
+        echarts_top_media_xinwen.on('click', function (params) {
+             _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            for(let i=0;i<newsData.length;i++){
+                if(newsData[i].article.media===params.name){
+                  _this.dialog_xw_provinceMap.push(newsData[i])
+                };
+             };
+          }) 
+        //微信
+        let weixin_top_media_data_num=[];
+        let weixin_top_media_data_name=[];
+        if(_this.fix_media_wx.length!=0){
+          for(let i=0;i<_this.fix_media_wx.length;i++){
+            weixin_top_media_data_num.push(_this.fix_media_wx[i].num);
+            weixin_top_media_data_name.push(_this.fix_media_wx[i].name);
+          }
+        }
+        weixin_top_media_data_num.sort(function(a,b){return a-b;})
+        let echarts_top_media_weixin = echarts.init(document.getElementById('echarts_top_media_weixin')); 
+        echarts_top_media_weixin.showLoading({
+            text: 'loading',
+            color: '#c23531',
+            textColor: '#000',
+            maskColor: 'snow'
+        });
+        if(_this.fix_media_wx.length!=0){
+          let option_top_media_weixin ={
+                    title: {
+                        text: '微信媒体声量top10'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: function (params, ticket, callback) {   
+                        return `媒体名称：${weixin_top_media_data_name[params[0].dataIndex]}; 数量：${weixin_top_media_data_num[params[0].dataIndex]} <br/>`                                                                 
+                    }
+                },
+                legend: {
+                    data: ['微信']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    boundaryGap: [0, 0.01]
+                },
+                yAxis: {
+                    type: 'category',
+                    data: weixin_top_media_data_name.reverse()
+                },
+                series: [
+                    {
+                        name: '微信',
+                        type: 'bar',
+                        data: weixin_top_media_data_num,
+                        label: {
+                            normal: {
+                            show: true,
+                            position: 'insideRight'
+                             }
+                          }
+                    }
+                ]
+            }
+            echarts_top_media_weixin.hideLoading();
+            echarts_top_media_weixin.setOption(option_top_media_weixin);
+        }else{
+            $('#echarts_top_media_weixin').html(`<h4>微信媒体声量top10</h4><br><p>暂无数据</p>`)
+        } 
+          echarts_top_media_weixin.on('click', function (params) {
+             _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            for(let i=0;i<weixinData.length;i++){
+                if(weixinData[i].article.media===params.name){
+                  _this.dialog_xw_provinceMap.push(weixinData[i])
+                };
+             };
+          })
+        //媒体声量top10 结束
         //正负性开始
         let echarts_diaoxing_xinwen = echarts.init(document.getElementById('echarts_diaoxing_xinwen')); 
         let echarts_diaoxing_weixin = echarts.init(document.getElementById('echarts_diaoxing_weixin')); 
-        let option_diaoxing_xinwen = {
-                title : {
-                text: '新闻正负性对比分析',
-                x:'center'
-            },
-            tooltip : {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'left',
-                data: ['正面','中面','负面']
-            },
-            series : [
-                {
-                    name: '访问来源',
-                    type: 'pie',
-                    radius : '60%',
-                    center: ['50%', '60%'],
-                    data:[
-                        {value:map.get('正'), name:'正面'},
-                        {value:map.get('中'), name:'中面'},
-                        {value:map.get('负'), name:'负面'}
-                    ],
-                    itemStyle: {
-                        emphasis: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+         echarts_diaoxing_xinwen.showLoading({
+              text: 'loading..',
+              color: '#c23531',
+              textColor: '#000',
+              maskColor: 'snow'
+          });
+        if(newsData.length!=0){
+            let option_diaoxing_xinwen = {
+                    title : {
+                    text: '新闻正负性对比分析',
+                    x:'center'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['正面','中面','负面']
+                },
+                series : [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius : '60%',
+                        center: ['50%', '60%'],
+                        data:[
+                            {value:map.get('正'), name:'正面'},
+                            {value:map.get('中'), name:'中面'},
+                            {value:map.get('负'), name:'负面'}
+                        ],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
                         }
                     }
-                }
-            ]
+                ]
+            }
+            echarts_diaoxing_xinwen.hideLoading();
+            echarts_diaoxing_xinwen.setOption(option_diaoxing_xinwen);
+        }else{
+          $('#echarts_diaoxing_xinwen').html(`<h4>新闻正负性对比分析</h4><br><p>暂无数据</p>`)
         }
-        let option_diaoxing_weixin = {
-                title : {
-                text: '微信正负性对比分析',
-                x:'center'
-            },
-            tooltip : {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'left',
-                data: ['正面','中面','负面']
-            },
-            series : [
-                {
-                    name: '访问来源',
-                    type: 'pie',
-                    radius : '60%',
-                    center: ['50%', '60%'],
-                    data:[
-                        {value:wxmap.get('正'), name:'正面'},
-                        {value:wxmap.get('中'), name:'中面'},
-                        {value:wxmap.get('负'), name:'负面'}
-                    ],
-                    itemStyle: {
-                        emphasis: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
-        }        
-        echarts_diaoxing_xinwen.setOption(option_diaoxing_xinwen);
-        echarts_diaoxing_weixin.setOption(option_diaoxing_weixin);
+        echarts_diaoxing_xinwen.on('click', function (params) {
+          let polar;
+          if(params.name==='中面'){
+            polar=0;
+          }else if(params.name==='负面'){
+            polar=-1;
+          }else {
+            polar=1;
+          }
+         _this.dialogEchart_xw_province=true;
+         _this.dialog_xw_provinceMap=[];
+          for(let i=0;i<newsData.length;i++){
+                if(newsData[i].article.polar===polar){
+                  _this.dialog_xw_provinceMap.push(newsData[i])
+                };
+             };
+          }) 
+        echarts_diaoxing_weixin.showLoading({
+              text: 'loading',
+              color: '#c23531',
+              textColor: '#000',
+              maskColor: 'snow'
+          });
+        if(weixinData.length!=0){
+            let option_diaoxing_weixin = {
+                  title : {
+                  text: '微信正负性对比分析',
+                  x:'center'
+              },
+              tooltip : {
+                  trigger: 'item',
+                  formatter: "{a} <br/>{b} : {c} ({d}%)"
+              },
+              legend: {
+                  orient: 'vertical',
+                  left: 'left',
+                  data: ['正面','中面','负面']
+              },
+              series : [
+                  {
+                      name: '访问来源',
+                      type: 'pie',
+                      radius : '60%',
+                      center: ['50%', '60%'],
+                      data:[
+                          {value:wxmap.get('正'), name:'正面'},
+                          {value:wxmap.get('中'), name:'中面'},
+                          {value:wxmap.get('负'), name:'负面'}
+                      ],
+                      itemStyle: {
+                          emphasis: {
+                              shadowBlur: 10,
+                              shadowOffsetX: 0,
+                              shadowColor: 'rgba(0, 0, 0, 0.5)'
+                          }
+                      }
+                  }
+              ]
+          } 
+          echarts_diaoxing_weixin.hideLoading();
+          echarts_diaoxing_weixin.setOption(option_diaoxing_weixin);
+        }else{
+          $('#echarts_diaoxing_weixin').html(`<h4>微信正负性对比分析</h4><br><p>暂无数据</p>`)
+        }              
+        echarts_diaoxing_weixin.on('click', function (params) {
+          let polar;
+          if(params.name==='中面'){
+            polar=0;
+          }else if(params.name==='负面'){
+            polar=-1;
+          }else {
+            polar=1;
+          }
+         _this.dialogEchart_xw_province=true;
+         _this.dialog_xw_provinceMap=[];
+          for(let i=0;i<weixinData.length;i++){
+                if(weixinData[i].article.polar===polar){
+                  _this.dialog_xw_provinceMap.push(weixinData[i])
+                };
+             };
+          })  
         //正负性结束
         //新闻指数开始
          let echarts_newsnumber = echarts.init(document.getElementById('echarts_newsnumber')); 
@@ -3229,18 +3042,827 @@ export default {
                 ]
             };
         echarts_newsnumber.setOption(option_newsnumber);
+        echarts_newsnumber.on('click', function (params) {
+           _this.dialogEchart_xw_province=true;
+           _this.dialog_xw_provinceMap=[];
+           let arr=[]
+          if(_this.time[1].getTime()-_this.time[0].getTime()<604800000){
+            for(let i=0;i<newsData.length;i++){
+                if(new Date(newsData[i].article.publishTime).getTime()>new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex]).getTime()&&new Date(newsData[i].article.publishTime).getTime()<new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex+1]).getTime()){
+                  arr.push(newsData[i])
+                }
+             };
+          }else{
+            for(let i=0;i<newsData.length;i++){
+                if(new Date(newsData[i].article.publishTime).getTime()>new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex].slice(0,5)+' 00:00').getTime()&&new Date(newsData[i].article.publishTime).getTime()<new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex+1].slice(0,5)+' 00:00').getTime()){
+                  arr.push(newsData[i])
+                }
+             };
+          }
+           arr.sort(Sort_top('article','newsIndex'));
+           _this.dialog_xw_provinceMap=arr;
+          }) 
+      //多维度分析开始
+      let more_newsData=[];//新闻数据
+      let more_weixinData=[];//微信数据
+      for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.articleType==1){
+            more_newsData.push(this.data[i])
+          }if(this.data[i].article.articleType==2){
+            more_weixinData.push(this.data[i])
+          } 
+      }
+      /*console.log(this.data)
+      console.log(more_weixinData)*/
+      //判断新闻数据
+      if(more_newsData.length==0){
+        console.log('新闻数据 0');
+      }else{
+        for(let i=0;i<more_newsData[0].article.newsSchemeDtoList.length;i++){
+          let fisrt_obj=new Object();
+          fisrt_obj.schemeId=more_newsData[0].article.newsSchemeDtoList[i].schemeId;
+          fisrt_obj.schemeName=more_newsData[0].article.newsSchemeDtoList[i].schemeName;
+          this.first_options.push(fisrt_obj)
+          this.second_options.push(fisrt_obj)
+        }
+        this.first_schemeId=this.first_options[0].schemeId;
+      }
+      //判断微信数据
+      if(more_weixinData.length==0){
+        console.log('微信数据 0');
+      }else{
+        for(let i=0;i<more_weixinData[0].article.wxSchemeDtoList.length;i++){
+          let fisrt_obj=new Object();
+          fisrt_obj.schemeId=more_weixinData[0].article.wxSchemeDtoList[i].schemeId;
+          fisrt_obj.schemeName=more_weixinData[0].article.wxSchemeDtoList[i].schemeName;
+          this.wx_first_options.push(fisrt_obj)
+          this.wx_second_options.push(fisrt_obj)
+        }
+        console.log(this.wx_first_options)
+        this.wx_first_schemeId=this.wx_first_options[0].schemeId;
+      };
+      //人物组织关系
+     /* let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      $.ajax({
+        url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/event",
+        type:"GET",
+        data:{
+          "method":"GET",
+          "proId":project_id,
+          "startTime":_this.time[0],//开始时间
+           "endTime":_this.time[1],
+           "articleType":2,
+           "perNum":5,
+           "locNum":5,
+           "orgNum":5,
+           "topicNum":1//议题数量
+        },
+        success:function(data){
+          //$('#loading_renwuzuzhi').css('display','none;')
+          for(let z=0;z<data.data.length;z++){
+            if(data.data[z].locationSet){
+              data.data[z].locationSet.sort(Sort('score'));
+              if(data.data[z].locationSet.length>10){
+                data.data[z].locationSet=data.data[z].locationSet.slice(0,10);
+              }
+            }
+            if(data.data[z].orgSet){
+              data.data[z].orgSet.sort(Sort('score'));
+              if(data.data[z].orgSet.length>10){
+                data.data[z].orgSet=data.data[z].orgSet.slice(0,10);
+              }
+            }
+            if(data.data[z].personSet){
+              data.data[z].personSet.sort(Sort('score'));
+              if(data.data[z].personSet.length>10){
+                data.data[z].personSet=data.data[z].personSet.slice(0,10);
+              }
+            }
+          }
+          _this.personSet=data.data[0].personSet;
+          _this.locationSet=data.data[0].locationSet;
+          _this.orgSet=data.data[0].orgSet;
+          //echarts
+          console.log(_this.personSet);
+          function random(){
+            return 100*Math.random();
+          }
+          let guanxi_arr=[];
+          let guanxi_arr_link=[];
+          for(let i=0;i<_this.personSet.length;i++){
+            let obj=new Object();
+            let obj_link=new Object();
+            obj.name=_this.personSet[i].mention;
+            obj.x=random();
+            obj.y=random();
+            guanxi_arr.push(obj);
+            obj_link.source=_this.personSet[i].mention;
+            obj_link.target=_this.personSet[parseInt(1+4*Math.random())].mention;
+            obj_link.lineStyle={
+                    normal: { curveness: 0.2 }
+                };
+            if(obj_link.source==obj_link.target){
+              obj_link.source=_this.personSet[0].mention;
+              obj_link.target=_this.personSet[i].mention;
+              obj_link.lineStyle=null;
+            }
+            guanxi_arr_link.push(obj_link)
+          }
+           console.log(guanxi_arr);
+           console.log(guanxi_arr_link);
+          
+          let echarts_guanxi = echarts.init(document.getElementById('echarts_guanxi')); 
+          let option_guanxi={
+                  title: {
+                      text: '人物'
+                  },
+                  tooltip: {},
+                  animationDurationUpdate: 1500,
+                  animationEasingUpdate: 'quinticInOut',
+                  series : [
+                      {
+                          type: 'graph',
+                          layout: 'none',
+                          symbolSize: 50,
+                          roam: true,
+                          label: {
+                              normal: {
+                                  show: true
+                              }
+                          },
+                          edgeSymbol: ['circle', 'arrow'],
+                          edgeSymbolSize: [4, 10],
+                          edgeLabel: {
+                              normal: {
+                                  textStyle: {
+                                      fontSize: 20
+                                  }
+                              }
+                          },
+                          data:guanxi_arr,
+                          links:guanxi_arr_link,
+                          lineStyle: {
+                              normal: {
+                                  opacity: 0.9,
+                                  width: 2,
+                                  curveness: 0
+                              }
+                          }
+                      }
+                  ]
+              };
+              echarts_guanxi.setOption(option_guanxi);
+        }
+      });*/
+
+    },
+    renwuzuzhi_search () {
+      this.renwuzuzhi_loading=true;
+       let _this=this;
+      function Sort(property){
+          return function(a,b){
+              var value1 = a[property];
+              var value2 = b[property];
+              return value1 - value2;
+          }
+        }
+      _this.personSet=[];
+      _this.locationSet=[];
+      _this.orgSet=[];
+      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      $.ajax({
+        url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/entity",
+        type:"GET",
+        data:{
+          "method":"GET",
+          "proId":project_id,
+          "startTime":_this.time[0],//开始时间
+           "endTime":_this.time[1],
+           "articleType":2,
+           "perNum":_this.current_sort_per,
+           "locNum":_this.current_sort_loc,
+           "orgNum":_this.current_sort_org,
+           "topicNum":1//议题数量
+        },
+        success:function(data){
+          _this.renwuzuzhi_loading=false;
+          console.log(data.data)
+          for(let z=0;z<data.data.length;z++){
+            if(data.data[z].locList){
+              data.data[z].locList.sort(Sort('count'));
+              if(data.data[z].locList.length>10){
+                data.data[z].locList=data.data[z].locList.slice(0,10);
+              }
+            }
+            if(data.data[z].orgList){
+              data.data[z].orgList.sort(Sort('count'));
+              if(data.data[z].orgList.length>10){
+                data.data[z].orgList=data.data[z].orgList.slice(0,10);
+              }
+            }
+            if(data.data[z].perList){
+              data.data[z].perList.sort(Sort('count'));
+              if(data.data[z].perList.length>10){
+                data.data[z].perList=data.data[z].perList.slice(0,10);
+              }
+            }
+          }
+          _this.personSet=data.data.perList;
+          _this.locationSet=data.data.locList;
+          _this.orgSet=data.data.orgList;
+          //echarts
+          /*console.log(_this.personSet);
+          function random(){
+            return 100*Math.random();
+          }
+          let guanxi_arr=[];
+          let guanxi_arr_link=[];
+          for(let i=0;i<_this.personSet.length;i++){
+            let obj=new Object();
+            let obj_link=new Object();
+            obj.name=_this.personSet[i].mention;
+            obj.x=random();
+            obj.y=random();
+            guanxi_arr.push(obj);
+            obj_link.source=_this.personSet[i].mention;
+            obj_link.target=_this.personSet[parseInt(1+(_this.personSet.length-1)*Math.random())].mention;
+            obj_link.lineStyle={
+                    normal: { curveness: 0.2 }
+                };
+            if(obj_link.source==obj_link.target){
+              obj_link.source=_this.personSet[0].mention;
+              obj_link.target=_this.personSet[i].mention;
+              obj_link.lineStyle=null;
+            }
+            guanxi_arr_link.push(obj_link)
+          }
+           console.log(guanxi_arr);
+           console.log(guanxi_arr_link);
+          
+          let echarts_guanxi = echarts.init(document.getElementById('echarts_guanxi')); 
+          let option_guanxi={
+                  title: {
+                      text: '人物'
+                  },
+                  tooltip: {},
+                  animationDurationUpdate: 1500,
+                  animationEasingUpdate: 'quinticInOut',
+                  series : [
+                      {
+                          type: 'graph',
+                          layout: 'none',
+                          symbolSize: 50,
+                          roam: true,
+                          label: {
+                              normal: {
+                                  show: true
+                              }
+                          },
+                          edgeSymbol: ['circle', 'arrow'],
+                          edgeSymbolSize: [4, 10],
+                          edgeLabel: {
+                              normal: {
+                                  textStyle: {
+                                      fontSize: 20
+                                  }
+                              }
+                          },
+                          data:guanxi_arr,
+                          links:guanxi_arr_link,
+                          lineStyle: {
+                              normal: {
+                                  opacity: 0.9,
+                                  width: 2,
+                                  curveness: 0
+                              }
+                          }
+                      }
+                  ]
+              };
+              echarts_guanxi.setOption(option_guanxi);*/
+        }
+      });
+    },
+    hide_echarts () {
+      this.show_filter();
+      this.first_options=[];
+      this.second_options=[];
+      this.wx_first_options=[];
+      this.wx_second_options=[];
+    },
+    more_echarts () {   
+      //obj 格式
+      Map;
+      console.log(this.first_schemeId)
+      console.log(this.second_schemeId)
+      //判断方案是否一致
+      if(this.first_schemeId===this.second_schemeId){
+        this.$message({
+              message: '请检查您的方案格式',
+              type: 'warning'
+            });
+        return
+      }else{
+        $('#echarts_more_direction_xinwen').css('display','block')
+        let x_data=[];//横坐标
+        let y_data=[];//纵坐标
+        for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.newsSchemeDtoList!=null){
+            for(let j=0;j<this.data[i].article.newsSchemeDtoList.length;j++){
+              //横坐标判定
+              if(this.data[i].article.newsSchemeDtoList[j].schemeId==this.first_schemeId){
+                x_data.push(this.data[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName)
+              }
+              //纵坐标判定
+              if(this.data[i].article.newsSchemeDtoList[j].schemeId==this.second_schemeId){
+                y_data.push(this.data[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName)
+              }
+            }
+          }else{}    
+        }
+        console.log(x_data)
+        //坐标去重
+        x_data = Array.from(new Set(x_data))
+        y_data = Array.from(new Set(y_data))
+        //生成{党媒:[为维护与已维护数组],门户:[为维护与已维护数组]}的bar_data_map MAP
+        let bar_data_map=new Map(); 
+        let bar_arr=new Array();     
+        for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.newsSchemeDtoList!=null){
+            for(let j=0;j<this.data[i].article.newsSchemeDtoList.length;j++){
+              for(let t=0;t<x_data.length;t++){
+                if(this.data[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName===x_data[t]){              
+                   //console.log(x_data[t]);
+                  for(let c=0;c<this.data[i].article.newsSchemeDtoList.length;c++){
+                    for(let k=0;k<y_data.length;k++){
+                      if(this.data[i].article.newsSchemeDtoList[c].newsMediaCategory.newsMediaCategoryName===y_data[k]){
+                        if(bar_data_map.get(x_data[t])==null){  
+                            bar_arr=[];
+                            bar_arr.push(y_data[k])
+                            bar_data_map.put(x_data[t],bar_arr)
+                          }else{
+                            let aa=bar_data_map.get(x_data[t]);
+                            aa.push(y_data[k])   
+                            bar_data_map.put(x_data[t],aa)   
+                          }
+                        //console.log(y_data[k]);
+                      }
+                    }
+                  }   
+                }
+              }
+            }
+          }else{}    
+        }
+        //根据echarts数据格式计算相对应的已维护与为维护数组
+        let more_map=new Map();
+        let more_arr=new Array(); 
+        console.log(bar_data_map.data)
+        for(let i in bar_data_map.data){
+          //计算bar_data_map的为维护与已维护个数叠加 map
+          let bar_map = new Map();
+          for(let j=0;j<bar_data_map.data[i].length;j++){
+            if(bar_map.get(bar_data_map.data[i][j])==null){
+              bar_map.put(bar_data_map.data[i][j],1)
+            }else{
+              bar_map.put(bar_data_map.data[i][j],bar_map.get(bar_data_map.data[i][j])+1)
+            }
+          }  
+          console.log(bar_map.data)
+          for(let t in bar_map.data){
+            if(more_map.get(t)==null){
+              more_arr=[];
+              more_arr.push(bar_map.data[t])
+              more_map.put(t,more_arr)
+            }else{
+              let aa=more_map.get(t);
+              //console.log(aa)
+              aa.push(bar_map.data[t])   
+              //console.log(aa); 
+              more_map.put(t,aa)  
+            }
+          }   
+        }
+        //echarts的series格式
+        let bar_series=[];
+        for(let i in more_map.data){
+          let obj=new Object();
+          obj.name=i;
+          obj.type='bar';
+          obj.stack='广告';
+          obj.data=more_map.data[i];
+          bar_series.push(obj)
+        }
+        console.log(bar_series)
+        console.log(more_map.data)
+        console.log(x_data)
+        console.log(y_data)
+        $('.echarts_content').css('display','block')
+        //多维度分析开始
+        let echarts_more_direction_xinwen = echarts.init(document.getElementById('echarts_more_direction_xinwen'));
+        let  option_more_direction = {
+           tooltip : {
+              trigger: 'axis',
+              axisPointer : {            
+                  type : 'shadow'        
+            }
+           },
+           grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    data : x_data
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : bar_series
+         }
+         echarts_more_direction_xinwen.setOption(option_more_direction);
+      }
+    },
+    type_echarts_xinwen () {
+       let _this=this;
+      Map;
+      function Sort(property){
+                            return function(a,b){
+                                var value1 = a[property];
+                                var value2 = b[property];
+                                return value1 - value2;
+                            }
+                          }
+      let newsData=[];//新闻数据
+      for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.articleType==1){
+            newsData.push(this.data[i])
+          } 
+      };
+      console.log(newsData)
+      let xinwen_arr=[];
+      for(let i=0;i<newsData.length;i++){
+          if(newsData[i].article.newsSchemeDtoList!=null){
+            for(let j=0;j<newsData[i].article.newsSchemeDtoList.length;j++){
+            if(newsData[i].article.newsSchemeDtoList[j].schemeId==this.first_schemeId){
+                xinwen_arr.push(newsData[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName)
+              }
+          }
+        }  
+       } 
+       let type_xinwen_map=new Map();
+       for(let j=0;j<xinwen_arr.length;j++){
+          if(type_xinwen_map.get(xinwen_arr[j])==null){
+            type_xinwen_map.put(xinwen_arr[j],1)
+          }else{
+            type_xinwen_map.put(xinwen_arr[j],type_xinwen_map.get(xinwen_arr[j])+1)
+          }   
+        }
+        let xinwen_data=[];
+      for(let i in type_xinwen_map.data){
+        let obj={};
+        obj.value=type_xinwen_map.data[i];
+        obj.name=i;
+        xinwen_data.push(obj)
+      }
+      xinwen_data.sort(Sort('value'));
+      let echarts_type_xinwen=echarts.init(document.getElementById('echarts_type_xinwen'));
+      if(xinwen_data.length!=0){
+        let option_echarts_type_xinwen={
+          backgroundColor: '#2c343c',
+          title: {
+              text: '新闻媒体类型分析',
+              left: 'center',
+              top: 20,
+              textStyle: {
+                  color: '#ccc'
+              }
+          },
+          toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          series : [
+              {
+                  name:'媒体类型',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '50%'],
+                  data:xinwen_data,
+                  itemStyle: {
+                      normal: {
+                          shadowBlur: 200,
+                          shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  },
+
+                  animationType: 'scale',
+                  animationEasing: 'elasticOut',
+                  animationDelay: function (idx) {
+                      return Math.random() * 200;
+                  }
+              }
+          ]
+        }
+        echarts_type_xinwen.setOption(option_echarts_type_xinwen);
+      }else{
+        $('#echarts_type_xinwen').html(`<h4>新闻类型分析</h4><br><p>暂无数据</p>`)
+      }
+      echarts_type_xinwen.on('click', function (params) {
+        _this.dialogEchart_xw_province=true;
+        _this.dialog_xw_provinceMap=[];
+        for(let i=0;i<newsData.length;i++){
+          if(newsData[i].article.newsSchemeDtoList!=null){
+            for(let j=0;j<newsData[i].article.newsSchemeDtoList.length;j++){
+            if(newsData[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName===params.data.name){
+                _this.dialog_xw_provinceMap.push(newsData[i])
+                    }
+                }
+              }  
+             }  
+          }) 
+    },
+    type_echarts_wx() {
+      let _this=this;
+      Map;
+      function Sort(property){
+                            return function(a,b){
+                                var value1 = a[property];
+                                var value2 = b[property];
+                                return value1 - value2;
+                            }
+                          }
+      let wxData=[];//新闻数据
+      for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.articleType==2){
+            wxData.push(this.data[i])
+          } 
+      };
+      let wx_arr=[];
+      for(let i=0;i<wxData.length;i++){
+          if(wxData[i].article.wxSchemeDtoList!=null){
+            for(let j=0;j<wxData[i].article.wxSchemeDtoList.length;j++){
+            if(wxData[i].article.wxSchemeDtoList[j].schemeId==this.wx_first_schemeId){
+                wx_arr.push(wxData[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName)
+              }
+          }
+        }  
+       } 
+       let type_wx_map=new Map();
+       for(let j=0;j<wx_arr.length;j++){
+          if(type_wx_map.get(wx_arr[j])==null){
+            type_wx_map.put(wx_arr[j],1)
+          }else{
+            type_wx_map.put(wx_arr[j],type_wx_map.get(wx_arr[j])+1)
+          }   
+        }
+        let wx_data=[];
+      for(let i in type_wx_map.data){
+        let obj={};
+        obj.value=type_wx_map.data[i];
+        obj.name=i;
+        wx_data.push(obj)
+      }
+      wx_data.sort(Sort('value'));
+      console.log(wx_data)
+      let echarts_type_wx=echarts.init(document.getElementById('echarts_type_wx'));
+      if(wx_data.length!=0){
+        let option_echarts_type_wx={
+          backgroundColor: '#2c343c',
+          title: {
+              text: '微信媒体类型分析',
+              left: 'center',
+              top: 20,
+              textStyle: {
+                  color: '#ccc'
+              }
+          },
+          toolbox: {
+                  show : true,
+                  feature : {
+                      dataView : {show: true, readOnly: false},
+                      restore : {show: true},
+                      saveAsImage : {show: true}
+                  }
+              },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          series : [
+              {
+                  name:'媒体类型',
+                  type:'pie',
+                  radius : '55%',
+                  center: ['50%', '50%'],
+                  data:wx_data,
+                  itemStyle: {
+                      normal: {
+                          shadowBlur: 200,
+                          shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  },
+                  animationType: 'scale',
+                  animationEasing: 'elasticOut',
+                  animationDelay: function (idx) {
+                      return Math.random() * 200;
+                  }
+              }
+          ]
+        }
+        echarts_type_wx.setOption(option_echarts_type_wx);
+      }else{
+        $('#echarts_type_wx').html(`<h4>微信类型分析</h4><br><p>暂无数据</p>`)
+      }
+      echarts_type_wx.on('click', function (params) {
+        _this.dialogEchart_xw_province=true;
+        _this.dialog_xw_provinceMap=[];
+        for(let i=0;i<wxData.length;i++){
+          if(wxData[i].article.wxSchemeDtoList!=null){
+            for(let j=0;j<wxData[i].article.wxSchemeDtoList.length;j++){
+            if(wxData[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName===params.data.name){
+                _this.dialog_xw_provinceMap.push(wxData[i])
+                    }
+                }
+              }  
+             }  
+          }) 
+    },
+    more_echarts_wx() {
+      Map;
+      console.log(this.wx_first_schemeId)
+      console.log(this.wx_second_schemeId)
+      //判断方案是否一致
+      if(this.wx_first_schemeId===this.wx_second_schemeId){
+        this.$message({
+              message: '请检查您的方案格式',
+              type: 'warning'
+            });
+        return
+      }else{
+        $('#echarts_more_direction_wx').css('display','block')
+        let x_data=[];//横坐标
+        let y_data=[];//纵坐标
+        for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.wxSchemeDtoList!=null){
+            for(let j=0;j<this.data[i].article.wxSchemeDtoList.length;j++){
+              //横坐标判定
+              if(this.data[i].article.wxSchemeDtoList[j].schemeId==this.wx_first_schemeId){
+                x_data.push(this.data[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName)
+              }
+              //纵坐标判定
+              if(this.data[i].article.wxSchemeDtoList[j].schemeId==this.wx_second_schemeId){
+                y_data.push(this.data[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName)
+              }
+            }
+          }else{}    
+        }
+        //坐标去重
+        x_data = Array.from(new Set(x_data))
+        y_data = Array.from(new Set(y_data))
+        //生成{党媒:[为维护与已维护数组],门户:[为维护与已维护数组]}的bar_data_map MAP
+        let bar_data_map=new Map(); 
+        let bar_arr=new Array();     
+        for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.wxSchemeDtoList!=null){
+            for(let j=0;j<this.data[i].article.wxSchemeDtoList.length;j++){
+              for(let t=0;t<x_data.length;t++){
+                if(this.data[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName===x_data[t]){              
+                   //console.log(x_data[t]);
+                  for(let c=0;c<this.data[i].article.wxSchemeDtoList.length;c++){
+                    for(let k=0;k<y_data.length;k++){
+                      if(this.data[i].article.wxSchemeDtoList[c].wxMediaCategory.wxMediaCategoryName===y_data[k]){
+                        if(bar_data_map.get(x_data[t])==null){  
+                            bar_arr=[];
+                            bar_arr.push(y_data[k])
+                            bar_data_map.put(x_data[t],bar_arr)
+                          }else{
+                            let aa=bar_data_map.get(x_data[t]);
+                            aa.push(y_data[k])   
+                            bar_data_map.put(x_data[t],aa)   
+                          }
+                        //console.log(y_data[k]);
+                      }
+                    }
+                  }   
+                }
+              }
+            }
+          }else{}    
+        }
+        //根据echarts数据格式计算相对应的已维护与为维护数组
+        let more_map=new Map();
+        let more_arr=new Array(); 
+        console.log(bar_data_map.data)
+        for(let i in bar_data_map.data){
+          //计算bar_data_map的为维护与已维护个数叠加 map
+          let bar_map = new Map();
+          for(let j=0;j<bar_data_map.data[i].length;j++){
+            if(bar_map.get(bar_data_map.data[i][j])==null){
+              bar_map.put(bar_data_map.data[i][j],1)
+            }else{
+              bar_map.put(bar_data_map.data[i][j],bar_map.get(bar_data_map.data[i][j])+1)
+            }
+          }  
+          console.log(bar_map.data)
+          for(let t in bar_map.data){
+            if(more_map.get(t)==null){
+              more_arr=[];
+              more_arr.push(bar_map.data[t])
+              more_map.put(t,more_arr)
+            }else{
+              let aa=more_map.get(t);
+              //console.log(aa)
+              aa.push(bar_map.data[t])   
+              //console.log(aa); 
+              more_map.put(t,aa)  
+            }
+          }   
+        }
+        //echarts的series格式
+        let bar_series=[];
+        for(let i in more_map.data){
+          let obj=new Object();
+          obj.name=i;
+          obj.type='bar';
+          obj.stack='广告';
+          obj.data=more_map.data[i];
+          bar_series.push(obj)
+        }
+        console.log(bar_series)
+        console.log(more_map.data)
+        console.log(x_data)
+        console.log(y_data)
+        $('.echarts_content').css('display','block')
+        //多维度分析开始
+        let echarts_more_direction_wx = echarts.init(document.getElementById('echarts_more_direction_wx'));
+        let  option_more_direction = {
+           tooltip : {
+              trigger: 'axis',
+              axisPointer : {            
+                  type : 'shadow'        
+            }
+           },
+           grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    data : x_data
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : bar_series
+         }
+         echarts_more_direction_wx.setOption(option_more_direction);
+      }
     },
     handleClose(tag) {
         this.kw.splice(this.kw.indexOf(tag), 1);
+        this.tags.unshift(tag)
     },
     nothandleClose(tag) {
         this.notkw.splice(this.notkw.indexOf(tag), 1);
+        this.notags.unshift(tag)
     },
     kw_dropdown (command) {
       this.kw.push(command);
+      this.tags.splice(this.tags.indexOf(command), 1)
     },
     notkw_dropdown (command) {
       this.notkw.push(command);
+      this.notags.splice(this.notags.indexOf(command), 1)
+    },
+    sort_dropdown_per (command) {
+        this.current_sort_per=command;
+    },
+    sort_dropdown_loc (command) {
+      this.current_sort_loc=command;
+    },
+    sort_dropdown_org(command) {
+      this.current_sort_org=command;
     },
     dialog_ReprintList (a) {
       this.dialogReprintList=true;
@@ -3277,7 +3899,7 @@ export default {
         combineErrorList.push(obj);
       }
       $.ajax({
-        url:'api/v1.1/project/'+project_id+'/article/combineError',
+        url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/article/combineError',
         type:'POST',
         dataType:"json",
         contentType:"application/json",
@@ -3299,7 +3921,7 @@ export default {
           }       
         },
         error:function(data){
-            alert("合并错误反馈-----失败回调函数-------------------");
+            console.log("合并错误反馈-----失败回调函数-------------------");
         }
       }); 
       
@@ -3310,17 +3932,19 @@ export default {
       //数据库数据
       let _this=this;
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let articleRecycleDto = {
-      "method":"GET",
-      "proId":project_id,
-      }
-      //console.log(articleRecycleDto.articleDtoList)
+      let articleRecycleDtoList =[
+       {
+        "method":"GET",
+        "proId":project_id
+        }
+      ]
+      console.log(JSON.stringify(articleRecycleDtoList))
       $.ajax({
-      url:"api/v1.1/project/"+project_id+"/recycle/article",
+      url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/recycle/article",
       type:"POST",//此处只能选用POST请求
       dataType:"json",
       contentType:"application/json",
-      data:JSON.stringify(articleRecycleDto),
+      data:JSON.stringify(articleRecycleDtoList),
       success:function(data){
           if(data.data==null||data.data.length<=0){
             _this.$message({
@@ -3330,6 +3954,12 @@ export default {
              $('#loading_recycle').css('display','none')
           }else{
             _this.recycle_data=data.data;
+            // 数据时间戳  时间格式
+              _this.format_time ();
+            //初始化总数据的publishTime转化
+            for(let i=0;i< _this.recycle_data.length;i++){
+                _this.recycle_data[i].article.publishTime=new Date( _this.recycle_data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
+             }
           }       
         }    
       }); 
@@ -3347,23 +3977,18 @@ export default {
       let articleDtoList=[];
       for(let i=0;i<this.selection_recycle.length;i++){
         let obj=new Object();
-        obj.article={};
-        obj.article.articleType=this.selection_recycle[i].article.articleType;
-        obj.article.id=this.selection_recycle[i].article.id;
+        obj.method="DELETE";
+        obj.proId=project_id;
+        obj.articleType=this.selection_recycle[i].article.articleType;
+        obj.articleId=this.selection_recycle[i].article.id;
         articleDtoList.push(obj);
       }
-      let articleRecycleDto = {
-      "method":"DELETE",
-      "proId":project_id,
-      "articleDtoList":articleDtoList
-      }
-
       $.ajax({
-      url:"api/v1.1/project/"+project_id+"/recycle/article",
+      url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/recycle/article",
       type:"POST",//此处只能选用POST请求
       dataType:"json",
       contentType:"application/json",
-      data:JSON.stringify(articleRecycleDto),
+      data:JSON.stringify(articleDtoList),
       success:function(data){
         if(data.success==true){
             //前台删除以及总数据添加
@@ -3377,8 +4002,189 @@ export default {
             _this.$refs.table.clearSelection(_this.selection_recycle);
          }
         }
-      });      
-    }
+      });       
+    },
+    Mover(a){
+      this.$refs.list[a].style.boxShadow='7px 7px 6px rgba(220,220,220,.6)'
+    }, 
+    Mout(a){
+      this.$refs.list[a].style.boxShadow=''
+    },
+    Mover_articleList (i) {
+        this.$refs.dialog_xw_articlelist[i].style.color="#00a17c"
+      },
+    Mout_articleList (i) {
+        this.$refs.dialog_xw_articlelist[i].style.color="rgb(72,87,106)"
+      },
+      date_change (){
+        if(this.time[0]==undefined||this.time[1]==undefined||this.time[1].getTime()<this.time[0].getTime()){
+          this.time=[new Date(new Date().getTime()-604800000), new Date()];
+          this.$message({
+              message: '请检查您的时间格式',
+              type: 'warning'
+            });
+         }
+      },
+    //时间变化刷新数据
+    /*date_change () {
+      //必须包含关键词回传数据 mustIncludeKeywordList
+     let allkeyword=this.allkeyword;
+     if(allkeyword){
+      allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
+      this.mustIncludeKeywordList=allkeyword.split(',')
+     }
+     //包含任意关键词回传数据 anyIncludeKeywordList
+     let keywordyoulike=this.keywordyoulike;
+     if(keywordyoulike){
+      keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
+      this.anyIncludeKeywordList=keywordyoulike.split(',')
+     }
+     //必须不包含关键词回传数据 notIncludeKeywordList
+     let nokeyword=this.nokeyword;
+     if(nokeyword){
+      nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
+      this.notIncludeKeywordList=nokeyword.split(',')
+     }
+      $('#filter_time>button').removeClass('warning')
+      let _this=this;
+      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+        _this.first_options=[];
+        _this.second_options=[];
+        _this.data=[];
+        let cate_id='';
+        for(let i=0;i<_this.classify.length;i++){
+          if(_this.classify[i].bg==true){
+           cate_id=_this.classify[i].id;
+          }
+        }
+        $('#table').css('display','none'); 
+        $('#loading_table').css('display','block');
+        $('.echarts_content').css('display','none')
+         _this.search_data(project_id,cate_id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true,true); 
+         this.mustIncludeKeywordList=null;
+        this.anyIncludeKeywordList=null
+       this.notIncludeKeywordList=null;
+      },*/
+    //右边fix地图切换  
+    tabClick (tab, event) {
+      console.log(this.fix_media)
+    },
+    fix_media_name (a,b,c) {
+      $('#table').css('display','block');
+      $('#page').css('display','block');
+      $('#data_size').css('display','block');
+      let fix_data=this.fix_data;
+      if(a.fontbg==true){
+        this.data=this.fix_data;
+        let t=0;
+        for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.reprintList){
+            for(let j=0;j<this.data[i].article.reprintList.length;j++){
+              t++;
+            }
+          }
+        }
+        this.reprintList_size=t;
+        this.format_tabledata();
+        a.fontbg=false;
+      }else{
+        $.each(b,function(i,j){
+        j.fontbg=false;
+      })
+      a.fontbg=true;
+      let fix_arr=[];
+      for(let i=0;i<fix_data.length;i++){
+          if(fix_data[i].article.media.indexOf(a.name)!==-1){
+            fix_arr.push(fix_data[i])
+          };
+       }; 
+      this.data=fix_arr;
+      let t=0;
+        for(let i=0;i<this.data.length;i++){
+          if(this.data[i].article.reprintList){
+            for(let j=0;j<this.data[i].article.reprintList.length;j++){
+              t++;
+            }
+          }
+        }
+        this.reprintList_size=t;
+      this.format_tabledata();
+      }
+    },
+    ct_click(i,n){
+      console.log(i)
+      window.open(i.linkedUrl)
+        /*$('#dialog_ct_list').css('border','0px solid rgb(220,220,220)')
+        let _this=this;
+        _this.ct_size='';
+        _this.ct_name='';
+        _this.ct_data=[];
+        $('#loading_ct').css('display','block');
+        let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+         _this.dialogCt=true;
+        $.ajax({
+          url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/entityArticle',
+          method:'GET',
+          traditional:true,
+          data:{
+            "method":"GET", //HTTP请求方法
+            "proId":project_id,//项目id  String 字符串
+            "articleType":_this.articleType,//文章类型
+            "entityType":n, //实体类型
+            "entityName":i.mention, //实体名称
+            "startTime":_this.time[0],//开始时间
+            "endTime":_this.time[1]//截止时间  
+          },
+          success:function(data){
+            if(data.data==null){
+              $('#dialog_ct_list').css('display','none')
+              $('#dialog_ct_list').html(`<p style="text-align:center" >暂无数据</p>`);
+              _this.ct_name=i.mention;
+              _this.ct_url=i.linkedUrl;
+            }else{
+              $('#dialog_ct_list>p').not('#loading_ct').css('display','none')
+              $('#loading_ct').css('display','block')
+              $('#dialog_ct_list').css('border','1px solid rgb(220,220,220)')
+              _this.ct_size=data.data.length;
+              _this.ct_name=i.mention;
+              _this.ct_url=i.linkedUrl;
+              _this.ct_data=data.data;
+              //初始表格数据
+              let newdata=[];
+              if(_this.ct_data.length>10){
+                for(let c=0;c<10;c++){
+                newdata.push(_this.ct_data[c])
+                }
+              }else{
+                newdata=_this.ct_data
+              }
+              _this.ct_data_list=newdata;
+            }
+          },
+          error:function(data){
+            alert("实体相关文章查询  ------失败回调函数-------------------")
+          }
+        });
+         _this.ct_data_list=[];*/
+      },
+      click_ct_list(i){
+         window.open(i.article.url)
+      },
+      Mover_ct_list(i){
+        this.$refs.ct_list[i].style.color="#00a17c"
+      },
+      Mout_ct_list(i) {
+        this.$refs.ct_list[i].style.color="#999"
+      },
+      handleCurrentChange_ct (val) {
+        this.currentPage_ct= val;
+        let newdata=[],
+        pageNum=this.currentPage_ct-1;
+        for(let i=this.page_size_ct*pageNum;i<this.page_size_ct*pageNum+this.page_size_ct;i++ ){
+          this.ct_data[i] !== undefined ? newdata.push(this.ct_data[i]) : '' 
+        }
+        this.ct_data_list=newdata
+      },    
   },
   watch: {
     queryType (curVal,oldVal) {
@@ -3390,6 +4196,56 @@ export default {
 
 <style lang="scss" >
   .list{
+    #dialog_ct{
+      #page_ct{
+          position: absolute;
+          right: 15px; 
+          bottom: 15px;
+          display: inline-block;
+          .el-pagination__total{
+            color:#999;
+          }
+          ul>li{
+            opacity: 1;
+          }
+          .el-pager .active {
+            border-color: #00b38a;
+            background-color: #00b38a;
+          }
+          .el-pagination__jump{
+            display: none;
+          }
+      }
+      .el-dialog__body{
+            padding-bottom: 45px !important;
+            padding-top: 20px !important;
+          }
+      .el-dialog--tiny{
+        width: 571px;
+      }
+      .list-group{
+        :last-child{
+          border-bottom:0px solid #ddd !important;
+        }
+        .list-group-item{
+          width: 95%;
+          margin: 0 auto;
+          border-width: 0px;
+          border-bottom: 1px solid #ebebeb;
+        }
+      }
+    }
+    button:hover{
+        opacity: 0.8;
+      }  
+    #steps{
+      .el-step__line{
+        border-color: #bfcbd9;
+      }
+      .el-step{
+        height: 70px !important;
+      }
+    } 
     position: relative;
     .fa-times{
       color:red;
@@ -3401,38 +4257,42 @@ export default {
       cursor: pointer
     }
     .filter{
+      .el-date-editor--datetime{
+        input{
+          height: 23px !important;
+        }
+       }
+      background-color: #f7f7f7;
+      border:1px solid #dcdcdc ;
       #filter_time{
         input{
           height: 28px;
         }
-      }
-      .search_start{
-        position:absolute;
-        left:50%;
-        margin-left:-104px;
-        padding:6px 40px;
+        .btn{
+          color:  black;
+          background-color: #f7f7f7;
+          border-color: #f7f7f7; 
+        }
+        .warning{
+          color:  #00b38a;
+          background-color: #f7f7f7;
+          border-color: #f7f7f7;
+        }
       }
       .filter_button{
-        border-top:none;
-        background: white;
         position:absolute;
-        left:50%;
-        margin-left:-110px;
-        margin-top:35px;
+        left:60%;
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
-        outline:none;
         padding:1px 12px;
       }
       #show_button{
         display: none;
       }
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 35px;
     }
     .btn-group{  
       .btn{
-        font-size: 12px;
+        width: 56px;
         line-height: 1.2;
         outline: none;
       }
@@ -3443,13 +4303,21 @@ export default {
       }
       .warning{
         color: #fff;
-        background-color: #f0ad4e;
-        border-color: #eea236;
+        background-color: #00b38a;
+        border-color: #00b38a;
       }
       #filter_sort_dropdown{
         padding-left:15px;
         font-size:12px;
         margin-top: -14px;
+        button:hover{
+          color:#00b38a;
+          border: 1px solid #00b38a;
+        }
+        button:focus{
+          color:#00b38a;
+          border: 1px solid #00b38a;
+        }
       }
       width:100%;
       button{
@@ -3473,13 +4341,14 @@ export default {
     .animated{
       transform-origin:50px 9px 0 !important;
     }
-    .carousel li{
+    .carousel>.carousel-indicators li{
       //filter: progid:DXImageTransform.Microsoft.gradient(startcolorstr=#00FFFAFA ,endcolorstr=#00FFFAFA ); 
-      opacity: 0;
+      display: none;
     }
-    .active{
+
+    .carousel>.carousel-indicators .active{
       //-ms-filter:alpha(opacity=0);
-     opacity: 1 !important;
+      display: block !important;
      transition: all 1s;
     }
     #carousel-example-generic{
@@ -3488,12 +4357,12 @@ export default {
         border:none;
         width:3%;
         border-right:0;
-        padding: 40px 0 0 0;
+        padding: 20px 0 0 0;
         ul{
           .bgcolor{
-            background: rgb(180,180,180);
-            border-color:rgb(180,180,180);
-            color:white;
+            background: #00b38a;
+            border-color:#00b38a;
+            color:white !important;
           }
           margin:0 1px 0 0;
           border:none;
@@ -3536,98 +4405,71 @@ export default {
       text-align: center;
     }
     .carousel-caption{
+     /*  artcle css strat */
+     #table {
+      #keyword_div{
+        text-align: left;
+        span{
+          font-size: 14px;
+          display: inline-block;
+          margin:8px 0 0 10px;
+          padding: 1px 3px;
+          border: 1px solid #dcdcdc;
+          border-radius: 4px;
+        }
+        span:nth-child(4n+1){
+          color:#00b38a;
+        }
+        span:nth-child(4n+2){
+          color:#3498db;
+        }
+        span:nth-child(4n+3){
+          color:#f6a623;
+        }
+        span:nth-child(4n+4){
+          color:#fc5128;
+        }
+      }
+      #bottom_dev{
+        .reprintList{
+          :hover{
+            color:#00b38a;
+          }
+        }
+      }
+      #list_dropdown{
+        .el-radio-group{
+          .is-checked{
+            .check_zheng{
+              border-color: rgb(0, 179, 138); background: rgb(0, 179, 138);
+            }
+            .check_zhong{
+              border-color: rgb(153, 153, 153); background: rgb(153, 153, 153);
+            }
+            .check_fu{
+              border-color: #fc5128; background: #fc5128;
+            }
+          }
+        }
+      }
+     }
+     /*  artcle css end */
        /*     分页-css start */
       .el-pagination{
-        margin-top: 10px;
-        float: right;
+        margin: 10px auto 0 auto; 
         display: inline-block;
         ul>li{
           opacity: 1;
+        }
+        .el-pager .active {
+          border-color: #00b38a;
+          background-color: #00b38a;
         }
       } 
       /*     分页-css end */      
       width:100%;left:0px;right:0px;top:20px;
       text-shadow: none;
       color:rgba(0,0,0,1);
-  /*     表格数据-css start */
-      table{
-        ul{
-          margin-bottom: 0;
-        }
-        ul>li{
-          opacity: 1;
-          float: left;
-          list-style: none;
-          line-height: 31px;
-        }
-        tr>td{
-          padding:0 !important;
-          .work_type{
-            width:36px;
-            height:20px;
-            border-radius:8px;
-            border:1px solid green;
-            color:red;
-            margin-left: 10px;
-            text-align:center;
-            line-height:20px;
-            font-size:12px;
-            margin-bottom:0px;
-            margin-top:5px;
-          }
-          .title{
-            font-size:1.5rem;
-            margin-top:-15px;
-          }  
-          .title_bottom{
-            height:25px;
-            border:1px solid gray;
-            padding-bottom:-15px;
-            border: none;
-            border-top:1px solid #ccc;   
-            -webkit-display: flex;
-            -ms-display: flex;
-            display: flex;
-            flex-direction:row;
-            justify-content:center;
-            :nth-child(6){
-                 border-right: none;
-                 margin-top: 0.6%;
-                 >span{
-                  margin: 0;
-                 }
-                 .name-wrapper{
-                  width:40%;
-                  display: inline-block;
-                 }
-              button{
-                padding: 2px 6px 2px 4px;
-                font-size: 10px;
-                border-radius: 3px;
-                margin-left: 0;
-                }
-                .mid{
-                  background-color: gray;
-                  border-color: gray;
-                  color: #fff;
-                }
-              } 
-            >div{
-              width: 16.6%;
-              height:79%;
-              margin-top: 4px;
-              line-height: 21px;
-              border-right: 1px solid #ccc;
-              i{
-                font-size: 1.5rem;
-              }
-              span{
-                margin-left: 12%;
-              }
-            }
-          }
-        }   
-      }
        /*     表格数据-css end */
     /*   图表 -css start */
       .el-button{
@@ -3647,13 +4489,101 @@ export default {
         }
       }
       .echarts_content{
+        #echarts-user_defind_mdeia{
+          .el-tabs__nav{
+            float: none;
+            .el-tabs__active-bar{
+              left:43.5%;
+            }
+          }
+        }
+        #echarts-more_direction{
+            .el-input{
+              width: 80%;
+            }
+          .el-input__inner{
+              height: 28px !important;
+            }
+          .el-button--success{
+            padding: 5px 8px;
+            margin-left: -10px;
+          } 
+
+        }
         #echarts-hot{
           #echarts_hot_xinwen{
             margin-top: 15px;
           }
           >div{
-             margin: 8px 10% 0 10%;
+             margin: 8px 0% 0 10%;
              height:380px;
+          }
+        }
+        #echarts-renwuzuzhi{
+          #panel{
+           padding-bottom: 10px;
+           >.panel{
+            border-color: #ebebeb;
+            .panel-heading{
+              border-color: #ebebeb;
+            }
+            .panel-body{
+              padding: 5px;
+              height: 300px;
+              position: relative;
+              border-color: #ebebeb;
+              .person{
+                width: 66px;
+                height: 66px;
+                border-radius: 50%;
+                background-color: #76e9f4 ;
+                position: absolute;
+                top: 121px;
+                left: 175px;
+                text-align: center;
+                line-height: 66px;
+                z-index: 5;
+              }
+              .line_first{
+                width: 136px;
+                height: 136px;
+                border-radius: 50%;
+                background-color: rgba(118, 233, 244,.4);
+                position: absolute;
+                top: 84px;
+                left: 140px;
+                z-index: 4;
+              }
+              .line_second{
+                width: 206px;
+                height: 206px;
+                border-radius: 50%;
+                background-color: rgba(118, 233, 244,.4);
+                position: absolute;
+                top: 48px;
+                left: 104px;
+                z-index: 3;
+              }
+              .line_last{
+                width: 276px;
+                height: 276px;
+                border-radius: 50%;
+                background-color: rgba(118, 233, 244,.3);
+                position: absolute;
+                top: 14px;
+                left: 68px;
+                z-index: 3;
+              }
+              .ct{
+                position: absolute;
+                background-color: #fec330;
+                border-radius: 50%;
+                border: 1px solid white;
+                z-index: 99;
+                cursor: pointer;
+              }
+            }
+           }
           }
         }
         >div{
@@ -3662,7 +4592,7 @@ export default {
             margin:15px 10% 0 10%;
             width:900px;
             height: 450px;
-            border: 1px solid #ccc;
+            border: 1px solid rgb(240,240,240);
             transition: all 1s;
             .third_card{
               position: relative;
@@ -3775,5 +4705,37 @@ export default {
       }
     }
   }
-
+#map_right{
+  .el-tabs__active-bar{
+      background-color:rgb(110, 187, 243) ;
+  }
+  .is-active{
+     color:rgb(110, 187, 243) ;
+  }
+  .el-tabs{
+    .el-tabs__content{
+      li{
+        float: left;
+        margin-left: 10px;
+        list-style: none;
+        color: #666666;
+        margin-bottom: 4px;
+        cursor: pointer;
+      }
+      #fixed_mediaName{
+        .fontscolor{
+          color:#6ebbf3 !important;
+        }
+        .el-tabs--card{
+          .is-active{
+            border-bottom-color:rgb(242,242,242);
+          }
+        }
+      }
+    }
+    .el-tabs__header{
+      margin-bottom: 8px;
+    }
+  }
+} 
 </style>
