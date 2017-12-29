@@ -12,8 +12,10 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
-    "echarts": "^3.5.3",
+    "child_process": "^1.0.2",
+    "echarts": "^3.8.5",
     "element-ui": "^1.0.0",
+    "fs": "0.0.1-security",
     "glyphicons": "^0.2.0",
     "node-sass": "^4.5.0",
     "promise-polyfill": "^6.0.2",
@@ -26,9 +28,12 @@
   "devDependencies": {
     "autoprefixer": "^6.4.0",
     "babel-core": "^6.0.0",
+    "babel-helper-vue-jsx-merge-props": "^2.0.2",
     "babel-loader": "^6.0.0",
     "babel-plugin-istanbul": "^3.0.0",
+    "babel-plugin-syntax-jsx": "^6.18.0",
     "babel-plugin-transform-runtime": "^6.0.0",
+    "babel-plugin-transform-vue-jsx": "^3.5.0",
     "babel-preset-es2015": "^6.0.0",
     "babel-preset-stage-2": "^6.0.0",
     "babel-register": "^6.0.0",
@@ -39,6 +44,7 @@
     "cross-env": "^3.1.3",
     "cross-spawn": "^4.0.2",
     "css-loader": "^0.25.0",
+    "echarts": "^3.8.5",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^1.0.1",

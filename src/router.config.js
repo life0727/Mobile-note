@@ -9,6 +9,7 @@ import Highcontent from './components/index/high_content.vue'
 import HighcontentNext from './components/index/high_content_next.vue'
 import Index from './components/index.vue'
 import All_net_analysis from './components/all_net_analysis'
+import Custom from './components/custom.vue'
 import Main from './components/main.vue'
 import List from './components/main/list.vue'
 import Keyword from './components/main/keyword.vue'
@@ -17,6 +18,7 @@ import Indexnumber from './components/main/indexnumber.vue'
 import Event from './components/main/event.vue'
 import Org from './components/main/org.vue'
 import Media from './components/main/media.vue'
+import Compet from './components/main/compet.vue'
 
 
 
@@ -88,6 +90,9 @@ export default new VueRouter({
 			{path:'/main/indexnumber',
 			component:Indexnumber
 			},
+			{path:'/main/compet',
+			component:Compet
+			},
 			{path:'/',
 				redirect:'/main/list'
 			}
@@ -95,5 +100,8 @@ export default new VueRouter({
 	},{
 		path:'/all_net_analysis',
 		component:All_net_analysis
+	},{
+		path:'/custom',
+		component:Custom
 	}]
 })

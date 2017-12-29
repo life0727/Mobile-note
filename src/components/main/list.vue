@@ -8,70 +8,34 @@
           <el-input v-model="allkeyword" placeholder="必须包含关键词(且)" size="small" style="width: 14% !important;margin-top:16px;margin-left: 20px;"></el-input>
           <el-input v-model="keywordyoulike" placeholder="包含任一关键词(或)" size="small" style="width: 14% !important;margin-left: 20px;margin-top:16px"></el-input>
           <el-input v-model="nokeyword" placeholder="不包含关键词" size="small" style="width: 14% !important;margin-left: 20px;margin-top:16px"></el-input>
-          <el-button type="success" size="large" class="search_start" @click="search_start" style="background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;">搜索</el-button>
-          <!-- <div style="display: inline-block;width:28%;">
-                            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">包含以下全部关键词：</button>
-                            <el-input v-model="allkeyword" placeholder="多个关键词以逗号分割" size="small"></el-input>
-                          </div>  
-                          <div style="display: inline-block;width:28%;">
-                            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">包含以下任一关键词：</button>
-                            <el-input v-model="keywordyoulike" placeholder="多个关键词以逗号分割" size="small"></el-input>  
-                          </div> 
-                          <div style="display: inline-block;width:28%;">
-                            <button  class="btn btn-default filter_name" style="border:none;background: snow;margin-left:2px;">不包含以下关键词：</button>
-                            <el-input v-model="nokeyword" placeholder="多个关键词以逗号分割" size="small"></el-input>  
-                          </div>  -->                
+          <el-button type="success" size="large" class="search_start" @click="search_start" style="background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" v-loading.fullscreen.lock="loading_start" element-loading-text="系统拼命加载中...">搜索</el-button>          
        </div>
         <hr>   
     <!-- 包含关键词 end -->
-   
     <!-- 类型 start -->
        <div class="btn-group" role="group" aria-label="..." style="margin-top:20px">
           <button class="btn btn-default filter_name" style="border:none;background:#f7f7f7;width:76px;font-size: 14px;"><b>文章类型：</b></button>
-          <button class="btn btn-default warning" @click="echarts_show=0;articleType=0">全部</button>
-          <button class="btn btn-default" @click="echarts_show=1;articleType=1" id="filter_xinwen" >新闻</button>
-          <button class="btn btn-default" @click="echarts_show=2;articleType=2" id="filter_weixin">微信</button>
+          <button :class="articleType==0 ? 'btn btn-default warning' : 'btn btn-default'" @click="echarts_show=0;articleType=0;dropdown_sort=['时间降序','时间升序'];current_sort='时间降序'">全部</button>
+          <button :class="articleType==1 ? 'btn btn-default warning' : 'btn btn-default'" @click="echarts_show=1;articleType=1;dropdown_sort=['时间降序','时间升序','新闻指数降序','新闻指数升序'];current_sort='时间降序'" id="filter_xinwen" >新闻</button>
+          <button :class="articleType==2 ? 'btn btn-default warning' : 'btn btn-default'" @click="echarts_show=2;articleType=2;dropdown_sort=['时间降序','时间升序','阅读数降序','阅读数升序'];current_sort='时间降序'" id="filter_weixin">微信</button>
        </div>
        <!-- <hr> -->  
     <!-- 类型 end -->
-    <!-- 文章调性 start -->
-        <div class="btn-group" role="group" aria-label="..." id="polar" style="margin-top:40px">
-          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;width:76px;" ><b>文章调性：</b></button>
-          <button  :class="polar_arr.length==3 ? 'btn polar warning' : 'btn polar'" id="filter_polar_all">全部</button>
-          <button class="btn polar warning" v-for="i in polar">{{i}}</button>
-       </div>
-       <!-- <hr> -->  
-    <!-- 文章调性 end -->
     <!-- 关键词位置 start -->
         <div class="btn-group" role="group" aria-label="..." style="margin-top:40px;padding-bottom: 20px;border-bottom:1px solid #dcdcdc;">
           <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;width:76px;"><b>检索位置：</b></button>
-          <button class="btn btn-default warning" style="margin-left:2.0% !important;" @click="queryType=0">全文</button>
-          <button class="btn btn-default" @click="queryType=1">仅标题</button>
-          <!-- <button class="btn btn-default filter_name" style="border:none;background: snow;margin-left:30%;">排序方式：</button>
-              <el-dropdown id="filter_sort_dropdown" @command="sort_dropdown">
-                    <el-button>{{current_sort}}<i class="el-icon-caret-bottom el-icon--right"></i></el-button>                  
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
-                    </el-dropdown-menu>
-              </el-dropdown>  -->
+          <button :class="queryType==0 ? 'btn btn-default warning' : 'btn btn-default'" style="margin-left:2.0% !important;" @click="queryType=0">全文</button>
+          <button :class="queryType==1 ? 'btn btn-default warning' : 'btn btn-default'" @click="queryType=1">仅标题</button>
        </div>
-       <!-- <hr>   --> 
     <!-- 关键词位置 end -->
-    
-       <!--  <el-button type="success" size="large" class="search_start" @click="search_start">搜索</el-button> -->
-        <!-- <button  class="btn btn-default filter_button"  id="hide_button" @click="hide_filter">隐藏筛选条件<i class="fa fa-chevron-up" style="margin-left:5px;"></i></button>
-        <button  class="btn btn-default filter_button" id="show_button"  @click="show_filter">显示筛选条件<i class="fa fa-chevron-down" style="margin-left:5px;"></i></button> -->
 
          <!-- 监测时间 start -->
         <div id="div_tianbu" style="height:20px;background: #ffffff;width: 1210px;margin-left: -1px;"></div> 
        <div class="btn-group" role="group" aria-label="..." style="" id="filter_time" style="height: 40px;position: relative;border-top: 1px solid #dcdcdc;">
           <!-- <button class="btn btn-default filter_name" style="border:none;background: snow;">监测时间：</button> -->
-          <button class="btn btn-default warning" style="font-size: 14px;margin-top: 9px;" @click="time=[new Date(new Date().getTime()-604800000), new Date()]">一周</button>
-          <button class="btn btn-default " style="font-size: 14px;margin-top: 9px;margin-left: 0px !important;" @click="time=[new Date(new Date().getTime()-86400000), new Date()]">今天</button>
-          <button class="btn btn-default " style="font-size: 14px;margin-top: 9px;margin-left: 0px !important;" @click="time=[new Date(new Date().getTime()-172800000), new Date()]">两天</button>
-          <!-- <div class="block" style="padding-left:18%;margin-top: 11px;" >
-            <el-date-picker v-model="time" @change="date_change" type="datetimerange" placeholder="选择日期时间" style="float: left;margin-top:-5px;width:290px;font-size: 12px"></el-date-picker>
-          </div> -->
+          <button :class="time[1]-time[0]==604800000 ? 'btn btn-default warning' : 'btn btn-default'" style="font-size: 14px;margin-top: 9px;" @click="time=[new Date(new Date().getTime()-604800000), new Date()]">一周</button>
+          <button :class="time[1]-time[0]==86400000 ? 'btn btn-default warning' : 'btn btn-default'" style="font-size: 14px;margin-top: 9px;margin-left: 0px !important;" @click="time=[new Date(new Date().getTime()-86400000), new Date()]">今天</button>
+          <button :class="time[1]-time[0]==172800000 ? 'btn btn-default warning' : 'btn btn-default'" style="font-size: 14px;margin-top: 9px;margin-left: 0px !important;" @click="time=[new Date(new Date().getTime()-172800000), new Date()]">两天</button>
           <div class="block" style="display: inline-block;margin-top: 9px;">
               <el-date-picker
               style="position: relative;width:170px;font-size: 12px;"
@@ -96,19 +60,17 @@
               </el-date-picker>
           </div>
           <span style="position: absolute;left: 47%;color: #dcdcdc;margin-top:8px">|</span>
-          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;margin-top: -1px;position:absolute;top:9px;"><b>排序方式：</b></button>
-            <el-dropdown id="filter_sort_dropdown" @command="sort_dropdown" style="padding-left: 115px;">
+          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;font-size: 14px;margin-top: -1px;position:absolute;top:9px;margin-left:18px !important;"><b>排序方式：</b></button>
+            <el-dropdown id="filter_sort_dropdown" @command="sort_dropdown" style="padding-left: 100px;">
                   <el-button>{{current_sort}}<i class="el-icon-caret-bottom el-icon--right" style="margin-left: 12px;"></i></el-button>                  
                   <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
                   </el-dropdown-menu>
             </el-dropdown>
-          <button  class="btn btn-default filter_button" style="width: 120px ;border:none;margin-left: 19% !important;margin-top:8px" id="hide_button" @click="hide_filter">隐藏筛选条件<i class="fa fa-angle-up" style="font-size:18px;margin-left:5px;"></i></button>
-          <button  class="btn btn-default filter_button" id="show_button" style="width: 120px ;border:none;margin-left: 19% !important;margin-top:8px" @click="show_filter">显示筛选条件<i class="fa fa-angle-down" style="margin-left:5px;font-size:18px;"></i></button>  
-          <!-- <el-button type="success" size="large" style="margin-top:-2px;margin-left:4% !important;padding:3px 18px;display: none;" id="search_top" @click="search_start">搜索</el-button> -->
+          <button  class="btn btn-default filter_button" style="width: 120px ;border:none;margin-left: 20% !important;margin-top:8px" id="hide_button" @click="hide_filter">隐藏筛选条件<i class="fa fa-angle-up" style="font-size:18px;margin-left:5px;"></i></button>
+          <button  class="btn btn-default filter_button" id="show_button" style="width: 120px ;border:none;margin-left: 20% !important;margin-top:8px" @click="show_filter">显示筛选条件<i class="fa fa-angle-down" style="margin-left:5px;font-size:18px;"></i></button>  
           <div style="position: absolute;right: 85px;width: 20px;height: 42px;background: #ffffff;top: -1px;border-left:1px solid #dcdcdc; "></div>
           <div style="position: absolute;right: -1px;width: 86px;height: 42px;background: #ffffff;top: -1px;">
-            <!-- <el-button   style="background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;">图表<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> -->
           </div>
        </div>
        <!-- <hr> -->
@@ -118,8 +80,6 @@
       <div id="carousel-example-generic" class="carousel slide" style="position:relative;">
           <ol class="carousel-indicators" style="width:100%;left:0;margin:0;top:0px;height:10px;">
             <li class="active">
-             <!--  <img data-target="#carousel-example-generic" data-slide-to="1" src="../../assets/pic.jpg" style="cursor:pointer;width:83px;height:21px;position:absolute;right:10px;" @click="show_echarts"> -->
-              <!-- <el-button data-target="#carousel-example-generic" data-slide-to="1"  style="background-color:#6ebbf3;border-color:  #6ebbf3;border-radius: 4px !important;font-size: 16px;width: 85px;height: 36px;color: white;position:fixed;top:450px;right: 15px;" @click="show_echarts">更多<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> -->
               <el-button v-show="this.data.length!==0" data-target="#carousel-example-generic" data-slide-to="1"  style="background-color: #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;position:absolute;top:-40px;right: 0;;" @click="show_echarts">更多<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> 
             </li>
             <li >
@@ -127,20 +87,10 @@
                <el-button data-target="#carousel-example-generic" data-slide-to="0"  style="background-color: #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;position:absolute;top:-40px;right: 0;;" @click="hide_echarts">信息<i class="fa fa-angle-left" style="margin-left: 8px;"></i></el-button> 
             </li>
           </ol>
-          <div class="col-xs-1 left_type" >
-                <ul class="list-group">
-                    <li class="list-group-item" v-for="(i,$index) in classify" :class="{bgcolor:i.bg}" @click="classify_toggleclass(i)" style="font-size: 16px;color: #666;">
-                      <p style="height:13px;margin-bottom:0;"><i class="fa fa-pencil" @click.stop="write(i,$index)" :class="{display:i.fa}"></i><i class="fa fa-times" @click.stop="del_classify(i)" :class="{display:i.fa}"></i></p>
-                        <span>{{i.name}}</span>
-                    </li>
-                    <li class="list-group-item" style="color: #666;font-size:30px;padding-top: 5px;"@click="addClassify">+</li>
-                </ul>
-          </div> <!-- 左边侧栏——分类 -->
           <div class="carousel-inner " role="listbox" style="width: 97%;">
           <div class="item active"  id="item_table" style="height:1370px">
             <div class="carousel-caption"  style="padding: 0;margin-top: -10px;">
 <!--      主要信息table start -->       
-            <p v-loading="this.data.length==0" element-loading-text="系统拼命加载中..." style="top:200px;margin-bottom:0;" id="loading_table"></p>
               <div style="padding: 0;position: relative;" class="row" id="table"><!-- 右边table -->
                 <div class="col-md-6 col-xs-12 "  @mouseover="Mover($index)" @mouseout="Mout($index)"  ref="list" style="width:575px;height:190px;border: 1px solid #dcdcdc;padding-left: 12px;padding-right: 8px;margin: 10px 5px 10px 15px;position: relative;border-radius: 4px;" v-for="(a,$index) in tabledata">
                   <div style="width: 421px;height:80px;border-right: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;  position: absolute;top:10px;text-align: left;">
@@ -154,36 +104,7 @@
                     </p>
                   </div>
                   <div style="width: 131px;height:80px;border-left: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;position: absolute;top:10px;right: 10px;text-align: center;">
-                    <span style="position: absolute;right: 0;cursor: pointer;" class="dropdown">
-                      <img src="../../assets/icon/列表里下拉(17x9px).png" class="dropdown-toggle" data-toggle="dropdown">
-                      <ul class="dropdown-menu" style="left:-60px;min-width: 80px" id="list_dropdown">         
-                        <li><a href="javascript:;" style="padding-left: 10px;font-size: 13px;color: #666666" @click="wuguan(a)">删除</a></li>
-                        <li><a href="javascript:;" style="padding-left: 10px;font-size: 13px;color: #666666">调性</a></li>
-                        <div class="el-radio-group" >  
-                          <label class="el-radio" style="margin-left: 20px;">
-                            <span class="el-radio__label" style="font-size:12px;color:#999999; ">正</span>
-                            <span :class="{'el-radio__input is-checked':a.article.polar==1}" style="white-space: nowrap;cursor: pointer; outline: 0;line-height: 1;vertical-align: middle;position: relative;display: inline-block;">
-                              <span class="el-radio__inner check_zheng" ></span>
-                              <input type="radio" class="el-radio__original"  @click="zheng(a)">
-                            </span>
-                          </label>
-                          <label class="el-radio" style="margin-left: 20px;">
-                            <span class="el-radio__label" style="font-size:12px;color:#999999; ">中</span>
-                            <span  :class="{'el-radio__input is-checked':a.article.polar==0}" style="white-space: nowrap;cursor: pointer; outline: 0;line-height: 1;vertical-align: middle;position: relative;display: inline-block;">
-                              <span class="el-radio__inner check_zhong" ></span>
-                              <input type="radio" class="el-radio__original" @click="zhong(a)">
-                            </span>
-                          </label>
-                          <label class="el-radio" style="margin-left: 20px;">
-                            <span class="el-radio__label" style="font-size:12px;color:#999999; ">负</span>
-                            <span :class="{'el-radio__input is-checked':a.article.polar==-1}" style="white-space: nowrap;cursor: pointer; outline: 0;line-height: 1;vertical-align: middle;position: relative;display: inline-block;">
-                              <span class="el-radio__inner check_fu" ></span>
-                              <input type="radio" class="el-radio__original" @click="fu(a)" >
-                            </span>
-                          </label>
-                        </div>  
-                      </ul>
-                    </span>
+                      <img src="../../assets/icon/del.png" style="position: absolute;right: 0;cursor: pointer;display:none;" ref="del_img" @click="wuguan(a)">
                     <span style="position: absolute;top: 10px;left:60px;"><img src="../../assets/icon/媒体（26x26px）.png"></span>
                     <p style="font-size: 14px;margin-top: 41px;">{{a.article.media}}</p>
                   </div>
@@ -270,7 +191,6 @@
               </div>  
             <!--  二级选项卡 end-->
            <!--  echarts-图 strat -->
-           <p v-loading="this.data.length==0" element-loading-text="系统拼命加载中..." style="top:200px;" id="loading_echarts"></p>
               <div class="echarts_content">
                 <div class="opa" id="echarts-hot">
                   <div style="position: absolute;width:150px;border:1px solid #ebebeb;left:720px;width: 300px;margin-top:15px;" v-show="echarts_show==0||echarts_show==1">
@@ -478,69 +398,6 @@
         </span>
       </el-dialog>
     <!--    添加自定义媒体分析模态框 -end -->
-
-     <!--    添加分类模态框 -start -->
-      <el-dialog :title="dialog_type" v-model="classify_dialog" size="tiny" ref="dia">
-        <form class="form-horizontal">
-        <div class="form-group" style="margin-bottom: 28px;">
-          <label for="name" class="col-sm-2 control-label" style="text-align: center;">分类名：</label>
-          <div >
-            <input type="text" class="col-sm-10 kwcontent"  v-model="classify_input" placeholder="分类名" @keyup.enter="add_classify">
-          </div> 
-        </div>
-        </form>     
-        <form class="form-horizontal">
-          <div class="form-group">
-            <label for="kw" class="col-sm-2 control-label" style="text-align: center;font-weight: none;">关键词：</label>
-            <div class="col-sm-10 kwcontent"  >
-              <el-tag
-                  :key="tag"
-                  v-for="tag in kw"
-                  :closable="true"
-                  :close-transition="false"
-                  @close="handleClose(tag)"
-                >
-                {{tag}}
-              </el-tag>
-              <el-dropdown  @command="kw_dropdown" style="height:21px;width:100px;">
-                <span id="dropdown_start" style="cursor: pointer;"><b>选择关键词</b><i class="fa fa-angle-down" style="font-size: 16px;margin-left: 3px;"></i></span>                  
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-for="i in tags" :command="i">{{i}}</el-dropdown-item>
-                    </el-dropdown-menu>
-              </el-dropdown>
-            </div>     
-          </div>  
-        </form> 
-        <form class="form-horizontal">
-          <div class="form-group">
-            <label for="kw" class="col-sm-2 control-label" style="text-align: center;font-weight: none;">排除词：</label>
-            <div class="col-sm-10 kwcontent"  >
-              <el-tag style="background: rgb(237,99,84)"
-                  :key="tag"
-                  v-for="tag in notkw"
-                  :closable="true"
-                  :close-transition="false"
-                  @close="nothandleClose(tag)"
-                >
-                {{tag}}
-              </el-tag>
-              <el-dropdown  @command="notkw_dropdown" style="height:21px;width:100px;">
-                <span id="dropdown_start" style="cursor: pointer;"><b>选择排除词</b><i class="fa fa-angle-down" style="font-size: 16px;margin-left: 3px;"></i></span>                  
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item v-for="i in notags" :command="i">{{i}}</el-dropdown-item>
-                    </el-dropdown-menu>
-              </el-dropdown>
-            </div>     
-          </div>  
-        </form> 
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="classify_dialog = false">取 消</el-button>
-          <el-button v-show="this.dialog_type=='添加分类'" type="primary" @click="add_classify" >确 定</el-button>
-          <el-button v-show="this.dialog_type=='编辑分类'" type="primary" @click="write_classify()" >确 定</el-button>
-        </span>
-      </el-dialog>
-    <!--    添加分类模态框 -end -->
-
     <!--    转发合并模态框 -start -->
       <el-dialog title="合并详情" v-model="dialogReprintList" class="dialogList" >
         <hr> 
@@ -812,75 +669,35 @@ import { Map }  from '../../assets/js/map.js'
 export default {
   mounted :function () {
   //判断是否初始化
+   if(this.$store.state.list_Data===''){
+    this.loading_start=true;
     if(JSON.parse(window.sessionStorage.getItem('start'))==null){
       console.log('初始化');
       let _this=this;    
       //页面加载完成判断项目及跳转
       $.ajax({
          type: "GET",
-         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
          traditional: true,
          data: {
              "method": 'get'
          },
          success: function(data){
-            /*console.log(JSON.stringify(data));
-            console.log(data.success);
-            console.log(data.message);*/
             if(data.data==null){
               window.location.href='#/index/clever'
             }else{
-              console.log('执行了else')
-               _this.search_data(data.data.projectList[0].id,-1,0,[],[],[],0,[-1,0,1],0,_this.time[0],_this.time[1]);
+               _this.search_data(_this.current_jushuNum,data.data.projectList[0].id,-1,_this.articleType,[],[],[],_this.queryType,[-1,0,1],0,_this.time[0],_this.time[1]);
                 window.sessionStorage.setItem('project_id',JSON.stringify(data.data.projectList[0].id))
-                 //获取分类列表
-                 $.ajax({
-                   type: 'GET',
-                   url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+data.data.projectList[0].id+'/category',
-                   traditional: true,
-                   data: {
-                  'method': 'get',
-                   },
-                   success: function(data){
-                    if(data.data!=null){
-                      for(let i=0;i<data.data.categoryList.length;i++){
-                        data.data.categoryList[i].bg=false;
-                        data.data.categoryList[i].fa=false;
-                       }    
-                        _this.classify=_this.classify.concat(data.data.categoryList);
-                    }else{
-
-                    }                  
-                 }     
-              })
             }
          }
       })
     }else{
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      this.search_data(project_id,-1,0,[],[],[],0,[-1,0,1],0,this.time[0],this.time[1]);
-      //获取分类列表
-                 $.ajax({
-                   type: 'GET',
-                   url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
-                   traditional: true,
-                   data: {
-                  'method': 'get',
-                   },
-                   success: function(data){
-                    if(data.data!=null){
-                      for(let i=0;i<data.data.categoryList.length;i++){
-                        data.data.categoryList[i].bg=false;
-                        data.data.categoryList[i].fa=false;
-                       }    
-                        _this.classify=_this.classify.concat(data.data.categoryList);
-                    }else{
-
-                    }   
-                  }    
-              })
+      this.search_data(this.current_jushuNum,project_id,-1,this.articleType,[],[],[],this.queryType,[-1,0,1],0,this.time[0],this.time[1]);
     }
-
+   }else{
+    this.data_write(this.$store.state.list_Data)
+   }
       //搜索按钮hover样式
       $('.filter_button').hover(function(){
         $(this).css('border-color','#00b38a');
@@ -967,6 +784,7 @@ export default {
     })
     //点击筛选按钮直接搜索数据
      $('.filter .btn').not('.filter_name').not('.filter_button').click(function(){
+      _this.loading_start=true;
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       if(_this.time[0]==undefined||_this.time[1]==undefined||_this.time[1].getTime()<_this.time[0].getTime()){
       _this.$message({
@@ -1004,7 +822,7 @@ export default {
         $('#table').css('display','none'); 
         $('#loading_table').css('display','block');
         $('.echarts_content').css('display','none')
-         _this.search_data(project_id,cate_id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);  
+         _this.search_data(_this.current_jushuNum,project_id,cate_id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);  
           _this.mustIncludeKeywordList=null;
           _this.anyIncludeKeywordList=null
           _this.notIncludeKeywordList=null;
@@ -1016,19 +834,19 @@ export default {
   	return {
       watch:JSON.parse(window.sessionStorage.getItem('start')),
       polar:['正面','中性','负面'],
-      dropdown_sort:['时间降序','时间升序','阅读数降序','阅读数升序','新闻指数降序','新闻指数升序'],
+      dropdown_sort:['时间降序','时间升序'],
       current_sort:'时间降序',
       pickerOptions0: {},
-      time: [new Date(new Date().getTime()-604800000), new Date()],
+      time: JSON.parse(window.sessionStorage.getItem('list_time0'))!=null ? [new Date(JSON.parse(window.sessionStorage.getItem('list_time0'))),new Date(JSON.parse(window.sessionStorage.getItem('list_time1')))] : [new Date(new Date().getTime()-604800000), new Date()],
       allkeyword:'',
       keywordyoulike:'',
       nokeyword:'',
       checked:true,
       checke:false,
       diaoxing_visible:'',
-      articleType:0,
+      articleType:JSON.parse(window.sessionStorage.getItem('list_articleType'))!=null ? JSON.parse(window.sessionStorage.getItem('list_articleType')) : 0,
       polar_arr:[-1,0,1],
-      queryType:0,
+      queryType:JSON.parse(window.sessionStorage.getItem('list_queryType'))!=null ? JSON.parse(window.sessionStorage.getItem('list_queryType')) : 0,
       mustIncludeKeywordList:[],
       anyIncludeKeywordList:[],
       notIncludeKeywordList:[],
@@ -1086,7 +904,7 @@ export default {
       wx_media_province_top:[],
       wx_media_province_top_size:'',
       edit:false,//时间控件的属性booleran
-      styleData:[
+       styleData:[
             {'width':'16px','height':'16px','top':'150px','left':'160px'},
             {'width':'16px','height':'16px','top':'120px','left':'242px'},
             {'width':'16px','height':'16px','top':'190px','left':'232px'},
@@ -1112,7 +930,10 @@ export default {
       current_sort_per:'5',
       current_sort_org:'5',
       dropdown_sort_num:['2','3','4','5','6','7','8','9','10'],
-      renwuzuzhi_loading:false
+      renwuzuzhi_loading:false,
+      dropdown_jushuNum:['1','2','3','5','全部'],
+      current_jushuNum:3,
+      loading_start:false
   	}
   },
   methods: {
@@ -1145,27 +966,17 @@ export default {
       this.tabledata=newdata;       
     },
     // 通过筛选条件搜索数据 this保存的前提下(_this)
-    search_data (proId,categoryId,articleType,mustIncludeKeywordList,anyIncludeKeywordList,notIncludeKeywordList,queryType,polar,timeType,startTime,endTime,echart,more_echarts,type_echarts) {
-      let _this=this;
-      Map;
-      function Sort(property){
-                      return function(a,b){
-                          var value1 = a[property];
-                          var value2 = b[property];
-                          return value2 - value1;
-                      }
-                  };
-      function Sort_down(property,c){
-          return function(a,b){
-              var value1 = a[property][c];
-              var value2 = b[property][c];
-              return value2 - value1;
-          }
-        }             
-      // 数据时间戳  时间格式
-       _this.format_time ();            
+    search_data (jushu,proId,categoryId,articleType,mustIncludeKeywordList,anyIncludeKeywordList,notIncludeKeywordList,queryType,polar,timeType,startTime,endTime,echart,more_echarts,type_echarts) {
+      if(jushu=='全部'){
+        jushu=0;
+      }
+      let _this=this;   
+      window.sessionStorage.setItem('list_time0',JSON.stringify(_this.time[0].getTime()));
+      window.sessionStorage.setItem('list_time1',JSON.stringify(_this.time[1].getTime()));
+      window.sessionStorage.setItem('list_articleType',JSON.stringify(_this.articleType));
+      window.sessionStorage.setItem('list_queryType',JSON.stringify(_this.queryType));        
       $.ajax({
-                url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+123456+'/article',
+                url:'http://192.168.0.3:8080/rs/api/v1.1/project/'+123456+'/article',
                 method:'GET',
                 traditional:true,
                 data:{
@@ -1184,6 +995,7 @@ export default {
                   },
                   success:function(data){
                     //console.log("成功回调函数-------------------")
+                    _this.loading_start=false;
                     if(data.data==null||data.data.length<=0){
                       $('#table').css('display','none');
                       _this.data=[];
@@ -1194,173 +1006,190 @@ export default {
                             type: 'warning'
                           });  
                     }else{
-                      $('#table').css('display','block')
-                      $('.echarts_content').css('display','block')
-                      //时间降序
-                        for(let i=0;i<data.data.length;i++){
-                          data.data[i].article.publishTime=new Date(data.data[i].article.publishTime).getTime();  
-                        }
-                        data.data.sort(Sort_down('article','publishTime'));
-                        for(let i=0;i<data.data.length;i++){
-                          data.data[i].article.publishTime=new Date(data.data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");  
-                        }
-                        _this.data=data.data;
-                        //fix 右边固定数据
-                        //console.log(data.data)
-                        _this.fix_data=data.data;
-                        let media_map=[];
-                        let media_map_xinwen=[];
-                        let media_map_wx=[];
-                         for(let i=0;i<_this.data.length;i++){
-                          media_map.push(_this.data[i].article.media);
-                          if(_this.data[i].article.articleType==1){
-                            media_map_xinwen.push(_this.data[i].article.media)
-                          }else if(_this.data[i].article.articleType==2){
-                            media_map_wx.push(_this.data[i].article.media)
-                          }
-                        }
-                        //console.log(media_map_xinwen)
-                        //console.log(media_map_wx)
-                        let media_map_data=media_map;
-                        let media_map_data_xinwen=media_map_xinwen;
-                        let media_map_data_wx=media_map_wx;
-                        _this.fix_media_size=media_map.length;//总个数
-                        _this.fix_media_xinwen_size=media_map_xinwen.length;//总个数
-                        _this.fix_media_wx_size=media_map_wx.length;//总个数
-                        let fix_map=new Map()//生成{媒体名称：个数} 的map
-                        let fix_map_xinwen=new Map()//生成{媒体名称：个数} 的map
-                        let fix_map_wx=new Map()//生成{媒体名称：个数} 的map
-                        for(let t=0;t<media_map_data.length;t++){
-                            if(fix_map.get(media_map_data[t])==null){
-                              fix_map.put(media_map_data[t],1)
-                            }else{
-                              fix_map.put(media_map_data[t],fix_map.get(media_map_data[t])+1)
-                            }   
-                          }
-                        if(_this.articleType==0){
-                            for(let t=0;t<media_map_data_xinwen.length;t++){
-                            if(fix_map_xinwen.get(media_map_data_xinwen[t])==null){
-                              fix_map_xinwen.put(media_map_data_xinwen[t],1)
-                            }else{
-                              fix_map_xinwen.put(media_map_data_xinwen[t],fix_map_xinwen.get(media_map_data_xinwen[t])+1)
-                            }   
-                          };
-                          let media_map_arr_xinwen=[];
-                          let media_map_arr_big_xinwen=[];
-                          for(let k in fix_map_xinwen.data){
-                            let obj={};
-                            obj.name=k;
-                            obj.num=fix_map_xinwen.data[k];
-                            obj.fontbg=false;
-                            media_map_arr_xinwen.push(obj)
-                          }
-                          media_map_arr_xinwen.sort(Sort('num'))
-                          if(media_map_arr_xinwen.length<10){
-                            _this.fix_media_xinwen=media_map_arr_xinwen;
-                          }else{
-                            for(let i=0;i<10;i++){
-                              media_map_arr_big_xinwen.push(media_map_arr_xinwen[i])
-                            }
-                            _this.fix_media_xinwen=media_map_arr_big_xinwen;
-                          }
-                        
-                          for(let t=0;t<media_map_data_wx.length;t++){
-                            if(fix_map_wx.get(media_map_data_wx[t])==null){
-                              fix_map_wx.put(media_map_data_wx[t],1)
-                            }else{
-                              fix_map_wx.put(media_map_data_wx[t],fix_map_wx.get(media_map_data_wx[t])+1)
-                            }   
-                          };
-                          let media_map_arr_wx=[];
-                          let media_map_arr_big_wx=[];
-                          for(let k in fix_map_wx.data){
-                            let obj={};
-                            obj.name=k;
-                            obj.num=fix_map_wx.data[k];
-                            obj.fontbg=false;
-                            media_map_arr_wx.push(obj)
-                          }
-                          media_map_arr_wx.sort(Sort('num'))
-                          if(media_map_arr_wx.length<10){
-                            _this.fix_media_wx=media_map_arr_wx;
-                          }else{
-                            for(let i=0;i<10;i++){
-                              media_map_arr_big_wx.push(media_map_arr_wx[i])
-                            }
-                            _this.fix_media_wx=media_map_arr_big_wx;
-                          }
-                        
-                        }
-                          let media_map_arr=[];
-                          let media_map_arr_big=[];
-                          for(let k in fix_map.data){
-                            let obj={};
-                            obj.name=k;
-                            obj.num=fix_map.data[k];
-                            obj.fontbg=false;
-                            media_map_arr.push(obj)
-                          }
-                          media_map_arr.sort(Sort('num'))
-                          if(media_map_arr.length<10){
-                            _this.fix_media=media_map_arr;
-                          }else{
-                            for(let i=0;i<10;i++){
-                              media_map_arr_big.push(media_map_arr[i])
-                            }
-                            _this.fix_media=media_map_arr_big;
-                          }
-                          
-                         /* console.log(_this.fix_media)                
-                          console.log(_this.fix_media_wx)                
-                          console.log(_this.fix_media_xinwen) */               
-                      //初始化总数据的publishTime转化
-                       let t=0;
-                      for(let i=0;i<_this.data.length;i++){
-                         _this.data[i].article.publishTime=new Date(_this.data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
-                         //初始化数据的reprintList的publishTime转化
-                         if(_this.data[i].article.reprintList){
-                          for(let j=0;j<_this.data[i].article.reprintList.length;j++){
-                            _this.data[i].article.reprintList[j].publishTime=new Date(_this.data[i].article.reprintList[j].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-                            t++;
-                          }
-                         }
-                      }
-                       _this.reprintList_size=t;
-                      if(echart){
-                          _this.show_echarts()
-                        }
-                      if(more_echarts){
-                        _this.more_echarts()
-                      } 
-                      if(type_echarts){
-                        _this.type_echarts_xinwen();
-                        _this.type_echarts_wx();
-                      } 
-                      //初始表格数据
-                      let newdata=[];
-                      if(_this.data.length>12){
-                        for(let c=0;c<12;c++){
-                        newdata.push(_this.data[c])
-                        }
-                      }else{
-                        for(let c=0;c<_this.data.length;c++){
-                        newdata.push(_this.data[c]);                  
-                        }
-                      }
-                      _this.tabledata=newdata;
+                      _this.data_write(data.data,echart,more_echarts,type_echarts);  
                     }
-                   },   
-                  error:function(data){
-                    console.log("失败回调函数-------------------")
-
-                  }
+                   }
               });
+    },
+    data_write(data,echart,more_echarts,type_echarts){//获取数据后的遍历等操作
+      let _this=this; 
+            Map;
+            function Sort(property){
+                            return function(a,b){
+                                var value1 = a[property];
+                                var value2 = b[property];
+                                return value2 - value1;
+                            }
+                        };
+            function Sort_down(property,c){
+                return function(a,b){
+                    var value1 = a[property][c];
+                    var value2 = b[property][c];
+                    return value2 - value1;
+                }
+              }             
+            // 数据时间戳  时间格式
+             _this.format_time (); 
+            $('#table').css('display','block')
+            $('.echarts_content').css('display','block')
+            //时间降序
+              for(let i=0;i<data.length;i++){
+                data[i].article.publishTime=new Date(data[i].article.publishTime).getTime();  
+              }
+              data.sort(Sort_down('article','publishTime'));
+              for(let i=0;i<data.length;i++){
+                data[i].article.publishTime=new Date(data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");  
+              }
+              _this.data=data;
+              _this.$store.state.list_Data=data;
+              //初始表格数据
+            let newdata=[];
+            if(_this.data.length>12){
+              for(let c=0;c<12;c++){
+              newdata.push(_this.data[c])
+              }
+            }else{
+              for(let c=0;c<_this.data.length;c++){
+              newdata.push(_this.data[c]);                  
+              }
+            }
+            _this.tabledata=newdata;
+              //fix 右边固定数据
+              _this.fix_data=data;
+              let media_map=[];
+              let media_map_xinwen=[];
+              let media_map_wx=[];
+               for(let i=0;i<_this.data.length;i++){
+                media_map.push(_this.data[i].article.media);
+                if(_this.data[i].article.articleType==1){
+                  media_map_xinwen.push(_this.data[i].article.media)
+                }else if(_this.data[i].article.articleType==2){
+                  media_map_wx.push(_this.data[i].article.media)
+                }
+              }
+              //console.log(media_map_xinwen)
+              //console.log(media_map_wx)
+              let media_map_data=media_map;
+              let media_map_data_xinwen=media_map_xinwen;
+              let media_map_data_wx=media_map_wx;
+              _this.fix_media_size=media_map.length;//总个数
+              _this.fix_media_xinwen_size=media_map_xinwen.length;//总个数
+              _this.fix_media_wx_size=media_map_wx.length;//总个数
+              let fix_map=new Map()//生成{媒体名称：个数} 的map
+              let fix_map_xinwen=new Map()//生成{媒体名称：个数} 的map
+              let fix_map_wx=new Map()//生成{媒体名称：个数} 的map
+              for(let t=0;t<media_map_data.length;t++){
+                  if(fix_map.get(media_map_data[t])==null){
+                    fix_map.put(media_map_data[t],1)
+                  }else{
+                    fix_map.put(media_map_data[t],fix_map.get(media_map_data[t])+1)
+                  }   
+                }
+              if(_this.articleType==0){
+                  for(let t=0;t<media_map_data_xinwen.length;t++){
+                  if(fix_map_xinwen.get(media_map_data_xinwen[t])==null){
+                    fix_map_xinwen.put(media_map_data_xinwen[t],1)
+                  }else{
+                    fix_map_xinwen.put(media_map_data_xinwen[t],fix_map_xinwen.get(media_map_data_xinwen[t])+1)
+                  }   
+                };
+                let media_map_arr_xinwen=[];
+                let media_map_arr_big_xinwen=[];
+                for(let k in fix_map_xinwen.data){
+                  let obj={};
+                  obj.name=k;
+                  obj.num=fix_map_xinwen.data[k];
+                  obj.fontbg=false;
+                  media_map_arr_xinwen.push(obj)
+                }
+                media_map_arr_xinwen.sort(Sort('num'))
+                if(media_map_arr_xinwen.length<10){
+                  _this.fix_media_xinwen=media_map_arr_xinwen;
+                }else{
+                  for(let i=0;i<10;i++){
+                    media_map_arr_big_xinwen.push(media_map_arr_xinwen[i])
+                  }
+                  _this.fix_media_xinwen=media_map_arr_big_xinwen;
+                }
+              
+                for(let t=0;t<media_map_data_wx.length;t++){
+                  if(fix_map_wx.get(media_map_data_wx[t])==null){
+                    fix_map_wx.put(media_map_data_wx[t],1)
+                  }else{
+                    fix_map_wx.put(media_map_data_wx[t],fix_map_wx.get(media_map_data_wx[t])+1)
+                  }   
+                };
+                let media_map_arr_wx=[];
+                let media_map_arr_big_wx=[];
+                for(let k in fix_map_wx.data){
+                  let obj={};
+                  obj.name=k;
+                  obj.num=fix_map_wx.data[k];
+                  obj.fontbg=false;
+                  media_map_arr_wx.push(obj)
+                }
+                media_map_arr_wx.sort(Sort('num'))
+                if(media_map_arr_wx.length<10){
+                  _this.fix_media_wx=media_map_arr_wx;
+                }else{
+                  for(let i=0;i<10;i++){
+                    media_map_arr_big_wx.push(media_map_arr_wx[i])
+                  }
+                  _this.fix_media_wx=media_map_arr_big_wx;
+                }
+              
+              }
+                let media_map_arr=[];
+                let media_map_arr_big=[];
+                for(let k in fix_map.data){
+                  let obj={};
+                  obj.name=k;
+                  obj.num=fix_map.data[k];
+                  obj.fontbg=false;
+                  media_map_arr.push(obj)
+                }
+                media_map_arr.sort(Sort('num'))
+                if(media_map_arr.length<10){
+                  _this.fix_media=media_map_arr;
+                }else{
+                  for(let i=0;i<10;i++){
+                    media_map_arr_big.push(media_map_arr[i])
+                  }
+                  _this.fix_media=media_map_arr_big;
+                }
+                
+               /* console.log(_this.fix_media)                
+                console.log(_this.fix_media_wx)                
+                console.log(_this.fix_media_xinwen) */               
+            //初始化总数据的publishTime转化
+             let t=0;
+            for(let i=0;i<_this.data.length;i++){
+               _this.data[i].article.publishTime=new Date(_this.data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
+               //初始化数据的reprintList的publishTime转化
+               if(_this.data[i].article.reprintList){
+                for(let j=0;j<_this.data[i].article.reprintList.length;j++){
+                  _this.data[i].article.reprintList[j].publishTime=new Date(_this.data[i].article.reprintList[j].publishTime).Format("yyyy-MM-dd hh:mm:ss");
+                  t++;
+                }
+               }
+            }
+             _this.reprintList_size=t;
+            if(echart){
+                _this.show_echarts()
+              }
+            if(more_echarts){
+              _this.more_echarts()
+            } 
+            if(type_echarts){
+              _this.type_echarts_xinwen();
+              _this.type_echarts_wx();
+            } 
     },
     write_polar (article_id,article_articleType,articlePolar,article_polar) {
       let _this=this;
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       $.ajax ({
-        url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/article/'+article_id,
+        url:'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/article/'+article_id,
         type:'POST',
         data:{
           "method":"POST", //http请求为 POST
@@ -1375,9 +1204,6 @@ export default {
             _this.diaoxing_visible=''
           }
           
-        },
-        error:function(){
-          console.log("调性修改-----失败回调函数-------------------");
         }
       });
     },
@@ -1396,6 +1222,7 @@ export default {
       $('#show_button').css('display','none');           
     },
     search_start () {
+      this.loading_start=true;
         //必须包含关键词回传数据 mustIncludeKeywordList
        let allkeyword=this.allkeyword;
        if(allkeyword){
@@ -1420,20 +1247,10 @@ export default {
         $('#table').css('display','none'); 
         $('#loading_table').css('display','block');
         $('.echarts_content').css('display','none')
-        this.search_data(project_id,-1,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1],true,true);
+        this.search_data(this.current_jushuNum,project_id,-1,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1],true,true);
         this.mustIncludeKeywordList=null;
         this.anyIncludeKeywordList=null
         this.notIncludeKeywordList=null;
-    },
-    zheng (a) {
-      console.log(this.data)
-      this.write_polar(a.article.id,a.article.articleType,a,1);
-    },
-    zhong (a) {
-      this.write_polar(a.article.id,a.article.articleType,a,0);
-    }, 
-    fu (a) {
-      this.write_polar(a.article.id,a.article.articleType,a,-1);
     },
     wuguan (a) {
       let _this=this;
@@ -1447,11 +1264,8 @@ export default {
           "articleId":a.article.id
           }
         ]
-
-      console.log(JSON.stringify(articleRecycleDtoList))
-      //console.log(articleRecycleDto.articleDtoList)
       $.ajax({
-      url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/recycle/article",
+      url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
       type:"POST",//此处只能选用POST请求
       dataType:"json",
       contentType:"application/json",
@@ -1462,6 +1276,7 @@ export default {
             let oid=[];
             oid[0]=a.article.id;
             _this.data=_this.data.filter(item => { return oid.indexOf(item.article.id) === -1; }); 
+            _this.$store.state.list_Data=_this.data;
             _this.format_tabledata();
           }
        }
@@ -1478,168 +1293,6 @@ export default {
       this.currentPage = val;
         this.format_tabledata();
       },
-    //修改分类提示框
-    write (i,j) {    
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;      
-      //获取项目下关键词
-      $.ajax({
-           type: "GET",
-           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
-           traditional: true,
-           data: {
-               "method": 'get'
-           },
-           success: function(data){
-            for(let i=0;i<data.data.keywordList.length;i++){
-              if(data.data.keywordList[i].isIncluded==0){
-                  _this.notags.push(data.data.keywordList[i].name);
-                  _this.excludeKeywords.push(data.data.keywordList[i]);
-              }else{
-                _this.tags.push(data.data.keywordList[i].name);
-                _this.includeKeywords.push(data.data.keywordList[i]);
-              }
-             } 
-            }
-          })
-      this.classify_dialog = true;
-      this.dialog_type = '编辑分类';
-      this.classify_input = i.name;
-      this.classify_index = j;
-        $.ajax({
-           type: 'GET',
-           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category/'+i.id+'',
-           traditional: true,
-           data: {
-          'method': 'get',
-           },
-           success: function(data){
-            _this.notkw=[];
-            _this.kw=[];
-              for(let i=0;i<data.data.keywordList.length;i++){
-              if(data.data.keywordList[i].isIncluded==0){
-                _this.notkw.push(data.data.keywordList[i].name);  
-                _this.notags=_this.notags.filter(item => { return _this.notkw.indexOf(item) === -1; });          
-              }else{
-               _this.kw.push(data.data.keywordList[i].name);                
-                _this.tags=_this.tags.filter(item => { return _this.kw.indexOf(item) === -1; });
-              }
-             } 
-           }
-      })
-      this.kw=[];
-      this.notkw=[];
-      this.tags=[];
-      this.notags=[];
-    },
-    //添加分类提示框
-    addClassify () {
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;      
-      //获取项目下关键词
-      $.ajax({
-           type: "GET",
-           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
-           traditional: true,
-           data: {
-               "method": 'get'
-           },
-           success: function(data){
-            for(let i=0;i<data.data.keywordList.length;i++){
-              if(data.data.keywordList[i].isIncluded==0){
-                  _this.notags.push(data.data.keywordList[i].name);
-                  _this.excludeKeywords.push(data.data.keywordList[i]);
-              }else{
-                _this.tags.push(data.data.keywordList[i].name);
-                _this.includeKeywords.push(data.data.keywordList[i]);
-              }
-             } 
-            }
-          })
-      this.classify_dialog = true;
-      this.dialog_type = '添加分类';
-      this.classify_input='';
-      this.kw=[];
-      this.notkw=[];
-      this.tags=[];
-      this.notags=[];
-
-    }, 
-    //删除分类   
-    del_classify (i,j) {
-      let allkeyword=this.allkeyword;
-       if(allkeyword){
-        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
-        this.mustIncludeKeywordList=allkeyword.split(',')
-       }
-        let keywordyoulike=this.keywordyoulike;
-         if(keywordyoulike){
-          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
-          this.anyIncludeKeywordList=keywordyoulike.split(',')
-         }
-         //必须不包含关键词回传数据 notIncludeKeywordList
-         let nokeyword=this.nokeyword;
-         if(nokeyword){
-          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
-          this.notIncludeKeywordList=nokeyword.split(',')
-         }
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;
-      this.$confirm('是否删除'+' '+i.name+' '+'分类?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-      }).then(() => {
-        $.ajax({
-                 type:'POST',
-                 url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
-                 traditional: true,
-                 data: {
-                'method': 'delete',
-                'delCateIds': [i.id]
-                 },
-                 success: function(data){
-                    $.ajax({
-                             type: 'GET',
-                             url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
-                             traditional: true,
-                             data: {
-                            'method': 'get',
-                             },
-                             success: function(data){
-                              if(data.data!=null){
-                                for(let i=0;i<data.data.categoryList.length;i++){
-                                  data.data.categoryList[i].bg=false;
-                                  data.data.categoryList[i].fa=false;
-                                 }
-                                 console.log(data.data.categoryList)
-                                  data.data.categoryList[data.data.categoryList.length-1].bg=true;
-                                  _this.classify=[{name:'全部','bg':false,'fa':true,id:-1}];
-                                  _this.classify=_this.classify.concat(data.data.categoryList);
-                                  $('#table').css('display','none')
-                                 _this.data=[];
-                                  _this.search_data(project_id,data.data.categoryList[data.data.categoryList.length-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);
-                                  _this.mustIncludeKeywordList=null;
-                                _this.anyIncludeKeywordList=null
-                                _this.notIncludeKeywordList=null;
-                              }else{
-                                _this.classify=[{name:'全部','bg':true,'fa':true,id:-1}];
-                                $('.echarts_content').css('display','none')
-                                $('#table').css('display','none')
-                                _this.data=[];
-                                _this.search_data(project_id,-1,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1]);
-                                _this.mustIncludeKeywordList=null;
-                              _this.anyIncludeKeywordList=null
-                              _this.notIncludeKeywordList=null;
-                              }   
-                            }    
-                        })
-                 }
-            })
-        //this.classify.splice(this.classify.indexOf(i), 1);//shanchu
-      }).catch(() => {        
-      });
-    },
     del_third_card (i) {
       this.$confirm('是否删除'+' '+i.name+' '+'方案?', '提示', {
         confirmButtonText: '确定',
@@ -1649,198 +1302,6 @@ export default {
         this.third_card.splice(this.third_card.indexOf(i), 1);//shanchu
       }).catch(() => {        
       });
-    },
-    //添加分类
-    add_classify () {
-      
-      let allkeyword=this.allkeyword;
-       if(allkeyword){
-        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
-        this.mustIncludeKeywordList=allkeyword.split(',')
-       }
-        let keywordyoulike=this.keywordyoulike;
-         if(keywordyoulike){
-          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
-          this.anyIncludeKeywordList=keywordyoulike.split(',')
-         }
-         //必须不包含关键词回传数据 notIncludeKeywordList
-         let nokeyword=this.nokeyword;
-         if(nokeyword){
-          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
-          this.notIncludeKeywordList=nokeyword.split(',')
-         }
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;
-      let inid=[],
-          exid=[];
-      this.includeKeywords=this.includeKeywords.filter(item => { return this.kw.indexOf(item.name) != -1; }); 
-      for(let i=0;i<this.includeKeywords.length;i++){
-        inid.push(this.includeKeywords[i].id)
-      }
-      this.excludeKeywords=this.excludeKeywords.filter(item => { return this.notkw.indexOf(item.name) != -1; }); 
-      for(let i=0;i<this.excludeKeywords.length;i++){
-        exid.push(this.excludeKeywords[i].id)
-      }
-      if(inid.length==0){
-        this.$message({
-          message: '填写错误哦，请最少选择一条关键词或排除词',
-          type: 'warning'
-        });
-        this.classify_dialog = false;
-      }else{
-        $.ajax({
-         type: "POST",
-         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
-         traditional: true,
-         data: {
-        'method': 'post',
-        'category.name': this.classify_input ? this.classify_input : '无命名',
-        'category.remark': null,
-        'includeKeywordIds': inid,
-        'excludeKeywordIds': exid
-         },
-          success: function(data){
-                $.ajax({
-                       type: 'GET',
-                       url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
-                       traditional: true,
-                       data: {
-                      'method': 'get',
-                       },
-                       success: function(data){
-                        if(data.data.categoryList!=null){
-                          for(let i=0;i<data.data.categoryList.length;i++){
-                            data.data.categoryList[i].bg=false;
-                            data.data.categoryList[i].fa=false;
-                           }
-                            data.data.categoryList[data.data.categoryList.length-1].bg=true;
-                            _this.classify=[{name:'全部','bg':false,'fa':true,id:-1}];
-                            _this.classify=_this.classify.concat(data.data.categoryList);
-                            $('.echarts_content').css('display','none')
-                            $('#table').css('display','none')
-                             _this.data=[];
-                             console.log(_this.mustIncludeKeywordList)
-                            _this.search_data(project_id,data.data.categoryList[data.data.categoryList.length-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);
-                            _this.mustIncludeKeywordList=null;
-                            _this.anyIncludeKeywordList=null
-                            _this.notIncludeKeywordList=null;
-                        }else{
-                        }   
-                      }    
-                  })
-                _this.classify_dialog = false;
-             }
-        })
-      }
-      this.classify_input='';
-      this.kw=[];
-      this.notkw=[];
-    },
-    //修改分类
-    write_classify () {
-      let allkeyword=this.allkeyword;
-       if(allkeyword){
-        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
-        this.mustIncludeKeywordList=allkeyword.split(',')
-       }
-        let keywordyoulike=this.keywordyoulike;
-         if(keywordyoulike){
-          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
-          this.anyIncludeKeywordList=keywordyoulike.split(',')
-         }
-         //必须不包含关键词回传数据 notIncludeKeywordList
-         let nokeyword=this.nokeyword;
-         if(nokeyword){
-          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
-          this.notIncludeKeywordList=nokeyword.split(',')
-         }
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this; 
-      let inid=[],
-          exid=[];
-      this.includeKeywords=this.includeKeywords.filter(item => { return this.kw.indexOf(item.name) != -1; }); 
-      for(let i=0;i<this.includeKeywords.length;i++){
-        inid.push(this.includeKeywords[i].id)
-      }
-      this.excludeKeywords=this.excludeKeywords.filter(item => { return this.notkw.indexOf(item.name) != -1; }); 
-      for(let i=0;i<this.excludeKeywords.length;i++){
-        exid.push(this.excludeKeywords[i].id)
-      }
-      console.log(inid)
-      if(inid.length==0){
-        this.$message({
-          message: '填写错误哦，请最少选择一条关键词',
-          type: 'warning'
-        });
-            $.ajax({
-               type: "GET",
-               url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
-               traditional: true,
-               data: {
-                   "method": 'get'
-               },
-               success: function(data){
-                console.log(data)
-                for(let i=0;i<data.data.keywordList.length;i++){
-                  if(data.data.keywordList[i].isIncluded==0){
-                      _this.excludeKeywords.push(data.data.keywordList[i]);
-
-                  }else{
-                    _this.includeKeywords.push(data.data.keywordList[i]);
-                  }
-                 } 
-                }
-              })
-      }else{
-           $.ajax({
-           type: 'POST',
-           url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category/'+this.classify[this.classify_index].id+'',
-           traditional: true,
-           data: {
-          'method': 'put',
-          'category.name': this.classify_input ? this.classify_input : '无命名',
-          'category.remark': null,
-          'includeKeywordIds': inid,
-          'excludeKeywordIds': exid
-           },
-           success: function(data){
-              $.ajax({
-                       type: 'GET',
-                       url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/category',
-                       traditional: true,
-                       data: {
-                      'method': 'get',
-                       },
-                       success: function(data){
-                        if(data.data.categoryList!=null){
-                          for(let i=0;i<data.data.categoryList.length;i++){
-                            data.data.categoryList[i].bg=false;
-                            data.data.categoryList[i].fa=false;
-                           }
-                            data.data.categoryList[_this.classify_index-1].bg=true;
-                            _this.classify=[{name:'全部','bg':false,'fa':true,id:-1}];
-                            _this.classify=_this.classify.concat(data.data.categoryList);
-                            $('.echarts_content').css('display','none')
-                            $('#table').css('display','none')
-                             _this.data=[];
-                            _this.search_data(project_id,data.data.categoryList[_this.classify_index-1].id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true);
-                            _this.mustIncludeKeywordList=null;
-                            _this.anyIncludeKeywordList=null
-                            _this.notIncludeKeywordList=null;
-                        }else{
-
-                        }   
-                      }    
-                  })
-                _this.classify_dialog = false;
-            }
-          })
-     }
-      /*console.log(this.classify[this.classify_index].id)
-        this.classify[this.classify_index].kw = this.kw;
-        this.classify[this.classify_index].notkw = this.notkw;
-        this.classify[this.classify_index].name = this.classify_input;
-        this.classify_dialog = false;*/
     },
     add_third_card () {
       $.each(this.third_card,function(i,j){
@@ -1855,40 +1316,6 @@ export default {
     },
     toggleclass (i) {
       $.each(this.third_card,function(i,j){
-        j.bg=false;
-      })
-      i.bg=true;
-    },
-    //切换分类
-    classify_toggleclass (i) {
-       let allkeyword=this.allkeyword;
-       if(allkeyword){
-        allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
-        this.mustIncludeKeywordList=allkeyword.split(',')
-       }
-        let keywordyoulike=this.keywordyoulike;
-         if(keywordyoulike){
-          keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
-          this.anyIncludeKeywordList=keywordyoulike.split(',')
-         }
-         //必须不包含关键词回传数据 notIncludeKeywordList
-         let nokeyword=this.nokeyword;
-         if(nokeyword){
-          nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
-          this.notIncludeKeywordList=nokeyword.split(',')
-         }
-      this.first_options=[];
-      this.second_options=[];
-      $('.echarts_content').css('display','none')
-      this.data=[];
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      $('#table').css('display','none')   
-      $('#loading_table').css('display','block');  
-      this.search_data(project_id,i.id,this.articleType,this.mustIncludeKeywordList,this.anyIncludeKeywordList,this.notIncludeKeywordList,this.queryType,this.polar_arr,0,this.time[0],this.time[1],true,false,true);
-      this.mustIncludeKeywordList=null;
-      this.anyIncludeKeywordList=null
-      this.notIncludeKeywordList=null;
-      $.each(this.classify,function(i,j){
         j.bg=false;
       })
       i.bg=true;
@@ -2077,7 +1504,9 @@ export default {
         }
         //生成 微信媒体省份地域热图数据
         for(let j=0;j<weixinData[i].mediaProvinceMap.length;j++){
+           //console.log(weixinData[i])
           let media_province=weixinData[i].mediaProvinceMap[j];  //获取微信媒体省
+
           if(wx_media_map.get(media_province)==null){
             wx_media_map.put(media_province,1)
           }else{
@@ -2178,6 +1607,7 @@ export default {
         wx_province.sort(Sort('num'));
         //微信媒体省份地域热图数据排序
         media_province.sort(Sort('num'));
+        console.log(media_province)
         //新闻top数据排序
         news_top.sort(Sort_down('num'));
        /*  console.log(news_top.length)*/
@@ -3101,120 +2531,6 @@ export default {
         console.log(this.wx_first_options)
         this.wx_first_schemeId=this.wx_first_options[0].schemeId;
       };
-      //人物组织关系
-     /* let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      $.ajax({
-        url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/event",
-        type:"GET",
-        data:{
-          "method":"GET",
-          "proId":project_id,
-          "startTime":_this.time[0],//开始时间
-           "endTime":_this.time[1],
-           "articleType":2,
-           "perNum":5,
-           "locNum":5,
-           "orgNum":5,
-           "topicNum":1//议题数量
-        },
-        success:function(data){
-          //$('#loading_renwuzuzhi').css('display','none;')
-          for(let z=0;z<data.data.length;z++){
-            if(data.data[z].locationSet){
-              data.data[z].locationSet.sort(Sort('score'));
-              if(data.data[z].locationSet.length>10){
-                data.data[z].locationSet=data.data[z].locationSet.slice(0,10);
-              }
-            }
-            if(data.data[z].orgSet){
-              data.data[z].orgSet.sort(Sort('score'));
-              if(data.data[z].orgSet.length>10){
-                data.data[z].orgSet=data.data[z].orgSet.slice(0,10);
-              }
-            }
-            if(data.data[z].personSet){
-              data.data[z].personSet.sort(Sort('score'));
-              if(data.data[z].personSet.length>10){
-                data.data[z].personSet=data.data[z].personSet.slice(0,10);
-              }
-            }
-          }
-          _this.personSet=data.data[0].personSet;
-          _this.locationSet=data.data[0].locationSet;
-          _this.orgSet=data.data[0].orgSet;
-          //echarts
-          console.log(_this.personSet);
-          function random(){
-            return 100*Math.random();
-          }
-          let guanxi_arr=[];
-          let guanxi_arr_link=[];
-          for(let i=0;i<_this.personSet.length;i++){
-            let obj=new Object();
-            let obj_link=new Object();
-            obj.name=_this.personSet[i].mention;
-            obj.x=random();
-            obj.y=random();
-            guanxi_arr.push(obj);
-            obj_link.source=_this.personSet[i].mention;
-            obj_link.target=_this.personSet[parseInt(1+4*Math.random())].mention;
-            obj_link.lineStyle={
-                    normal: { curveness: 0.2 }
-                };
-            if(obj_link.source==obj_link.target){
-              obj_link.source=_this.personSet[0].mention;
-              obj_link.target=_this.personSet[i].mention;
-              obj_link.lineStyle=null;
-            }
-            guanxi_arr_link.push(obj_link)
-          }
-           console.log(guanxi_arr);
-           console.log(guanxi_arr_link);
-          
-          let echarts_guanxi = echarts.init(document.getElementById('echarts_guanxi')); 
-          let option_guanxi={
-                  title: {
-                      text: '人物'
-                  },
-                  tooltip: {},
-                  animationDurationUpdate: 1500,
-                  animationEasingUpdate: 'quinticInOut',
-                  series : [
-                      {
-                          type: 'graph',
-                          layout: 'none',
-                          symbolSize: 50,
-                          roam: true,
-                          label: {
-                              normal: {
-                                  show: true
-                              }
-                          },
-                          edgeSymbol: ['circle', 'arrow'],
-                          edgeSymbolSize: [4, 10],
-                          edgeLabel: {
-                              normal: {
-                                  textStyle: {
-                                      fontSize: 20
-                                  }
-                              }
-                          },
-                          data:guanxi_arr,
-                          links:guanxi_arr_link,
-                          lineStyle: {
-                              normal: {
-                                  opacity: 0.9,
-                                  width: 2,
-                                  curveness: 0
-                              }
-                          }
-                      }
-                  ]
-              };
-              echarts_guanxi.setOption(option_guanxi);
-        }
-      });*/
-
     },
     renwuzuzhi_search () {
       this.renwuzuzhi_loading=true;
@@ -3231,7 +2547,7 @@ export default {
       _this.orgSet=[];
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       $.ajax({
-        url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/entity",
+        url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/entity",
         type:"GET",
         data:{
           "method":"GET",
@@ -3270,76 +2586,6 @@ export default {
           _this.personSet=data.data.perList;
           _this.locationSet=data.data.locList;
           _this.orgSet=data.data.orgList;
-          //echarts
-          /*console.log(_this.personSet);
-          function random(){
-            return 100*Math.random();
-          }
-          let guanxi_arr=[];
-          let guanxi_arr_link=[];
-          for(let i=0;i<_this.personSet.length;i++){
-            let obj=new Object();
-            let obj_link=new Object();
-            obj.name=_this.personSet[i].mention;
-            obj.x=random();
-            obj.y=random();
-            guanxi_arr.push(obj);
-            obj_link.source=_this.personSet[i].mention;
-            obj_link.target=_this.personSet[parseInt(1+(_this.personSet.length-1)*Math.random())].mention;
-            obj_link.lineStyle={
-                    normal: { curveness: 0.2 }
-                };
-            if(obj_link.source==obj_link.target){
-              obj_link.source=_this.personSet[0].mention;
-              obj_link.target=_this.personSet[i].mention;
-              obj_link.lineStyle=null;
-            }
-            guanxi_arr_link.push(obj_link)
-          }
-           console.log(guanxi_arr);
-           console.log(guanxi_arr_link);
-          
-          let echarts_guanxi = echarts.init(document.getElementById('echarts_guanxi')); 
-          let option_guanxi={
-                  title: {
-                      text: '人物'
-                  },
-                  tooltip: {},
-                  animationDurationUpdate: 1500,
-                  animationEasingUpdate: 'quinticInOut',
-                  series : [
-                      {
-                          type: 'graph',
-                          layout: 'none',
-                          symbolSize: 50,
-                          roam: true,
-                          label: {
-                              normal: {
-                                  show: true
-                              }
-                          },
-                          edgeSymbol: ['circle', 'arrow'],
-                          edgeSymbolSize: [4, 10],
-                          edgeLabel: {
-                              normal: {
-                                  textStyle: {
-                                      fontSize: 20
-                                  }
-                              }
-                          },
-                          data:guanxi_arr,
-                          links:guanxi_arr_link,
-                          lineStyle: {
-                              normal: {
-                                  opacity: 0.9,
-                                  width: 2,
-                                  curveness: 0
-                              }
-                          }
-                      }
-                  ]
-              };
-              echarts_guanxi.setOption(option_guanxi);*/
         }
       });
     },
@@ -3899,7 +3145,7 @@ export default {
         combineErrorList.push(obj);
       }
       $.ajax({
-        url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/article/combineError',
+        url:'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/article/combineError',
         type:'POST',
         dataType:"json",
         contentType:"application/json",
@@ -3919,9 +3165,6 @@ export default {
             _this.reprintList_data=_this.reprintList_data.filter(item => { return idarr.indexOf(item.id) === -1; });
             _this.$refs.table.clearSelection(_this.selection);  
           }       
-        },
-        error:function(data){
-            console.log("合并错误反馈-----失败回调函数-------------------");
         }
       }); 
       
@@ -3940,7 +3183,7 @@ export default {
       ]
       console.log(JSON.stringify(articleRecycleDtoList))
       $.ajax({
-      url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/recycle/article",
+      url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
       type:"POST",//此处只能选用POST请求
       dataType:"json",
       contentType:"application/json",
@@ -3984,7 +3227,7 @@ export default {
         articleDtoList.push(obj);
       }
       $.ajax({
-      url:"http://192.168.1.2:8080/rs0/api/v1.1/project/"+project_id+"/recycle/article",
+      url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
       type:"POST",//此处只能选用POST请求
       dataType:"json",
       contentType:"application/json",
@@ -4006,9 +3249,11 @@ export default {
     },
     Mover(a){
       this.$refs.list[a].style.boxShadow='7px 7px 6px rgba(220,220,220,.6)'
+      this.$refs.del_img[a].style.display='inline-block'
     }, 
     Mout(a){
       this.$refs.list[a].style.boxShadow=''
+      this.$refs.del_img[a].style.display='none'
     },
     Mover_articleList (i) {
         this.$refs.dialog_xw_articlelist[i].style.color="#00a17c"
@@ -4017,6 +3262,7 @@ export default {
         this.$refs.dialog_xw_articlelist[i].style.color="rgb(72,87,106)"
       },
       date_change (){
+        Date.prototype.toJSON = function () { return this.toLocaleString(); }
         if(this.time[0]==undefined||this.time[1]==undefined||this.time[1].getTime()<this.time[0].getTime()){
           this.time=[new Date(new Date().getTime()-604800000), new Date()];
           this.$message({
@@ -4025,147 +3271,12 @@ export default {
             });
          }
       },
-    //时间变化刷新数据
-    /*date_change () {
-      //必须包含关键词回传数据 mustIncludeKeywordList
-     let allkeyword=this.allkeyword;
-     if(allkeyword){
-      allkeyword=allkeyword.replace(/，/ig,','); //转化逗号
-      this.mustIncludeKeywordList=allkeyword.split(',')
-     }
-     //包含任意关键词回传数据 anyIncludeKeywordList
-     let keywordyoulike=this.keywordyoulike;
-     if(keywordyoulike){
-      keywordyoulike=keywordyoulike.replace(/，/ig,','); //转化逗号
-      this.anyIncludeKeywordList=keywordyoulike.split(',')
-     }
-     //必须不包含关键词回传数据 notIncludeKeywordList
-     let nokeyword=this.nokeyword;
-     if(nokeyword){
-      nokeyword=nokeyword.replace(/，/ig,','); //转化逗号
-      this.notIncludeKeywordList=nokeyword.split(',')
-     }
-      $('#filter_time>button').removeClass('warning')
-      let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-        _this.first_options=[];
-        _this.second_options=[];
-        _this.data=[];
-        let cate_id='';
-        for(let i=0;i<_this.classify.length;i++){
-          if(_this.classify[i].bg==true){
-           cate_id=_this.classify[i].id;
-          }
-        }
-        $('#table').css('display','none'); 
-        $('#loading_table').css('display','block');
-        $('.echarts_content').css('display','none')
-         _this.search_data(project_id,cate_id,_this.articleType,_this.mustIncludeKeywordList,_this.anyIncludeKeywordList,_this.notIncludeKeywordList,_this.queryType,_this.polar_arr,0,_this.time[0],_this.time[1],true,true); 
-         this.mustIncludeKeywordList=null;
-        this.anyIncludeKeywordList=null
-       this.notIncludeKeywordList=null;
-      },*/
-    //右边fix地图切换  
-    tabClick (tab, event) {
-      console.log(this.fix_media)
-    },
-    fix_media_name (a,b,c) {
-      $('#table').css('display','block');
-      $('#page').css('display','block');
-      $('#data_size').css('display','block');
-      let fix_data=this.fix_data;
-      if(a.fontbg==true){
-        this.data=this.fix_data;
-        let t=0;
-        for(let i=0;i<this.data.length;i++){
-          if(this.data[i].article.reprintList){
-            for(let j=0;j<this.data[i].article.reprintList.length;j++){
-              t++;
-            }
-          }
-        }
-        this.reprintList_size=t;
-        this.format_tabledata();
-        a.fontbg=false;
-      }else{
-        $.each(b,function(i,j){
-        j.fontbg=false;
-      })
-      a.fontbg=true;
-      let fix_arr=[];
-      for(let i=0;i<fix_data.length;i++){
-          if(fix_data[i].article.media.indexOf(a.name)!==-1){
-            fix_arr.push(fix_data[i])
-          };
-       }; 
-      this.data=fix_arr;
-      let t=0;
-        for(let i=0;i<this.data.length;i++){
-          if(this.data[i].article.reprintList){
-            for(let j=0;j<this.data[i].article.reprintList.length;j++){
-              t++;
-            }
-          }
-        }
-        this.reprintList_size=t;
-      this.format_tabledata();
-      }
+    dropdown_jushu(command){
+      this.current_jushuNum=command
     },
     ct_click(i,n){
       console.log(i)
       window.open(i.linkedUrl)
-        /*$('#dialog_ct_list').css('border','0px solid rgb(220,220,220)')
-        let _this=this;
-        _this.ct_size='';
-        _this.ct_name='';
-        _this.ct_data=[];
-        $('#loading_ct').css('display','block');
-        let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-         _this.dialogCt=true;
-        $.ajax({
-          url:'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/entityArticle',
-          method:'GET',
-          traditional:true,
-          data:{
-            "method":"GET", //HTTP请求方法
-            "proId":project_id,//项目id  String 字符串
-            "articleType":_this.articleType,//文章类型
-            "entityType":n, //实体类型
-            "entityName":i.mention, //实体名称
-            "startTime":_this.time[0],//开始时间
-            "endTime":_this.time[1]//截止时间  
-          },
-          success:function(data){
-            if(data.data==null){
-              $('#dialog_ct_list').css('display','none')
-              $('#dialog_ct_list').html(`<p style="text-align:center" >暂无数据</p>`);
-              _this.ct_name=i.mention;
-              _this.ct_url=i.linkedUrl;
-            }else{
-              $('#dialog_ct_list>p').not('#loading_ct').css('display','none')
-              $('#loading_ct').css('display','block')
-              $('#dialog_ct_list').css('border','1px solid rgb(220,220,220)')
-              _this.ct_size=data.data.length;
-              _this.ct_name=i.mention;
-              _this.ct_url=i.linkedUrl;
-              _this.ct_data=data.data;
-              //初始表格数据
-              let newdata=[];
-              if(_this.ct_data.length>10){
-                for(let c=0;c<10;c++){
-                newdata.push(_this.ct_data[c])
-                }
-              }else{
-                newdata=_this.ct_data
-              }
-              _this.ct_data_list=newdata;
-            }
-          },
-          error:function(data){
-            alert("实体相关文章查询  ------失败回调函数-------------------")
-          }
-        });
-         _this.ct_data_list=[];*/
       },
       click_ct_list(i){
          window.open(i.article.url)

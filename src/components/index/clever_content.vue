@@ -130,7 +130,7 @@
     </div>  
     <el-dialog title="相关文章" v-model="dialogVisible" size="tiny" id="dialog_add">
       <clevernext></clevernext>
-      <el-button @click="dialogVisible = false" style="left: 34%;color:white;background-color:#f6a623;border-color: #f6a623;padding: 9px 16px;position: absolute;bottom: 30px;">取 消</el-button>
+      <el-button @click="dialogVisible = false" style="left: 34%;color:white;background-color:#f6a623;border-color: #f6a623;padding: 9px 16px;position: absolute;bottom: 10px;">取 消</el-button>
       <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" style="margin-right: 10%;color:white;background-color:#f6a623;border-color: #f6a623;padding: 7px 15px; ">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false" style="margin-right: 35%;background-color:#00b38a;border-color: #00b38a;padding: 7px 15px;">确 定</el-button>

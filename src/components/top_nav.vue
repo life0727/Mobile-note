@@ -2,7 +2,8 @@
   <div class="index_nav" >     
         <ul class="nav navbar-nav " style="width: 1250px;;margin: 0 auto;position: relative; ">
           <li><a href="#/main/list"><img src="../assets/icon/793549342520256102.png" style="margin-top: -16px;" ></a></li>
-          <li style="margin-left: 2%;"><a href="#/main/list" :class="this.$route.path=='/all_net_analysis' ?  '' : 'active'" >舆情监测</a></li>
+          <li style="margin-left: 2%;"><a href="#/main/list" :class="this.$route.path=='/main/list' ?  'active' : ''" >舆情监测</a></li>
+          <li><a href="#custom" :class="this.$route.path=='/custom' ?  'active' : ''">客户管理</a></li>
           <li><a href="#all_net_analysis" :class="this.$route.path=='/all_net_analysis' ?  'active' : ''">全网分析</a></li>
           <li><a href="javascript:;" style="line-height:38px;font-size: 18px"><b>. . .</b></a></li>
           <li  style="position: absolute;right: 80px;">
@@ -82,17 +83,17 @@ export default{
       let _this=this; 
       $.ajax({
          type: "GET",
-         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
          traditional: true,
          data: {
              "method": 'get'
          },
          success: function(data){
             if(data.data.projectList.length<1){
-              window.location.href='#/index/clever'
+              window.location.href='#/index/clever';
             }else{
                _this.item=data.data.projectList;
-               _this.current_item=data.data.projectList[0].name;
+               _this.current_item=data.data.projectList[0].name; 
               window.sessionStorage.setItem('start',JSON.stringify(_this.current_item));
             }
          }
@@ -101,7 +102,7 @@ export default{
       let _this=this; 
       $.ajax({
          type: "GET",
-         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
          traditional: true,
          data: {
              "method": 'get'
@@ -137,6 +138,8 @@ export default{
         sessionStorage.removeItem('orgSet');
         sessionStorage.removeItem('personSet');
         sessionStorage.removeItem('current_sort');
+        sessionStorage.removeItem('time0');
+        sessionStorage.removeItem('time1');
         window.location.reload();
         
       },
@@ -150,7 +153,7 @@ export default{
           if(a.name===_this.current_item){
               $.ajax({
                  type: "POST",
-                 url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+                 url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
                  traditional: true,
                  data: {
                      "method": 'delete',
@@ -160,7 +163,7 @@ export default{
                     if(data.success==true){
                       $.ajax({
                          type: "GET",
-                         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+                         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
                          traditional: true,
                          data: {
                              "method": 'get'
@@ -182,7 +185,7 @@ export default{
           }else{
                 $.ajax({
                  type: "POST",
-                 url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+                 url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
                  traditional: true,
                  data: {
                      "method": 'delete',
@@ -192,7 +195,7 @@ export default{
                     if(data.success==true){
                       $.ajax({
                          type: "GET",
-                         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+                         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
                          traditional: true,
                          data: {
                              "method": 'get'
@@ -224,12 +227,21 @@ export default{
     logout () {
       window.sessionStorage.clear();
     }  
-  }
+  },
+  watch:{
+      $route (to,from){
+        console.log(from)
+        if(from.path==='/main/event'){
+          console.log(4555)
+        }
+      }
+    }
 }
 </script>
 
 <style lang="scss" >
   .index_nav{
+    
     height: 78px;
     background: #090723;
     @media screen and (min-width:768px) {

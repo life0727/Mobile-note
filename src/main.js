@@ -17,10 +17,18 @@ if (!window.Promise) {
 
 const vuex_store=new Vuex.Store({
 	state:{
-		data:'',
-		start_data:'',
-		ajax_data:[],
-		threeList:{}
+    list_Data:'',//文章管理模块数据
+		data:'',//事件模块数据
+    ev_duibidata:'',//事件的对比数据
+		start_data:'',//事件模块原始数据
+    btn_daochu:false,//事件导出按钮状态
+    duibiButton:false,//展现事件表格的按钮隐藏或者显示状态
+    btn_org:false,
+    btn_media:false,
+    org_Data:'',//组织数据
+    org_duibiData:'',//组织的对比数据
+    media_Data:'',
+    media_duibiData:''//媒体的对比数据
 	},
 	mutations:{
         showUser(state){

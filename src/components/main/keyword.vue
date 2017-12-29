@@ -88,7 +88,9 @@
           <span style="font-size: 10px;margin-left: 66%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>    
         </div>  
       </form>
-
+        <p :style="{color:'#999',transition: '1s',opacity:show_moren}" class="moren">是否添加默认排除词：
+        <el-button type="info" :style="{display:show_moren==1? 'inline-block' : 'none'}" @click="add_moren">确 定</el-button> 
+        <el-button type="warning" :style="{display:show_moren==1? 'inline-block' : 'none'}"  @click="show_moren=0">取消</el-button></p>
     </el-form>
       <button type="button" class="btn  btn-md btn-inline-block " style="width:66px;margin-left: 46%;margin-top:4%;height: 34px;font-size: 18px;background-color: #00a17c;
     border-color: #00a17c;color: white;" @click="to_list">保存</button>
@@ -103,7 +105,7 @@ export default {
     $('.keyword').css('height',window.screen.height);
     $.ajax({
      type: "GET",
-     url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
+     url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/keyword',
      traditional: true,
      data: {
          "method": 'get'
@@ -119,7 +121,7 @@ export default {
         }else if(data.data.keywordList[i].isIncluded==6){
           _this.mustags.push(data.data.keywordList[i].name)
         }
-       } 
+       }
       }
     })
   },
@@ -139,53 +141,95 @@ export default {
           t_notags:[],
           t_notkw:'',
           mustags:[],
-          mustkw:''
+          mustkw:'',
+          show_moren:1,
+          keyword_flag:false
       }
   	},
   methods: {
+    add_moren(){
+        let _this=this;
+        $.ajax({
+               type: "POST",
+               url: 'http://192.168.0.3:8080/rs/api/v1.1/defaultExcludeKeyword',
+               data: {
+                   "method": 'get'
+               },
+               success: function(data){
+                _this.notags=_this.notags.concat(data.data);
+                _this.notags=Array.from(new Set(_this.notags));
+                _this.show_moren=0;
+               }
+          })
+      },
     to_list () {
       let _this=this;
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      if(this.mustags.length==0){
+      if(this.mustags.length+this.tags.length==0){
         this.$message({
-          message: '必须包含关键词不能为空哦',
+          message: '必须包含关键词和关键词不能同时为空',
           type: 'warning'
         });
       }else{
-        $.ajax({
-         type: "POST",
-         url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/keyword',
-         traditional: true,
-         data: {
-        'method': 'post',
-        'includeKeywords': this.tags,
-        'mustIncludeKeywords':this.mustags,
-        'titleExcludeKeywords':this.t_notags,
-        'contentExcludeKeywords': this.notags
-         },
-         success: function(data){
-            console.log(JSON.stringify(data));
-            console.log(data.success);
-            console.log(data.message);
-            console.log(_this.notags);
-            window.location.href='#/main/list'
-            $('.el-tabs__item:eq(0)').addClass('is-active');
-            $('.el-tabs__item:eq(1)').removeClass('is-active');
-         }
-        })
+        if(this.keyword_flag){
+          //console.log('giale')
+          $.ajax({
+             type: "POST",
+             url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/keyword',
+             traditional: true,
+             data: {
+            'method': 'post',
+            'includeKeywords': this.tags,
+            'mustIncludeKeywords':this.mustags,
+            'titleExcludeKeywords':this.t_notags,
+            'contentExcludeKeywords': this.notags
+             },
+             success: function(data){
+              _this.$store.state.list_Data='';//文章管理模块数据
+              _this.$store.state.data='';//事件模块数据
+              _this.$store.state.ev_duibidata='';//事件的对比数据
+              _this.$store.state.start_data='';//事件模块原始数据
+              _this.$store.state.btn_daochu=false;//事件导出按钮状态
+              _this.$store.state.btn_org=false;//组织按钮
+              _this.$store.state.org_Data='';//组织数据
+              _this.$store.state.org_duibiData='';//组织的对比数据
+              _this.$store.state.btn_media=false;//媒体按钮
+              _this.$store.state.media_Data='';//媒体数据
+              _this.$store.state.media_duibiData='';//媒体的对比数据
+                        _this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+                /*console.log(JSON.stringify(data));
+                console.log(data.success);
+                console.log(data.message);
+                console.log(_this.notags);
+                window.location.href='#/main/list'
+                $('.el-tabs__item:eq(0)').addClass('is-active');
+                $('.el-tabs__item:eq(1)').removeClass('is-active');*/
+             }
+          })
+        } 
       }     
     },
     handleClose(tag) {
         this.tags.splice(this.tags.indexOf(tag), 1);
+        this.keyword_flag=true;
       },
     nothandleClose(tag) {
         this.notags.splice(this.notags.indexOf(tag), 1);
+        if(this.notags.length==0){
+          this.show_moren=1;//恢复默认排除次提示
+        }
+        this.keyword_flag=true;
       }, 
       t_nothandleClose(tag) {
         this.t_notags.splice(this.t_notags.indexOf(tag), 1);
+        this.keyword_flag=true;
       },
      musthandleClose(tag){
       this.mustags.splice(this.mustags.indexOf(tag), 1);
+      this.keyword_flag=true;
      }, 
     create_tag () {
         let kw = this.kw;
@@ -203,7 +247,9 @@ export default {
                  }
               }else{
                 this.tags.push(kw);
-              }      
+              }   
+              this.tags=Array.from(new Set(this.tags));
+              this.keyword_flag=true;     
             }else{
               this.$message({
                             message: '请不要输入与排除词、关键词重复的内容',
@@ -229,7 +275,9 @@ export default {
                  }
               }else{
                 this.notags.push(notkw);
-              }      
+              } 
+              this.notags=Array.from(new Set(this.notags));
+              this.keyword_flag=true;      
             }else{
               this.$message({
                             message: '请不要输入与排除词、关键词重复的内容',
@@ -255,7 +303,9 @@ export default {
                  }
               }else{
                 this.t_notags.push(t_notkw);
-              }      
+              }     
+              this.t_notags=Array.from(new Set(this.t_notags));   
+              this.keyword_flag=true;  
             }else{
               this.$message({
                             message: '请不要输入与排除词、关键词重复的内容',
@@ -282,6 +332,8 @@ export default {
               }else{
                 this.mustags.push(mustkw);
               }      
+              this.mustags=Array.from(new Set(this.mustags)); 
+              this.keyword_flag=true;  
             }else{
               this.$message({
                         message: '请不要输入与排除词重复的内容',
@@ -320,6 +372,11 @@ export default {
     >hr{
       margin: 10px 0;
     }
+    .moren{
+          button{
+            margin-left: 20px;padding: 3px 3px;
+          }
+        }
     .form-horizontal{
         #name{
           border: 1px solid #ccc;

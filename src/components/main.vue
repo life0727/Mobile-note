@@ -36,7 +36,7 @@
                 <router-link to="/main/keyword"><div :class="this.$route.path=='/main/keyword' ? 'el-tabs__item is-active' : 'el-tabs__item'">关键词管理</div></router-link>
                 <router-link to="/main/event"><div :class="this.$route.path=='/main/event' ? 'el-tabs__item is-active' : 'el-tabs__item'">事件管理</div></router-link>
                 <router-link to="/main/org"><div :class="this.$route.path=='/main/org' ? 'el-tabs__item is-active' : 'el-tabs__item'">组织关系管理</div></router-link>
-                <router-link to="/main/media"><div :class="this.$route.path=='/main/media' ? 'el-tabs__item is-active' : 'el-tabs__item'">媒体关系管理</div></router-link>
+                <router-link to="/main/media"><div :class="this.$route.path=='/main/media' ? 'el-tabs__item is-active' : 'el-tabs__item'">媒体关系管理</div></router-link><router-link to="/main/compet"><div :class="this.$route.path=='/main/compet' ? 'el-tabs__item is-active' : 'el-tabs__item'">竞品管理</div></router-link>
                 <!-- <router-link to="/main/position"><div :class="this.$route.path=='/main/position' ? 'el-tabs__item is-active' : 'el-tabs__item'" >位置提示</div></router-link>
                 <router-link to="/main/indexnumber"><div :class="this.$route.path=='/main/indexnumber' ? 'el-tabs__item is-active' : 'el-tabs__item'">指数提示</div></router-link> -->
               </div>
@@ -73,7 +73,7 @@ import topnav from './top_nav.vue'
       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
       $.ajax({
                 type: "POST",
-                url: 'http://192.168.1.2:8080/rs0/api/v1.1/project/'+project_id+'/event/update',
+                url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/event/update',
                 data:{
                   "eventDtoList":JSON.stringify(Data)
                 },
@@ -89,11 +89,12 @@ import topnav from './top_nav.vue'
     watch:{
       $route (to,from){
         if(from.path==='/main/event'){
-          for(let i=0;i<this.$store.state.start_data.length;i++){
+          this.$store.state.start_data= this.$store.state.data;
+          //console.log(this.$store.state.EventIds)
+          /*for(let i=0;i<this.$store.state.start_data.length;i++){
               //data第一层判断
                 if(this.$store.state.start_data[i].label!==this.$store.state.data[i].label||this.$store.state.start_data[i].articleList.length!==this.$store.state.data[i].articleList.length||this.$store.state.start_data[i].keywordList.length!==this.$store.state.data[i].keywordList.length||this.$store.state.start_data[i].perList.length!==this.$store.state.data[i].perList.length||this.$store.state.start_data[i].locList.length!==this.$store.state.data[i].locList.length||this.$store.state.start_data[i].orgList.length!==this.$store.state.data[i].orgList.length){
                   //console.log(this.$store.state.articleList_idarr)
-                  /*console.log(this.$store.state.start_data[i]);*/
                       this.$confirm('是否保存对事件管理模块的修改?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -101,7 +102,7 @@ import topnav from './top_nav.vue'
                         type: 'warning'
                       }).then(() => {
                           this.$store.state.start_data= this.$store.state.data;
-                          this.Ajax(this.$store.state.ajax_data);
+                          //this.Ajax(this.$store.state.ajax_data);
                       }).catch(() => {
                         this.$store.state.data=this.$store.state.start_data;
                         this.$store.state.ajax_data=[];
@@ -116,7 +117,7 @@ import topnav from './top_nav.vue'
                         type: 'warning'
                         }).then(() => {
                            this.$store.state.start_data= this.$store.state.data;
-                           this.Ajax(this.$store.state.ajax_data);
+                           //this.Ajax(this.$store.state.ajax_data);
                         }).catch(() => {
                           this.$store.state.data=this.$store.state.start_data;
                           this.$store.state.ajax_data=[];
@@ -132,7 +133,7 @@ import topnav from './top_nav.vue'
                         type: 'warning'
                         }).then(() => {
                            this.$store.state.start_data= this.$store.state.data;
-                           this.Ajax(this.$store.state.ajax_data);
+                          // this.Ajax(this.$store.state.ajax_data);
                         }).catch(() => {
                           this.$store.state.data=this.$store.state.start_data;
                           this.$store.state.ajax_data=[];
@@ -155,7 +156,7 @@ import topnav from './top_nav.vue'
                       }
                     }  
                   }
-              }
+              }*/
         }else{}
       }
     },

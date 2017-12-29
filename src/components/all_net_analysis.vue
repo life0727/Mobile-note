@@ -62,6 +62,7 @@ export default {
   //$('#sum .el-badge__content').css({'padding':'1px 5px','border':'0px solid #fff'});
       this.search_xinwen();
       this.search_weixin();
+      this.$store.state.start_data= this.$store.state.data;
      //筛选时期
      $('#filter>button').not('#filter_name').click(function(){
       $(this).addClass('btn-warning').siblings().removeClass('btn-warning');
@@ -88,21 +89,30 @@ export default {
       $('#loading_weixin').css('display','block')
       $('#xinwen_top').css('display','none')
       $('#weixin_top').css('display','none') 
-       $('#filter>button').not('#filter_name').removeClass('btn-warning');    
-      this.search_xinwen();
-      this.search_weixin();
+       $('#filter>button').not('#filter_name').removeClass('btn-warning');  
+       if(this.time[0]==undefined||this.time[1]==undefined||this.time[1].getTime()<this.time[0].getTime()){
+          this.time=[new Date(new Date().getTime()-604800000), new Date()];
+          this.$message({
+              message: '请检查您的时间格式',
+              type: 'warning'
+            });
+         }else{
+          this.search_xinwen();
+          this.search_weixin();
+         }  
+      
     },
     search_xinwen () {
       //新闻top20数据
-        let xinwen_top_data_num=[];
+        let xinwen_top_data_num=[],_this=this;
         $.ajax({
-              url:'http://192.168.1.2:8080/rs0/api/v1.1/article/topn',
+              url:'http://192.168.0.3:8080/rs/api/v1.1/article/topn',
               type:'GET',
               data:{
                  topN:20, //topN前多少条
                  articleType:1, //新闻1 微信2  
-                 startTime:new Date(new Date().getTime()-604800000),
-                 endTime:new Date()
+                 startTime:_this.time[0],
+                 endTime:_this.time[1]
               },
               success:function(data){
                  /*alert("测试topN-----成功回调函数-------------------");
@@ -177,15 +187,15 @@ export default {
     },
     search_weixin () {
       //微信top20数据
-        let weixin_top_data_num=[];
+        let weixin_top_data_num=[],_this=this;
         $.ajax({
-          url:'http://192.168.1.2:8080/rs0/api/v1.1/article/topn',
+          url:'http://192.168.0.3:8080/rs/api/v1.1/article/topn',
           type:'GET',
           data:{
              topN:20, //topN前多少条
              articleType:2, //新闻1 微信2  
-             startTime:new Date(new Date().getTime()-604800000),
-             endTime:new Date()
+             startTime:_this.time[0],
+             endTime:_this.time[1]
           },
           success:function(data){
              /*alert("测试topN-----成功回调函数-------------------");

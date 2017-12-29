@@ -1,12 +1,12 @@
 <template>  
 <div class="clever_content_next ">
-  <el-form :label-position="labelPosition" label-width="120px" :model="formLabelAlign" style="margin-top: 3%; margin-left: 14%;width: 480px;">
+  <el-form :label-position="labelPosition" label-width="120px" :model="formLabelAlign" style="margin-top: 3%; margin-left: 14%;width: 100%;">
     <form class="form-horizontal">
       <div class="form-group" style="margin-bottom: 20px;">
        <!--  <label for="name" class="col-sm-2 control-label">方案名：</label> -->
         <div class="col-sm-10" style="border-radius:4px;padding:0 4px;width:80%;border: 1px solid #ccc;margin-left: 3px;">
           <img src="../../assets/icon/project.png" style="padding-left:5px;">
-          <input type="text" class="form-control" id="name" placeholder="输入项目名称" v-model="name" style="width:60%;display: inline-block">
+          <input type="text" class="form-control" id="name" placeholder="输入项目名称" v-model="name" style="width:60%;display: inline-block" @blur="pro_name">
         </div> 
       </div>
     </form>
@@ -85,7 +85,10 @@
         </el-tag>
           <input type="text" class="form-control" id="notkw" placeholder="输入排除词" @blur="notcreate_notag" v-model="notkw" @keyup.enter="notcreate_notag">
         </div> 
-        <span style="font-size: 10px;margin-left: 56%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>    
+        <span style="font-size: 10px;margin-left: 56%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
+        <p :style="{color:'#999',transition: '1s',opacity:show_moren}" class="moren">是否添加默认排除词：
+        <el-button type="info" :style="{display:show_moren==1? 'inline-block' : 'none'}" @click="add_moren">确 定</el-button> 
+        <el-button type="warning" :style="{display:show_moren==1? 'inline-block' : 'none'}"  @click="show_moren=0">取消</el-button></p>   
       </div>  
     </form>
     <p style="margin-left: -15px;margin-bottom: 0px !important;">备注信息：</p>
@@ -123,13 +126,33 @@
           t_notkw:'',
           mustags:[],
           mustkw:'',
-          remark:''
+          remark:'',
+          show_moren:0
       }
     },
     created : function () {
       //window.localStorage.setItem('sj',JSON.stringify(this.items)) 
+
     },
     methods:{
+      pro_name(){
+        this.show_moren=1;
+      },
+      add_moren(){
+        let _this=this;
+        $.ajax({
+               type: "POST",
+               url: 'http://192.168.0.3:8080/rs/api/v1.1/defaultExcludeKeyword',
+               data: {
+                   "method": 'get'
+               },
+               success: function(data){
+                _this.notags=_this.notags.concat(data.data);
+                _this.notags=Array.from(new Set(_this.notags));
+                _this.show_moren=0;
+               }
+          })
+      },
       handleClose(tag) {
         this.tags.splice(this.tags.indexOf(tag), 1);
       },
@@ -138,6 +161,9 @@
       },
       nothandleClose(tag) {
         this.notags.splice(this.notags.indexOf(tag), 1);
+        if(this.notags.length==0){
+          this.show_moren=1;//恢复默认排除次提示
+        }
       },
       t_nothandleClose(tag) {
         this.t_notags.splice(this.t_notags.indexOf(tag), 1);
@@ -150,15 +176,18 @@
             kw=kw.replace(/，/ig,','); //转化逗号
               let dd=kw.split(',');
               if(dd.length>1){ //若输入逗号即添加的数组长度大于一即链接
+                console.log(dd)
                 this.tags=this.tags.concat(dd);
                  for(var j=0;j<this.tags.length;j++){
+                  console.log(this.tags[j])
                   if(this.tags[j]==''){
                     this.tags.splice(j,1)
                   }
                  }
               }else{
                 this.tags.push(kw);
-              }      
+              }   
+              this.tags=Array.from(new Set(this.tags));   
             }else{
               this.$message({
                             message: '请不要输入与排除词、关键词重复的内容',
@@ -184,7 +213,8 @@
                  }
               }else{
                 this.mustags.push(mustkw);
-              }      
+              }
+              this.mustags=Array.from(new Set(this.mustags));      
             }else{
               this.$message({
                         message: '请不要输入与排除词重复的内容',
@@ -210,7 +240,8 @@
                  }
               }else{
                 this.notags.push(notkw);
-              }      
+              }   
+              this.notags=Array.from(new Set(this.notags));   
             }else{
               this.$message({
                             message: '请不要输入与排除词、关键词重复的内容',
@@ -236,7 +267,8 @@
                  }
               }else{
                 this.t_notags.push(t_notkw);
-              }      
+              }     
+              this.t_notags=Array.from(new Set(this.t_notags));  
             }else{
               this.$message({
                             message: '请不要输入与排除词、关键词重复的内容',
@@ -252,15 +284,15 @@
       kw_down () {
         /*window.localStorage.setItem('kw',JSON.stringify(this.tags))*/
         //window.sessionStorage.setItem('notkw',JSON.stringify('[this.notags]'))
-        if(this.name.length==0||this.mustags.length==0){
+        if(this.name.length==0||this.mustags.length+this.tags.length==0){
           this.$message({
-              message: '不要忘了写方案名或者必须包含关键词哦',
+              message: '不要忘了写方案名或者必须关键词和关键词不能同时为空',
               type: 'warning'
             });
         }else{
           $.ajax({
                type: "POST",
-               url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+               url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
                traditional: true,
                data: {
                    "method": 'post',
@@ -281,9 +313,6 @@
                }
           })
         }
-        console.log(this.name.length)
-        console.log(this.tags.length)
-
       }
     },
     computed:{
@@ -306,6 +335,11 @@
         opacity: 0.8;
       }
       .form-horizontal{
+        .moren{
+          button{
+            margin-left: 20px;padding: 3px 3px;
+          }
+        }
         #name{
           border:none;
           padding:0px 4px;

@@ -38,6 +38,8 @@
 			  </div>
 		</form>
 		<!-- <a href="#mess1" >登录</a> -->
+		<p style="text-align: center;margin-top: 100px;">版权所有 © 2005–2017 Rs, Inc. 保留全部权利。</p>
+		<p style="text-align: center;">Powered by Apereo Central Authentication Service 4.2.7 2017-09-08T15:34:26.000+08:00</p>
 	</div>
 <!-- 登录主体end -->	
 </div>	
@@ -57,6 +59,9 @@ import topnav from './top_nav.vue'
     	login () {
     		window.location.href="#index"
     	}
+    },
+    mounted(){
+    	    
     }
   }
 </script>

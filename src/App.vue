@@ -9,16 +9,10 @@
 export default {
   name: 'app',
   created :function () {
-    
-   
   },
   data () {
   	return {
-   
   	}
-  },
-  methods: {
-
   }
 }
 </script>

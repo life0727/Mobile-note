@@ -67,7 +67,7 @@
        console.log(getCookie('CASTGC')) */
        $.ajax({
             type: "POST",
-            url: 'http://192.168.1.2:8080/rs0/api/v1.1/project',
+            url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
             traditional: true,
             data: {
                 "method": 'post',
