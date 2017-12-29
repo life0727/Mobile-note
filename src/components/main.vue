@@ -1,5 +1,6 @@
 <template>  
 <div>
+<h1>hola</h1>
 <topnav></topnav>
   <div class="main container" style="background:#ffffff;padding: 0;">
     <div style="height:40px;width:100%;"></div>
