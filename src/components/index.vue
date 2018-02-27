@@ -38,7 +38,6 @@
 <script >
  import topnav from './top_nav.vue'
  import axios from 'axios'
- import {test} from '../assets/js/index.js'
   export default{
     data : function(){ 
         return{
@@ -67,7 +66,7 @@
        console.log(getCookie('CASTGC')) */
        $.ajax({
             type: "POST",
-            url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
+            url: 'api/v1.1/project',
             traditional: true,
             data: {
                 "method": 'post',
@@ -97,7 +96,6 @@
         
       },
     mounted:function(){
-      test();
        $('.index').css('height',window.screen.height);
        $('#index_btn_group button').click(function(){
         $(this).addClass('focus').parent().siblings().children().removeClass('focus');

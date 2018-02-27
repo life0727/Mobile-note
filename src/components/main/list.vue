@@ -4,7 +4,7 @@
     <div class="filter" style="border-radius: 4px;">
     <!-- 包含关键词 start -->
         <div class="btn-group " role="group" aria-label="..." style="height: 50px;">
-          <button class="btn btn-default filter_name" style="border:none;background: #f7f7f7;margin-top:16px;margin-left: 30px !important;"><b style="font-size: 16px;">关键词：</b></button>
+          <button id="worrd" class="btn btn-default filter_name" style="border:none;background: #f7f7f7;margin-top:16px;margin-left: 30px !important;"><b style="font-size: 16px;">关键词：</b></button>
           <el-input v-model="allkeyword" placeholder="必须包含关键词(且)" size="small" style="width: 14% !important;margin-top:16px;margin-left: 20px;"></el-input>
           <el-input v-model="keywordyoulike" placeholder="包含任一关键词(或)" size="small" style="width: 14% !important;margin-left: 20px;margin-top:16px"></el-input>
           <el-input v-model="nokeyword" placeholder="不包含关键词" size="small" style="width: 14% !important;margin-left: 20px;margin-top:16px"></el-input>
@@ -179,14 +179,14 @@
             <!--  二级选项卡 start -->
               <div class="second_card">
                 <el-button-group>
-                  <a href="javascript:;"><el-button id="btn_hot">地域热图</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_more_media" >媒体声量top10</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_top">top20</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_diaoxing">正负性对比图</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_newsnumber">新闻指数走势图</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_user_defind_mdeia" >媒体类型分析</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_more_direction" >多维度分析</el-button></a>
-                  <a href="javascript:;"><el-button id="btn_renwuzuzhi" >人物组织关系</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_hot" @click="exchange($event)">地域热图</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_media_top" @click="exchange($event)">媒体声量top10</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_top" @click="exchange($event)">top20</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_diaoxing" @click="exchange($event)">正负性对比图</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_newsnumber" @click="exchange($event)">新闻指数走势图</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_user_defind_mdeia" @click="exchange($event)" >媒体类型分析</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_more_direction" @click="exchange($event)">多维度分析</el-button></a>
+                  <a href="javascript:;"><el-button id="btn_renwuzuzhi" @click="exchange($event)">人物组织关系</el-button></a>
                 </el-button-group>
               </div>  
             <!--  二级选项卡 end-->
@@ -303,7 +303,7 @@
                   </div>
                   <div id="echarts_more_direction_wx" v-show="echarts_show==0||echarts_show==1" style="height: 450px;"> </div> 
                 </div>    
-                <div class="nopa" id="echarts-media-top">
+                <div class="nopa" id="echarts-media_top">
                   <div id="echarts_top_media_xinwen" v-show="echarts_show==0||echarts_show==1" style="height:590px"></div>
                   <div id="echarts_top_media_weixin" v-show="echarts_show==0||echarts_show==2" style="height:590px">></div>
                 </div>   
@@ -665,39 +665,43 @@
 </template>
 <script>
 import echarts from 'echarts'
-import { Map }  from '../../assets/js/map.js'
+import _echart from '../../assets/js/_echart.js'
+import { filter_polar,Sort_up,Sort_down,Sort,_Sort,SetSessionStorage,GetSessionStorage,format_time,date_change,Map }  from '../../assets/js/map.js'
+//import { wordExport }  from '../../assets/js/wordexport.js'
 export default {
   mounted :function () {
+    format_time()
+    
   //判断是否初始化
    if(this.$store.state.list_Data===''){
     this.loading_start=true;
-    if(JSON.parse(window.sessionStorage.getItem('start'))==null){
-      console.log('初始化');
-      let _this=this;    
-      //页面加载完成判断项目及跳转
-      $.ajax({
-         type: "GET",
-         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-         traditional: true,
-         data: {
-             "method": 'get'
-         },
-         success: function(data){
-            if(data.data==null){
-              window.location.href='#/index/clever'
-            }else{
-               _this.search_data(_this.current_jushuNum,data.data.projectList[0].id,-1,_this.articleType,[],[],[],_this.queryType,[-1,0,1],0,_this.time[0],_this.time[1]);
-                window.sessionStorage.setItem('project_id',JSON.stringify(data.data.projectList[0].id))
-            }
-         }
-      })
-    }else{
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      this.search_data(this.current_jushuNum,project_id,-1,this.articleType,[],[],[],this.queryType,[-1,0,1],0,this.time[0],this.time[1]);
-    }
+    if(GetSessionStorage('start')==null){
+        console.log('初始化');
+        let _this=this;    
+        //页面加载完成判断项目及跳转
+        $.ajax({
+           type: "GET",
+           url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
+           traditional: true,
+           data: {
+               "method": 'get'
+           },
+           success: function(data){
+              if(data.data==null){
+                window.location.href='#/index/clever'
+              }else{
+                 _this.search_data(_this.current_jushuNum,data.data.projectList[0].id,-1,_this.articleType,[],[],[],_this.queryType,[-1,0,1],0,_this.time[0],_this.time[1]);
+                  SetSessionStorage('project_id',data.data.projectList[0].id);
+              }
+           }
+        })
+      }else{
+        let project_id=GetSessionStorage('project_id');
+        this.search_data(this.current_jushuNum,project_id,-1,this.articleType,[],[],[],this.queryType,[-1,0,1],0,this.time[0],this.time[1]);
+      }
    }else{
     this.data_write(this.$store.state.list_Data)
-   }
+   };
       //搜索按钮hover样式
       $('.filter_button').hover(function(){
         $(this).css('border-color','#00b38a');
@@ -708,44 +712,7 @@ export default {
         $(this).css('color','black');
         //$('.filter').css('border-bottom-color','#ccc')        
       });
-      /* echarts-一级选项卡*/
-      $('.second_card button').click(function(){
-        $(this).css({
-          'background-color':'#20a0ff',
-          'border-color':'#20a0ff',
-          'color':'white'
-        }).parent().parent().find('button').not($(this)).css({
-          'background-color':'#fff',
-          'border-color':'#bfcbd9',
-          'color':'#1f2d3d'
-        })
-      });
-     /* echarts-选项卡切换*/
-      $('#btn_hot').click(function(){
-        $('#echarts-hot').attr('class','opa').siblings().attr('class','nopa')
-      })
-      $('#btn_top').click(function(){
-        $('#echarts-top').attr('class','opa').siblings().attr('class','nopa')
-      })
-      $('#btn_diaoxing').click(function(){
-        $('#echarts-diaoxing').attr('class','opa').siblings().attr('class','nopa')
-      })
-      $('#btn_newsnumber').click(function(){
-        $('#echarts-newsnumber').attr('class','opa').siblings().attr('class','nopa')
-      })
-      $('#btn_user_defind_mdeia').click(function(){
-        $('#echarts-user_defind_mdeia').attr('class','opa').siblings().attr('class','nopa')
-      })
-      $('#btn_more_direction').click(function(){
-        $('#echarts-more_direction').attr('class','opa').siblings().attr('class','nopa')
-      });
-      $('#btn_more_media').click(function(){
-        $('#echarts-media-top').attr('class','opa').siblings().attr('class','nopa')
-      });
-      $('#btn_renwuzuzhi').click(function(){
-         $('#echarts-renwuzuzhi').attr('class','opa').siblings().attr('class','nopa')
-      })
-      //ie?
+      //监测是否兼容ie?
       if (!!window.ActiveXObject || "ActiveXObject" in window){
         $('.carousel-indicators>li').not('.active').css('display','none');
         $('.carousel-indicators>li').click(function(){
@@ -757,7 +724,7 @@ export default {
       $(this).addClass('warning').siblings().removeClass('warning')
      });
      let _this=this;
-     $('.polar').click(function(){
+    /* $('.polar').click(function(){
         $(this).toggleClass('warning');
         //文章调性回传数据 polar_arr
         let polar_arr=[];
@@ -781,11 +748,12 @@ export default {
          $('.polar').addClass('warning');
          _this.polar_arr=[-1,0,1];
       }
-    })
+    })*/
     //点击筛选按钮直接搜索数据
      $('.filter .btn').not('.filter_name').not('.filter_button').click(function(){
       _this.loading_start=true;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
+
       if(_this.time[0]==undefined||_this.time[1]==undefined||_this.time[1].getTime()<_this.time[0].getTime()){
       _this.$message({
           message: '请检查您的时间格式',
@@ -827,26 +795,25 @@ export default {
           _this.anyIncludeKeywordList=null
           _this.notIncludeKeywordList=null;
       }
-     })
-    
+     });
   },
   data () {
   	return {
-      watch:JSON.parse(window.sessionStorage.getItem('start')),
+      watch:GetSessionStorage('start'),
       polar:['正面','中性','负面'],
       dropdown_sort:['时间降序','时间升序'],
       current_sort:'时间降序',
       pickerOptions0: {},
-      time: JSON.parse(window.sessionStorage.getItem('list_time0'))!=null ? [new Date(JSON.parse(window.sessionStorage.getItem('list_time0'))),new Date(JSON.parse(window.sessionStorage.getItem('list_time1')))] : [new Date(new Date().getTime()-604800000), new Date()],
+      time:GetSessionStorage('list_time0')!=null ? [new Date(GetSessionStorage('list_time0')),new Date(GetSessionStorage('list_time1'))] : [new Date(new Date().getTime()-604800000), new Date()],
       allkeyword:'',
       keywordyoulike:'',
       nokeyword:'',
       checked:true,
       checke:false,
       diaoxing_visible:'',
-      articleType:JSON.parse(window.sessionStorage.getItem('list_articleType'))!=null ? JSON.parse(window.sessionStorage.getItem('list_articleType')) : 0,
+      articleType:GetSessionStorage('list_articleType')!=null ? GetSessionStorage('list_articleType') : 0,
       polar_arr:[-1,0,1],
-      queryType:JSON.parse(window.sessionStorage.getItem('list_queryType'))!=null ? JSON.parse(window.sessionStorage.getItem('list_queryType')) : 0,
+      queryType:GetSessionStorage('list_queryType')!=null ? GetSessionStorage('list_queryType'): 0,
       mustIncludeKeywordList:[],
       anyIncludeKeywordList:[],
       notIncludeKeywordList:[],
@@ -904,7 +871,7 @@ export default {
       wx_media_province_top:[],
       wx_media_province_top_size:'',
       edit:false,//时间控件的属性booleran
-       styleData:[
+      styleData:[
             {'width':'16px','height':'16px','top':'150px','left':'160px'},
             {'width':'16px','height':'16px','top':'120px','left':'242px'},
             {'width':'16px','height':'16px','top':'190px','left':'232px'},
@@ -937,25 +904,8 @@ export default {
   	}
   },
   methods: {
-    //通用methods
-    //数据时间戳  时间格式
-    format_time () {
-      Date.prototype.Format = function (fmt) {  
-        var o = {
-              "M+": this.getMonth() + 1, //月份 
-              "d+": this.getDate(), //日 
-              "h+": this.getHours(), //小时 
-              "m+": this.getMinutes(), //分 
-              "s+": this.getSeconds(), //秒 
-              "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-              "S": this.getMilliseconds() //毫秒 
-          };
-          if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-          for (var k in o)
-          if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-          return fmt;
-        }
-    },
+    //通用methods方法
+
     //格式表格数据
     format_tabledata () {
       let newdata=[],
@@ -969,12 +919,12 @@ export default {
     search_data (jushu,proId,categoryId,articleType,mustIncludeKeywordList,anyIncludeKeywordList,notIncludeKeywordList,queryType,polar,timeType,startTime,endTime,echart,more_echarts,type_echarts) {
       if(jushu=='全部'){
         jushu=0;
-      }
+      };
       let _this=this;   
-      window.sessionStorage.setItem('list_time0',JSON.stringify(_this.time[0].getTime()));
-      window.sessionStorage.setItem('list_time1',JSON.stringify(_this.time[1].getTime()));
-      window.sessionStorage.setItem('list_articleType',JSON.stringify(_this.articleType));
-      window.sessionStorage.setItem('list_queryType',JSON.stringify(_this.queryType));        
+      SetSessionStorage('list_time0',_this.time[0].getTime());
+      SetSessionStorage('list_time1',_this.time[1].getTime());
+      SetSessionStorage('list_articleType',_this.articleType);
+      SetSessionStorage('list_queryType',_this.queryType);       
       $.ajax({
                 url:'http://192.168.0.3:8080/rs/api/v1.1/project/'+123456+'/article',
                 method:'GET',
@@ -1012,24 +962,7 @@ export default {
               });
     },
     data_write(data,echart,more_echarts,type_echarts){//获取数据后的遍历等操作
-      let _this=this; 
-            Map;
-            function Sort(property){
-                            return function(a,b){
-                                var value1 = a[property];
-                                var value2 = b[property];
-                                return value2 - value1;
-                            }
-                        };
-            function Sort_down(property,c){
-                return function(a,b){
-                    var value1 = a[property][c];
-                    var value2 = b[property][c];
-                    return value2 - value1;
-                }
-              }             
-            // 数据时间戳  时间格式
-             _this.format_time (); 
+      let _this=this;            
             $('#table').css('display','block')
             $('.echarts_content').css('display','block')
             //时间降序
@@ -1102,7 +1035,7 @@ export default {
                   obj.fontbg=false;
                   media_map_arr_xinwen.push(obj)
                 }
-                media_map_arr_xinwen.sort(Sort('num'))
+                media_map_arr_xinwen.sort(_Sort('num'))
                 if(media_map_arr_xinwen.length<10){
                   _this.fix_media_xinwen=media_map_arr_xinwen;
                 }else{
@@ -1128,7 +1061,7 @@ export default {
                   obj.fontbg=false;
                   media_map_arr_wx.push(obj)
                 }
-                media_map_arr_wx.sort(Sort('num'))
+                media_map_arr_wx.sort(_Sort('num'))
                 if(media_map_arr_wx.length<10){
                   _this.fix_media_wx=media_map_arr_wx;
                 }else{
@@ -1148,7 +1081,7 @@ export default {
                   obj.fontbg=false;
                   media_map_arr.push(obj)
                 }
-                media_map_arr.sort(Sort('num'))
+                media_map_arr.sort(_Sort('num'))
                 if(media_map_arr.length<10){
                   _this.fix_media=media_map_arr;
                 }else{
@@ -1187,7 +1120,7 @@ export default {
     },
     write_polar (article_id,article_articleType,articlePolar,article_polar) {
       let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
       $.ajax ({
         url:'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/article/'+article_id,
         type:'POST',
@@ -1206,20 +1139,6 @@ export default {
           
         }
       });
-    },
-    hide_filter () {
-      $('.filter').children().not('.filter_button').not('#filter_time').css('display','none');
-      $('.filter').css('border-top','0px solid white')
-      $('#hide_button').css('display','none');    
-      $('#show_button').css('display','inline-block');
-    },
-    show_filter () {  
-      $('.filter').children().not('.filter_button').not('#filter_time').css('display','inline-block');  
-      $('hr').css('display','block')
-      $('#div_tianbu').css('display','block')
-      $('.filter').css('border-top','1px solid #dcdcdc')
-      $('#hide_button').css('display','inline-block');    
-      $('#show_button').css('display','none');           
     },
     search_start () {
       this.loading_start=true;
@@ -1242,7 +1161,7 @@ export default {
         this.notIncludeKeywordList=nokeyword.split(',')
        }
         //搜索开始
-        let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+        let project_id=GetSessionStorage('project_id');
         this.data=[];
         $('#table').css('display','none'); 
         $('#loading_table').css('display','block');
@@ -1254,7 +1173,7 @@ export default {
     },
     wuguan (a) {
       let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
       //数据库删除
       let articleRecycleDtoList = [
           {
@@ -1322,25 +1241,6 @@ export default {
     },
     sort_dropdown (command) {
       this.current_sort=command;
-    //时间格式
-      this.format_time();
-      //对象数组排序方法——升序
-      function Sort(property,c){
-          return function(a,b){
-              var value1 = a[property][c];
-              var value2 = b[property][c];
-              return value1 - value2;
-          }
-        }
-      //对象数组排序方法——降序
-      function Sort_down(property,c){
-          return function(a,b){
-              var value1 = a[property][c];
-              var value2 = b[property][c];
-              return value2 - value1;
-          }
-        } 
-      //时间降序  
       if(command=='时间降序'){
         for(let i=0;i<this.data.length;i++){
           this.data[i].article.publishTime=new Date(this.data[i].article.publishTime).getTime();  
@@ -1355,7 +1255,7 @@ export default {
         for(let i=0;i<this.data.length;i++){
           this.data[i].article.publishTime=new Date(this.data[i].article.publishTime).getTime();  
         }
-        this.data.sort(Sort('article','publishTime'));
+        this.data.sort(Sort_up('article','publishTime'));
         for(let i=0;i<this.data.length;i++){
           this.data[i].article.publishTime=new Date(this.data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");  
         }
@@ -1366,7 +1266,7 @@ export default {
       }
       //阅读数升序
       if(command=='阅读数升序'){
-        this.data.sort(Sort('article','readCount'));
+        this.data.sort(Sort_up('article','readCount'));
       }
       //新闻指数降序
       if(command=='新闻指数降序'){
@@ -1374,7 +1274,7 @@ export default {
       }
       //新闻指数升序
       if(command=='新闻指数升序'){
-        this.data.sort(Sort('article','newsIndex'));
+        this.data.sort(Sort_up('article','newsIndex'));
       }
       //格式表格数据
       this.format_tabledata();
@@ -1396,7 +1296,7 @@ export default {
         this.hide_filter();
       }  
       let _this=this;
-      this.format_time();
+
       // 新闻微信数据过滤
       let newsData=[];//新闻数据
       let weixinData=[];//新闻数据
@@ -1408,7 +1308,6 @@ export default {
         }
       }
       //obj 格式
-      Map;
       //生成 总数据对象
       let map=new Map();
       let wxmap=new Map();
@@ -1487,8 +1386,8 @@ export default {
                 newsnumber_xdata.push(k_time);
               }
           }
-         console.log(newsnumber_data)
-          console.log(newsnumber_xdata)
+        // console.log(newsnumber_data)
+          //console.log(newsnumber_xdata)
           /*console.log(newsIndex_map.data)
           console.log(newsIndex_max_map.data)*/
       //遍历微信数据
@@ -1528,37 +1427,15 @@ export default {
             wxmap.put(polar,wxmap.get(polar)+1)
           } 
       }     
-        //新闻省份地域热图数据生成数组对象格式
+        //新闻省份地域热图数据且过滤（'正，中，负'）后的数据
         let province = [];
-        for( let l in map.data){
-            let obj = new Object();
-            if(l !== '正'&&l !== '中'&&l !== '负'){
-               obj.province=l;
-              obj.num=map.data[l];
-              province.push(obj);
-            }   
-        } 
-         //微信省份地域热图数据生成数组对象格式
+        filter_polar(province,map.data);
+        //微信省份地域热图数据且过滤（'正，中，负'）后的数据
         let wx_province = [];
-        for( let l in wxmap.data){
-            let obj = new Object();
-            if(l !== '正'&&l !== '中'&&l !== '负'){
-            obj.province=l;
-            obj.num=wxmap.data[l];
-            wx_province.push(obj);
-           } 
-        }  
-         //微信媒体省份地域热图数据生成数组对象格式
+        filter_polar(wx_province,wxmap.data);
+        //微信媒体省份地域热图数据且过滤（'正，中，负'）后的数据
         let media_province = [];
-        for( let l in wx_media_map.data){
-            let obj = new Object();
-            if(l !== '正'&&l !== '中'&&l !== '负'){
-            obj.media_province=l;
-            obj.num=wx_media_map.data[l];
-            media_province.push(obj);
-          }
-        }     
-          //console.log(wxmap.data)      
+        filter_polar(media_province,wx_media_map.data);          
         // top数组对象格式
         //新闻top
         let news_top = []; 
@@ -1578,52 +1455,18 @@ export default {
             obj.url=weixinData[t].article.url;
             weixin_top.push(obj);
         }
-        //数组对象排序方法正序
-        function Sort(property){
-          return function(a,b){
-              var value1 = a[property];
-              var value2 = b[property];
-              return value1 - value2;
-          }
-        }
-        //数组对象排序方法倒序
-        function Sort_down(property){
-          return function(a,b){
-              var value1 = a[property];
-              var value2 = b[property];
-              return value2 - value1;
-          }
-        }
-        function Sort_top(property,c){
-          return function(a,b){
-              var value1 = a[property][c];
-              var value2 = b[property][c];
-              return value2 - value1;
-          }
-        } 
         //新闻省份地域热图数据排序
         province.sort(Sort('num'));
         //微信省份地域热图数据排序
         wx_province.sort(Sort('num'));
         //微信媒体省份地域热图数据排序
         media_province.sort(Sort('num'));
-        console.log(media_province)
+        //console.log(media_province)
         //新闻top数据排序
-        news_top.sort(Sort_down('num'));
-       /*  console.log(news_top.length)*/
+        news_top.sort(_Sort('num'));
         //判断新闻top20有没有20个
-        let news_top_data=[];  
-        if(news_top.length<20){
-          for( let i=0;i<news_top.length;i++){
-            news_top_data.push(news_top[i]);
-            //news_top_data.sort(function(a,b){return a-b})//柱状图数据格式
-          }
-        }else{
-          for( let i=0;i<20;i++){
-            news_top_data.push(news_top[i])
-            //news_top_data.sort(function(a,b){return a-b})//柱状图数据格式
-          }
-        }
+        let news_top_data=[];
+        news_top.length < 20 ? news_top_data = news_top : news_top_data = news_top.slice(0,20);
         //拿到20或者小于20个新闻数据后设置图标的展示数据
         let news_top_data_title=[];
         let news_top_data_num=[];
@@ -1633,18 +1476,10 @@ export default {
           news_top_data_num.sort(function(a,b){return a-b})
         }
         //微信top数据排序
-        weixin_top.sort(Sort_down('num'));
+        weixin_top.sort(_Sort('num'));
         //判断微信top20有没有20个
-        let weixin_top_data=[];              
-        if(weixin_top.length<20){
-          for( let i=0;i<weixin_top.length;i++){
-            weixin_top_data.push(weixin_top[i]);
-          }
-        }else{
-          for( let i=0;i<20;i++){
-            weixin_top_data.push(weixin_top[i]);
-          }
-        }
+        let weixin_top_data=[]; 
+        weixin_top.length < 20 ? weixin_top_data = weixin_top : weixin_top_data = weixin_top.slice(0,20);            
         //拿到20或者小于20个微信数据后设置图标的展示数据
         let weixin_top_data_title=[];
         let weixin_top_data_num=[];
@@ -1653,500 +1488,100 @@ export default {
           weixin_top_data_title.push(weixin_top_data[i].title)
           weixin_top_data_num.sort(function(a,b){return a-b})
         }
-          //地域热图开始 
-      $.get('static/china.json', function (chinaJson) {
-        echarts.registerMap('china', chinaJson);
-        let echarts_hot_xinwen = echarts.init(document.getElementById('echarts_hot_xinwen'));
-        let echarts_hot_weixin_article = echarts.init(document.getElementById('echarts_hot_weixin_article'));
-        let echarts_hot__weixin_media = echarts.init(document.getElementById('echarts_hot__weixin_media'));
-        echarts_hot_xinwen.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
-        /*console.log('地域热图一长度'+province.length)
-        console.log('地域热图二长度'+media_province.length)
-        console.log('地域热图三长度'+wx_province.length)*/
+        //地域热图开始 地域热图一长度'+province.length  地域热图二长度'+media_province.length  地域热图三长度'+wx_province.length)
         if(province.length!=0){
-          let option_hot_xinwen = {
-             title: {
-                    text: '新闻中地点出现的地域分布',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data:[]
-                },
-                visualMap: {
-                    min: province[0].num,
-                    max: province[province.length-1].num,
-                    left: 'left',
-                    top: 'bottom',
-                    text: ['高','低'],           // 文本，默认为数值文本
-                    calculable: true
-                },
-                toolbox: {
-                    show: true,
-                    orient: 'vertical',
-                    left: 'right',
-                    top: 'center',
-                    feature: {
-                        dataView: {readOnly: false},
-                        restore: {},
-                        saveAsImage: {}
-                    }
-                },
-                series: [
-                    {
-                        name: '新闻中地点出现的地域分布',
-                        type: 'map',
-                        mapType: 'china',
-                        roam: false,
-                        label: {
-                            normal: {
-                                show: true
-                            },
-                            emphasis: {
-                                show: true
-                            }
-                        },
-                        data:[
-                            {name: '北京',value: map.get('北京') },
-                            {name: '天津',value: map.get('天津') },
-                            {name: '上海',value: map.get('上海') },
-                            {name: '重庆',value: map.get('重庆') },
-                            {name: '河北',value: map.get('河北') },
-                            {name: '河南',value: map.get('河南') },
-                            {name: '云南',value: map.get('云南') },
-                            {name: '辽宁',value: map.get('辽宁') },
-                            {name: '黑龙江',value: map.get('黑龙江') },
-                            {name: '湖南',value: map.get('湖南') },
-                            {name: '安徽',value: map.get('安徽') },
-                            {name: '山东',value: map.get('山东') },
-                            {name: '新疆',value: map.get('新疆') },
-                            {name: '江苏',value: map.get('江苏') },
-                            {name: '浙江',value: map.get('浙江') },
-                            {name: '江西',value: map.get('江西') },
-                            {name: '湖北',value: map.get('湖北') },
-                            {name: '广西',value: map.get('广西') },
-                            {name: '甘肃',value: map.get('甘肃') },
-                            {name: '山西',value: map.get('山西') },
-                            {name: '内蒙古',value: map.get('内蒙古') },
-                            {name: '陕西',value: map.get('陕西') },
-                            {name: '吉林',value: map.get('吉林') },
-                            {name: '福建',value: map.get('福建') },
-                            {name: '贵州',value: map.get('贵州') },
-                            {name: '广东',value: map.get('广东') },
-                            {name: '青海',value: map.get('青海') },
-                            {name: '西藏',value: map.get('西藏') },
-                            {name: '四川',value: map.get('四川') },
-                            {name: '宁夏',value: map.get('宁夏') },
-                            {name: '海南',value: map.get('海南') },
-                            {name: '台湾',value: map.get('台湾') },
-                            {name: '香港',value: map.get('香港') },
-                            {name: '澳门',value: map.get('澳门') }
-                        ]
-                    }
-                ]
-          };
-          echarts_hot_xinwen.hideLoading();
-          echarts_hot_xinwen.setOption(option_hot_xinwen); 
+          _echart.build_list_map(map,province,'echarts_hot_xinwen','新闻中地点出现的地域分布');
           //新闻地图左侧top10
           let province_top_size_xinwen=0;
           for(let t=0;t<province.length;t++){
             province_top_size_xinwen+=province[t].num;
           }
           _this.xinwen_province_top_size=province_top_size_xinwen;
-          province.sort(Sort_down('num'));
-          if(province.length<10){
-            _this.xinwen_province_top=province;
-          }else{
-            let arr=[];
-            for(let i=0;i<10;i++){
-              arr.push(province[i]);
-            }
-            _this.xinwen_province_top=arr;
-          } 
+          province.sort(_Sort('num'));
+          province.length < 10 ? _this.xinwen_province_top = province : _this.xinwen_province_top=province.slice(0,10);
+          //点击事件
+          _echart.build_list_map(map,province,'echarts_hot_xinwen','新闻中地点出现的地域分布').on('click', function (params) {
+              _this.dialogEchart_xw_province=true;
+              _this.dialog_xw_provinceMap=[];
+              for(let i=0;i<newsData.length;i++){
+                  if(newsData[i].provinceMap.indexOf(params.data.name)!==-1){
+                    _this.dialog_xw_provinceMap.push(newsData[i])
+                  };
+               };
+          });
         }else{
            $('#echarts_hot_xinwen').html(`<h4>新闻中地点出现的地域分布</h4><br><p>暂无数据</p>`)
         }
-        echarts_hot_xinwen.on('click', function (params) {
-          /*console.log(params.data.name);
-           console.log(newsData)*/
-           _this.dialogEchart_xw_province=true;
-            _this.dialog_xw_provinceMap=[];
-            for(let i=0;i<newsData.length;i++){
-                if(newsData[i].provinceMap.indexOf(params.data.name)!==-1){
-                  _this.dialog_xw_provinceMap.push(newsData[i])
-                };
-             };
-        });
-
-        echarts_hot_weixin_article.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
+        
         if(wx_province.length!=0){
-         let option_hot_xinwen_article = {
-           title: {
-                  text: '微信中地点出现的地域分布',
-                  left: 'center'
-              },
-              tooltip: {
-                  trigger: 'item'
-              },
-              legend: {
-                  orient: 'vertical',
-                  left: 'left',
-                  data:[]
-              },
-              visualMap: {
-                  min: wx_province[0].num,
-                  max: wx_province[wx_province.length-1].num,
-                  left: 'left',
-                  top: 'bottom',
-                  text: ['高','低'],           // 文本，默认为数值文本
-                  calculable: true
-              },
-              toolbox: {
-                  show: true,
-                  orient: 'vertical',
-                  left: 'right',
-                  top: 'center',
-                  feature: {
-                      dataView: {readOnly: false},
-                      restore: {},
-                      saveAsImage: {}
-                  }
-              },
-              series: [
-                  {
-                      name: '微信中地点出现的地域分布',
-                      type: 'map',
-                      mapType: 'china',
-                      roam: false,
-                      label: {
-                          normal: {
-                              show: true
-                          },
-                          emphasis: {
-                              show: true
-                          }
-                      },
-                      data:[
-                          {name: '北京',value: wxmap.get('北京') },
-                          {name: '天津',value: wxmap.get('天津') },
-                          {name: '上海',value: wxmap.get('上海') },
-                          {name: '重庆',value: wxmap.get('重庆') },
-                          {name: '河北',value: wxmap.get('河北') },
-                          {name: '河南',value: wxmap.get('河南') },
-                          {name: '云南',value: wxmap.get('云南') },
-                          {name: '辽宁',value: wxmap.get('辽宁') },
-                          {name: '黑龙江',value: wxmap.get('黑龙江') },
-                          {name: '湖南',value: wxmap.get('湖南') },
-                          {name: '安徽',value: wxmap.get('安徽') },
-                          {name: '山东',value: wxmap.get('山东') },
-                          {name: '新疆',value: wxmap.get('新疆') },
-                          {name: '江苏',value: wxmap.get('江苏') },
-                          {name: '浙江',value: wxmap.get('浙江') },
-                          {name: '江西',value: wxmap.get('江西') },
-                          {name: '湖北',value: wxmap.get('湖北') },
-                          {name: '广西',value: wxmap.get('广西') },
-                          {name: '甘肃',value: wxmap.get('甘肃') },
-                          {name: '山西',value: wxmap.get('山西') },
-                          {name: '内蒙古',value: wxmap.get('内蒙古') },
-                          {name: '陕西',value: wxmap.get('陕西') },
-                          {name: '吉林',value: wxmap.get('吉林') },
-                          {name: '福建',value: wxmap.get('福建') },
-                          {name: '贵州',value: wxmap.get('贵州') },
-                          {name: '广东',value: wxmap.get('广东') },
-                          {name: '青海',value: wxmap.get('青海') },
-                          {name: '西藏',value: wxmap.get('西藏') },
-                          {name: '四川',value: wxmap.get('四川') },
-                          {name: '宁夏',value: wxmap.get('宁夏') },
-                          {name: '海南',value: wxmap.get('海南') },
-                          {name: '台湾',value: wxmap.get('台湾') },
-                          {name: '香港',value: wxmap.get('香港') },
-                          {name: '澳门',value: wxmap.get('澳门') }
-                      ]
-                  }
-              ]
-          };
-          echarts_hot_weixin_article.hideLoading();
-          echarts_hot_weixin_article.setOption(option_hot_xinwen_article); 
+          _echart.build_list_map(wxmap,wx_province,'echarts_hot_weixin_article','微信中地点出现的地域分布');
           //w微信地图左侧top10
           let province_top_size_wx=0;
           for(let t=0;t<wx_province.length;t++){
             province_top_size_wx+=wx_province[t].num;
           }
           _this.wx_province_top_size=province_top_size_wx;
-          wx_province.sort(Sort_down('num'));
-          if(wx_province.length<10){
-            _this.wx_province_top=wx_province;
-          }else{
-            let arr=[];
-            for(let i=0;i<10;i++){
-              arr.push(wx_province[i]);
-            }
-            _this.wx_province_top=arr;
-          } 
+          wx_province.sort(_Sort('num'));
+          wx_province.length < 10 ? _this.wx_province_top = wx_province : _this.wx_province_top=wx_province.slice(0,10);
+          //点击事件
+          _echart.build_list_map(wxmap,wx_province,'echarts_hot_weixin_article','微信中地点出现的地域分布').on('click', function (params) {
+              _this.dialogEchart_xw_province=true;
+              _this.dialog_xw_provinceMap=[];
+              for(let i=0;i<weixinData.length;i++){
+                  if(weixinData[i].provinceMap.indexOf(params.data.name)!==-1){
+                    _this.dialog_xw_provinceMap.push(weixinData[i])
+                  };
+               };
+          })
         }else{
           $('#echarts_hot_weixin_article').html(`<h4>微信中地点出现的地域分布</h4><br><p>暂无数据</p>`)
         }
-        echarts_hot_weixin_article.on('click', function (params) {
-           _this.dialogEchart_xw_province=true;
-            _this.dialog_xw_provinceMap=[];
-            console.log(weixinData)
-            for(let i=0;i<weixinData.length;i++){
-                if(weixinData[i].provinceMap.indexOf(params.data.name)!==-1){
-                  _this.dialog_xw_provinceMap.push(weixinData[i])
-                };
-             };
-        })
-        echarts_hot__weixin_media.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
+
         if(media_province.length!=0){
-           let option_hot_xinwen_media = {
-             title: {
-                    text: '微信文章发布媒体所在地域分布',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data:[]
-                },
-                visualMap: {
-                    min: media_province[0].num,
-                    max: media_province[media_province.length-1].num,
-                    left: 'left',
-                    top: 'bottom',
-                    text: ['高','低'],           // 文本，默认为数值文本
-                    calculable: true
-                },
-                toolbox: {
-                    show: true,
-                    orient: 'vertical',
-                    left: 'right',
-                    top: 'center',
-                    feature: {
-                        dataView: {readOnly: false},
-                        restore: {},
-                        saveAsImage: {}
-                    }
-                },
-                series: [
-                    {
-                        name: '微信文章发布媒体所在地域分布',
-                        type: 'map',
-                        mapType: 'china',
-                        roam: false,
-                        label: {
-                            normal: {
-                                show: true
-                            },
-                            emphasis: {
-                                show: true
-                            }
-                        },
-                        data:[
-                            {name: '北京',value: wx_media_map.get('北京') },
-                            {name: '天津',value: wx_media_map.get('天津') },
-                            {name: '上海',value: wx_media_map.get('上海') },
-                            {name: '重庆',value: wx_media_map.get('重庆') },
-                            {name: '河北',value: wx_media_map.get('河北') },
-                            {name: '河南',value: wx_media_map.get('河南') },
-                            {name: '云南',value: wx_media_map.get('云南') },
-                            {name: '辽宁',value: wx_media_map.get('辽宁') },
-                            {name: '黑龙江',value: wx_media_map.get('黑龙江') },
-                            {name: '湖南',value: wx_media_map.get('湖南') },
-                            {name: '安徽',value: wx_media_map.get('安徽') },
-                            {name: '山东',value: wx_media_map.get('山东') },
-                            {name: '新疆',value: wx_media_map.get('新疆') },
-                            {name: '江苏',value: wx_media_map.get('江苏') },
-                            {name: '浙江',value: wx_media_map.get('浙江') },
-                            {name: '江西',value: wx_media_map.get('江西') },
-                            {name: '湖北',value: wx_media_map.get('湖北') },
-                            {name: '广西',value: wx_media_map.get('广西') },
-                            {name: '甘肃',value: wx_media_map.get('甘肃') },
-                            {name: '山西',value: wx_media_map.get('山西') },
-                            {name: '内蒙古',value: wx_media_map.get('内蒙古') },
-                            {name: '陕西',value: wx_media_map.get('陕西') },
-                            {name: '吉林',value: wx_media_map.get('吉林') },
-                            {name: '福建',value: wx_media_map.get('福建') },
-                            {name: '贵州',value: wx_media_map.get('贵州') },
-                            {name: '广东',value: wx_media_map.get('广东') },
-                            {name: '青海',value: wx_media_map.get('青海') },
-                            {name: '西藏',value: wx_media_map.get('西藏') },
-                            {name: '四川',value: wx_media_map.get('四川') },
-                            {name: '宁夏',value: wx_media_map.get('宁夏') },
-                            {name: '海南',value: wx_media_map.get('海南') },
-                            {name: '台湾',value: wx_media_map.get('台湾') },
-                            {name: '香港',value: wx_media_map.get('香港') },
-                            {name: '澳门',value: wx_media_map.get('澳门') }
-                        ]
-                    }
-                ]            
-          }
-          echarts_hot__weixin_media.hideLoading();
-          echarts_hot__weixin_media.setOption(option_hot_xinwen_media);
+          _echart.build_list_map(wx_media_map,media_province,'echarts_hot__weixin_media','微信文章发布媒体所在地域分布');
           //w微信地图左侧top10
           let province_top_size_wx_media=0;
           for(let t=0;t<media_province.length;t++){
             province_top_size_wx_media+=media_province[t].num;
           }
           _this.wx_media_province_top_size=province_top_size_wx_media;
-          media_province.sort(Sort_down('num'));
-          if(media_province.length<10){
-            _this.wx_media_province_top=media_province;
-          }else{
-            let arr=[];
-            for(let i=0;i<10;i++){
-              arr.push(media_province[i]);
-            }
-            _this.wx_media_province_top=arr;
-          } 
-          console.log(_this.wx_media_province_top)
+          media_province.sort(_Sort('num'));
+          media_province.length < 10 ? _this.wx_media_province_top = media_province : _this.wx_media_province_top=media_province.slice(0,10);
+          //点击事件
+          _echart.build_list_map(wx_media_map,media_province,'echarts_hot__weixin_media','微信文章发布媒体所在地域分布').on('click', function (params) {
+              _this.dialogEchart_xw_province=true;
+              _this.dialog_xw_provinceMap=[];
+              for(let i=0;i<weixinData.length;i++){
+                  if(weixinData[i].mediaProvinceMap.indexOf(params.data.name)!==-1){
+                    _this.dialog_xw_provinceMap.push(weixinData[i])
+                  };
+               };
+          })
         }else{
           $('#echarts_hot__weixin_media').html(`<h4>微信文章发布媒体所在地域分布</h4><br><p>暂无数据</p>`)
-        }
-         echarts_hot__weixin_media.on('click', function (params) {
-         _this.dialogEchart_xw_province=true;
-          _this.dialog_xw_provinceMap=[];
-          for(let i=0;i<weixinData.length;i++){
-              if(weixinData[i].mediaProvinceMap.indexOf(params.data.name)!==-1){
-                _this.dialog_xw_provinceMap.push(weixinData[i])
-              };
-           };
-          })   
-        })   
-          //地域热图结束
-          // top20 开始
-        let echarts_top_xinwen = echarts.init(document.getElementById('echarts_top_xinwen')); 
-        let echarts_top_weixin = echarts.init(document.getElementById('echarts_top_weixin'));
-        echarts_top_xinwen.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
+        }         
+      // top20 开始 
         if(news_top_data.length!=0){
-          let option_top_xinwen ={
-                    title: {
-                        text: '新闻指数top20'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    },
-                    formatter: function (params, ticket, callback) {   
-                        return `新闻标题：${news_top_data_title[news_top_data_title.length-1-(params[0].dataIndex)]}; 新闻指数：${news_top_data_num[params[0].dataIndex]} <br/>`                                                                 
-                    }
-                },
-                legend: {
-                    data: ['新闻']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'value',
-                    boundaryGap: [0, 0.01]
-                },
-                yAxis: {
-                    type: 'category',
-                    data: news_top_data_num
-                },
-                series: [
-                    {
-                        name: '新闻',
-                        type: 'bar',
-                        data: news_top_data_num
-                    }
-                ]
-            }
-            echarts_top_xinwen.hideLoading();
-            echarts_top_xinwen.setOption(option_top_xinwen);
+          _echart.build_list_bar_top20(news_top_data_title,news_top_data_num,'echarts_top_xinwen','新闻指数top20','新闻','指数');
+          //点击事件
+          _echart.build_list_bar_top20(news_top_data_title,news_top_data_num,'echarts_top_xinwen','新闻指数top20','新闻','指数').on('click', function (params) {
+            window.open(news_top_data[news_top_data.length-1-(params.dataIndex)].url);
+          }) 
         }else{
             $('#echarts_top_xinwen').html(`<h4>新闻指数top20</h4><br><p>暂无数据</p>`)
         } 
-        echarts_top_xinwen.on('click', function (params) {
-          window.open(news_top_data[news_top_data.length-1-(params.dataIndex)].url);
-          })  
-        echarts_top_weixin.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
-        //console.log(weixin_top_data)
+         
         if(weixin_top_data.length!=0){
-              let option_top_weixin ={
-                    title: {
-                      text: '微信阅读数top20'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    },
-                    formatter: function (params, ticket, callback) {                                 
-                        return `标题：${weixin_top_data_title[weixin_top_data_title.length-1-(params[0].dataIndex)]};  阅读数：${weixin_top_data_num[params[0].dataIndex]} <br/>`                                                                 
-                    }
-                },
-                legend: {
-                    data: ['微信']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'value',
-                    boundaryGap: [0, 0.01]
-                },
-                yAxis: {
-                    type: 'category',
-                    data: weixin_top_data_num
-                },
-                series: [
-                    {
-                        name: '微信',
-                        type: 'bar',
-                        data: weixin_top_data_num
-                    }
-                ]
-            } 
-          echarts_top_weixin.hideLoading();
-          echarts_top_weixin.setOption(option_top_weixin);
-          }else{
-             $('#echarts_top_weixin').html(`<h4>微信阅读数top20</h4><br><p>暂无数据</p>`)
-          }
-          echarts_top_weixin.on('click', function (params) {
+          _echart.build_list_bar_top20(weixin_top_data_title,weixin_top_data_num,'echarts_top_weixin','微信阅读数top20','微信','阅读数');
+          //点击事件
+           _echart.build_list_bar_top20(weixin_top_data_title,weixin_top_data_num,'echarts_top_weixin','微信阅读数top20','微信','阅读数').on('click', function (params) {
              window.open(weixin_top_data[weixin_top_data.length-1-(params.dataIndex)].url);
-          }) 
-        // top20 结束
-        //媒体声量top10 开始
+          })
+        }else{
+           $('#echarts_top_weixin').html(`<h4>微信阅读数top20</h4><br><p>暂无数据</p>`)
+        }  
+      //媒体声量top10
+        //新闻
         let xinwen_top_media_data_num=[];
         let xinwen_top_media_data_name=[];
         if(_this.fix_media_xinwen.length!=0){
@@ -2155,65 +1590,12 @@ export default {
             xinwen_top_media_data_name.push(_this.fix_media_xinwen[i].name);
           }
         }
-          xinwen_top_media_data_num.sort(function(a,b){return a-b;})
-        let echarts_top_media_xinwen = echarts.init(document.getElementById('echarts_top_media_xinwen')); 
-        echarts_top_media_xinwen.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
+        xinwen_top_media_data_num.sort(function(a,b){return a-b;});
+        xinwen_top_media_data_name.reverse();
         if(_this.fix_media_xinwen.length!=0){
-          let option_top_media_xinwen ={
-                    title: {
-                        text: '新闻媒体声量top10'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    },
-                    formatter: function (params, ticket, callback) {   
-                        return `媒体名称：${xinwen_top_media_data_name[params[0].dataIndex]}; 数量：${xinwen_top_media_data_num[params[0].dataIndex]} <br/>`                                                                 
-                    }
-                },
-                legend: {
-                    data: ['新闻']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'value',
-                    boundaryGap: [0, 0.01]
-                },
-                yAxis: {
-                    type: 'category',
-                    data: xinwen_top_media_data_name.reverse()
-                },
-                series: [
-                    {
-                        name: '新闻',
-                        type: 'bar',
-                        data: xinwen_top_media_data_num,
-                        label: {
-                            normal: {
-                            show: true,
-                            position: 'insideRight'
-                             }
-                          }
-                    }
-                ]
-            }
-            echarts_top_media_xinwen.hideLoading();
-            echarts_top_media_xinwen.setOption(option_top_media_xinwen);
-        }else{
-            $('#echarts_top_media_xinwen').html(`<h4>新闻媒体声量top10</h4><br><p>暂无数据</p>`)
-        } 
-        echarts_top_media_xinwen.on('click', function (params) {
+          _echart.build_list_bar_mediaTop10(xinwen_top_media_data_name,xinwen_top_media_data_num,'echarts_top_media_xinwen','新闻媒体声量top10','新闻');
+          //点击事件
+          _echart.build_list_bar_mediaTop10(xinwen_top_media_data_name,xinwen_top_media_data_num,'echarts_top_media_xinwen','新闻媒体声量top10','新闻').on('click', function (params) {
              _this.dialogEchart_xw_province=true;
             _this.dialog_xw_provinceMap=[];
             for(let i=0;i<newsData.length;i++){
@@ -2221,7 +1603,10 @@ export default {
                   _this.dialog_xw_provinceMap.push(newsData[i])
                 };
              };
-          }) 
+          })
+        }else{
+            $('#echarts_top_media_xinwen').html(`<h4>新闻媒体声量top10</h4><br><p>暂无数据</p>`)
+        } 
         //微信
         let weixin_top_media_data_num=[];
         let weixin_top_media_data_name=[];
@@ -2231,267 +1616,91 @@ export default {
             weixin_top_media_data_name.push(_this.fix_media_wx[i].name);
           }
         }
-        weixin_top_media_data_num.sort(function(a,b){return a-b;})
-        let echarts_top_media_weixin = echarts.init(document.getElementById('echarts_top_media_weixin')); 
-        echarts_top_media_weixin.showLoading({
-            text: 'loading',
-            color: '#c23531',
-            textColor: '#000',
-            maskColor: 'snow'
-        });
-        if(_this.fix_media_wx.length!=0){
-          let option_top_media_weixin ={
-                    title: {
-                        text: '微信媒体声量top10'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    },
-                    formatter: function (params, ticket, callback) {   
-                        return `媒体名称：${weixin_top_media_data_name[params[0].dataIndex]}; 数量：${weixin_top_media_data_num[params[0].dataIndex]} <br/>`                                                                 
-                    }
-                },
-                legend: {
-                    data: ['微信']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'value',
-                    boundaryGap: [0, 0.01]
-                },
-                yAxis: {
-                    type: 'category',
-                    data: weixin_top_media_data_name.reverse()
-                },
-                series: [
-                    {
-                        name: '微信',
-                        type: 'bar',
-                        data: weixin_top_media_data_num,
-                        label: {
-                            normal: {
-                            show: true,
-                            position: 'insideRight'
-                             }
-                          }
-                    }
-                ]
-            }
-            echarts_top_media_weixin.hideLoading();
-            echarts_top_media_weixin.setOption(option_top_media_weixin);
-        }else{
-            $('#echarts_top_media_weixin').html(`<h4>微信媒体声量top10</h4><br><p>暂无数据</p>`)
-        } 
-          echarts_top_media_weixin.on('click', function (params) {
-             _this.dialogEchart_xw_province=true;
-            _this.dialog_xw_provinceMap=[];
-            for(let i=0;i<weixinData.length;i++){
-                if(weixinData[i].article.media===params.name){
-                  _this.dialog_xw_provinceMap.push(weixinData[i])
-                };
-             };
+        weixin_top_media_data_num.sort(function(a,b){return a-b;});
+        weixin_top_media_data_name.reverse();
+        _echart.build_list_bar_mediaTop10(weixin_top_media_data_name,weixin_top_media_data_num,'echarts_top_media_weixin','微信媒体声量top10','微信'); 
+        //点击事件 
+        _echart.build_list_bar_mediaTop10(weixin_top_media_data_name,weixin_top_media_data_num,'echarts_top_media_weixin','微信媒体声量top10','微信').on('click', function (params) {
+              _this.dialogEchart_xw_province=true;
+              _this.dialog_xw_provinceMap=[];
+              for(let i=0;i<weixinData.length;i++){
+                  if(weixinData[i].article.media===params.name){
+                    _this.dialog_xw_provinceMap.push(weixinData[i])
+                  };
+               };
           })
-        //媒体声量top10 结束
         //正负性开始
-        let echarts_diaoxing_xinwen = echarts.init(document.getElementById('echarts_diaoxing_xinwen')); 
-        let echarts_diaoxing_weixin = echarts.init(document.getElementById('echarts_diaoxing_weixin')); 
-         echarts_diaoxing_xinwen.showLoading({
-              text: 'loading..',
-              color: '#c23531',
-              textColor: '#000',
-              maskColor: 'snow'
-          });
         if(newsData.length!=0){
-            let option_diaoxing_xinwen = {
-                    title : {
-                    text: '新闻正负性对比分析',
-                    x:'center'
-                },
-                tooltip : {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data: ['正面','中面','负面']
-                },
-                series : [
-                    {
-                        name: '访问来源',
-                        type: 'pie',
-                        radius : '60%',
-                        center: ['50%', '60%'],
-                        data:[
-                            {value:map.get('正'), name:'正面'},
-                            {value:map.get('中'), name:'中面'},
-                            {value:map.get('负'), name:'负面'}
-                        ],
-                        itemStyle: {
-                            emphasis: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
+          _echart.build_list_pie_polar(map,'echarts_diaoxing_xinwen','新闻正负性对比分析');
+          //点击事件
+          _echart.build_list_pie_polar(map,'echarts_diaoxing_xinwen','新闻正负性对比分析').on('click', function (params) {
+            let polar;
+            if(params.name==='中面'){
+              polar=0;
+            }else if(params.name==='负面'){
+              polar=-1;
+            }else {
+              polar=1;
             }
-            echarts_diaoxing_xinwen.hideLoading();
-            echarts_diaoxing_xinwen.setOption(option_diaoxing_xinwen);
+            _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            for(let i=0;i<newsData.length;i++){
+                  if(newsData[i].article.polar===polar){
+                    _this.dialog_xw_provinceMap.push(newsData[i])
+                  };
+               };
+            });
         }else{
           $('#echarts_diaoxing_xinwen').html(`<h4>新闻正负性对比分析</h4><br><p>暂无数据</p>`)
         }
-        echarts_diaoxing_xinwen.on('click', function (params) {
-          let polar;
-          if(params.name==='中面'){
-            polar=0;
-          }else if(params.name==='负面'){
-            polar=-1;
-          }else {
-            polar=1;
-          }
-         _this.dialogEchart_xw_province=true;
-         _this.dialog_xw_provinceMap=[];
-          for(let i=0;i<newsData.length;i++){
-                if(newsData[i].article.polar===polar){
-                  _this.dialog_xw_provinceMap.push(newsData[i])
-                };
-             };
-          }) 
-        echarts_diaoxing_weixin.showLoading({
-              text: 'loading',
-              color: '#c23531',
-              textColor: '#000',
-              maskColor: 'snow'
-          });
+         
         if(weixinData.length!=0){
-            let option_diaoxing_weixin = {
-                  title : {
-                  text: '微信正负性对比分析',
-                  x:'center'
-              },
-              tooltip : {
-                  trigger: 'item',
-                  formatter: "{a} <br/>{b} : {c} ({d}%)"
-              },
-              legend: {
-                  orient: 'vertical',
-                  left: 'left',
-                  data: ['正面','中面','负面']
-              },
-              series : [
-                  {
-                      name: '访问来源',
-                      type: 'pie',
-                      radius : '60%',
-                      center: ['50%', '60%'],
-                      data:[
-                          {value:wxmap.get('正'), name:'正面'},
-                          {value:wxmap.get('中'), name:'中面'},
-                          {value:wxmap.get('负'), name:'负面'}
-                      ],
-                      itemStyle: {
-                          emphasis: {
-                              shadowBlur: 10,
-                              shadowOffsetX: 0,
-                              shadowColor: 'rgba(0, 0, 0, 0.5)'
-                          }
-                      }
-                  }
-              ]
-          } 
-          echarts_diaoxing_weixin.hideLoading();
-          echarts_diaoxing_weixin.setOption(option_diaoxing_weixin);
-        }else{
-          $('#echarts_diaoxing_weixin').html(`<h4>微信正负性对比分析</h4><br><p>暂无数据</p>`)
-        }              
-        echarts_diaoxing_weixin.on('click', function (params) {
-          let polar;
-          if(params.name==='中面'){
-            polar=0;
-          }else if(params.name==='负面'){
-            polar=-1;
-          }else {
-            polar=1;
-          }
-         _this.dialogEchart_xw_province=true;
-         _this.dialog_xw_provinceMap=[];
-          for(let i=0;i<weixinData.length;i++){
+          _echart.build_list_pie_polar(wxmap,'echarts_diaoxing_weixin','微信正负性对比分析');
+          //点击事件
+          _echart.build_list_pie_polar(wxmap,'echarts_diaoxing_weixin','微信正负性对比分析').on('click', function (params) {
+            let polar;
+            if(params.name==='中面'){
+              polar=0;
+            }else if(params.name==='负面'){
+              polar=-1;
+            }else {
+              polar=1;
+            }
+            _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            for(let i=0;i<weixinData.length;i++){
                 if(weixinData[i].article.polar===polar){
                   _this.dialog_xw_provinceMap.push(weixinData[i])
                 };
              };
-          })  
-        //正负性结束
+          });
+        }else{
+          $('#echarts_diaoxing_weixin').html(`<h4>微信正负性对比分析</h4><br><p>暂无数据</p>`)
+        }              
+
         //新闻指数开始
-         let echarts_newsnumber = echarts.init(document.getElementById('echarts_newsnumber')); 
-         let  option_newsnumber = {
-                title: {
-                    text: '新闻指数走势图'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data:['新闻指数']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                toolbox: {
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: newsnumber_xdata
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        name:'新闻指数',
-                        type:'line',
-                        stack: '总量',
-                        data:newsnumber_data
-                    }
-                ]
-            };
-        echarts_newsnumber.setOption(option_newsnumber);
-        echarts_newsnumber.on('click', function (params) {
-           _this.dialogEchart_xw_province=true;
-           _this.dialog_xw_provinceMap=[];
-           let arr=[]
-          if(_this.time[1].getTime()-_this.time[0].getTime()<604800000){
-            for(let i=0;i<newsData.length;i++){
-                if(new Date(newsData[i].article.publishTime).getTime()>new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex]).getTime()&&new Date(newsData[i].article.publishTime).getTime()<new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex+1]).getTime()){
-                  arr.push(newsData[i])
-                }
-             };
-          }else{
-            for(let i=0;i<newsData.length;i++){
-                if(new Date(newsData[i].article.publishTime).getTime()>new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex].slice(0,5)+' 00:00').getTime()&&new Date(newsData[i].article.publishTime).getTime()<new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex+1].slice(0,5)+' 00:00').getTime()){
-                  arr.push(newsData[i])
-                }
-             };
-          }
-           arr.sort(Sort_top('article','newsIndex'));
-           _this.dialog_xw_provinceMap=arr;
-          }) 
+        _echart.build_list_line_newsNum(newsnumber_xdata,newsnumber_data,'echarts_newsnumber');
+        //点击事件
+        _echart.build_list_line_newsNum(newsnumber_xdata,newsnumber_data,'echarts_newsnumber').on('click', function (params) {
+            _this.dialogEchart_xw_province=true;
+            _this.dialog_xw_provinceMap=[];
+            let arr=[]
+            if(_this.time[1].getTime()-_this.time[0].getTime()<604800000){
+              for(let i=0;i<newsData.length;i++){
+                  if(new Date(newsData[i].article.publishTime).getTime()>new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex]).getTime()&&new Date(newsData[i].article.publishTime).getTime()<new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex+1]).getTime()){
+                    arr.push(newsData[i])
+                  }
+               };
+            }else{
+              for(let i=0;i<newsData.length;i++){
+                  if(new Date(newsData[i].article.publishTime).getTime()>new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex].slice(0,5)+' 00:00').getTime()&&new Date(newsData[i].article.publishTime).getTime()<new Date(new Date().getFullYear()+'-'+newsnumber_xdata[params.dataIndex+1].slice(0,5)+' 00:00').getTime()){
+                    arr.push(newsData[i])
+                  }
+               };
+            }
+            arr.sort(Sort_down('article','newsIndex'));
+            _this.dialog_xw_provinceMap=arr;
+          }); 
       //多维度分析开始
       let more_newsData=[];//新闻数据
       let more_weixinData=[];//微信数据
@@ -2528,24 +1737,17 @@ export default {
           this.wx_first_options.push(fisrt_obj)
           this.wx_second_options.push(fisrt_obj)
         }
-        console.log(this.wx_first_options)
+        //console.log(this.wx_first_options)
         this.wx_first_schemeId=this.wx_first_options[0].schemeId;
       };
     },
     renwuzuzhi_search () {
       this.renwuzuzhi_loading=true;
        let _this=this;
-      function Sort(property){
-          return function(a,b){
-              var value1 = a[property];
-              var value2 = b[property];
-              return value1 - value2;
-          }
-        }
       _this.personSet=[];
       _this.locationSet=[];
       _this.orgSet=[];
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
       $.ajax({
         url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/entity",
         type:"GET",
@@ -2598,9 +1800,8 @@ export default {
     },
     more_echarts () {   
       //obj 格式
-      Map;
-      console.log(this.first_schemeId)
-      console.log(this.second_schemeId)
+      //console.log(this.first_schemeId)
+      //console.log(this.second_schemeId)
       //判断方案是否一致
       if(this.first_schemeId===this.second_schemeId){
         this.$message({
@@ -2626,7 +1827,7 @@ export default {
             }
           }else{}    
         }
-        console.log(x_data)
+       // console.log(x_data)
         //坐标去重
         x_data = Array.from(new Set(x_data))
         y_data = Array.from(new Set(y_data))
@@ -2737,14 +1938,6 @@ export default {
     },
     type_echarts_xinwen () {
        let _this=this;
-      Map;
-      function Sort(property){
-                            return function(a,b){
-                                var value1 = a[property];
-                                var value2 = b[property];
-                                return value1 - value2;
-                            }
-                          }
       let newsData=[];//新闻数据
       for(let i=0;i<this.data.length;i++){
           if(this.data[i].article.articleType==1){
@@ -2844,14 +2037,6 @@ export default {
     },
     type_echarts_wx() {
       let _this=this;
-      Map;
-      function Sort(property){
-                            return function(a,b){
-                                var value1 = a[property];
-                                var value2 = b[property];
-                                return value1 - value2;
-                            }
-                          }
       let wxData=[];//新闻数据
       for(let i=0;i<this.data.length;i++){
           if(this.data[i].article.articleType==2){
@@ -2949,7 +2134,6 @@ export default {
           }) 
     },
     more_echarts_wx() {
-      Map;
       console.log(this.wx_first_schemeId)
       console.log(this.wx_second_schemeId)
       //判断方案是否一致
@@ -3132,7 +2316,7 @@ export default {
     del_reprintList () {
       let _this=this;
       //获取combineErrorList
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
       let combineErrorList=[];
       console.log(this.selection)
       for(let i=0;i<this.selection.length;i++){
@@ -3174,7 +2358,7 @@ export default {
       this.dialog_recycle=true;
       //数据库数据
       let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
       let articleRecycleDtoList =[
        {
         "method":"GET",
@@ -3197,8 +2381,7 @@ export default {
              $('#loading_recycle').css('display','none')
           }else{
             _this.recycle_data=data.data;
-            // 数据时间戳  时间格式
-              _this.format_time ();
+
             //初始化总数据的publishTime转化
             for(let i=0;i< _this.recycle_data.length;i++){
                 _this.recycle_data[i].article.publishTime=new Date( _this.recycle_data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
@@ -3216,7 +2399,7 @@ export default {
     recovery_recycle () {
       let _this=this;
       //获取articleDtoList
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let project_id=GetSessionStorage('project_id');
       let articleDtoList=[];
       for(let i=0;i<this.selection_recycle.length;i++){
         let obj=new Object();
@@ -3261,41 +2444,59 @@ export default {
     Mout_articleList (i) {
         this.$refs.dialog_xw_articlelist[i].style.color="rgb(72,87,106)"
       },
-      date_change (){
-        Date.prototype.toJSON = function () { return this.toLocaleString(); }
-        if(this.time[0]==undefined||this.time[1]==undefined||this.time[1].getTime()<this.time[0].getTime()){
-          this.time=[new Date(new Date().getTime()-604800000), new Date()];
-          this.$message({
-              message: '请检查您的时间格式',
-              type: 'warning'
-            });
-         }
-      },
+    date_change (){date_change(this);},//修改时间验证
     dropdown_jushu(command){
       this.current_jushuNum=command
     },
     ct_click(i,n){
       console.log(i)
       window.open(i.linkedUrl)
-      },
-      click_ct_list(i){
-         window.open(i.article.url)
-      },
-      Mover_ct_list(i){
-        this.$refs.ct_list[i].style.color="#00a17c"
-      },
-      Mout_ct_list(i) {
-        this.$refs.ct_list[i].style.color="#999"
-      },
-      handleCurrentChange_ct (val) {
-        this.currentPage_ct= val;
-        let newdata=[],
-        pageNum=this.currentPage_ct-1;
-        for(let i=this.page_size_ct*pageNum;i<this.page_size_ct*pageNum+this.page_size_ct;i++ ){
-          this.ct_data[i] !== undefined ? newdata.push(this.ct_data[i]) : '' 
-        }
-        this.ct_data_list=newdata
-      },    
+    },
+    click_ct_list(i){
+       window.open(i.article.url)
+    },
+    Mover_ct_list(i){
+      this.$refs.ct_list[i].style.color="#00a17c"
+    },
+    Mout_ct_list(i) {
+      this.$refs.ct_list[i].style.color="#999"
+    },
+    handleCurrentChange_ct (val) {
+      this.currentPage_ct= val;
+      let newdata=[],
+      pageNum=this.currentPage_ct-1;
+      for(let i=this.page_size_ct*pageNum;i<this.page_size_ct*pageNum+this.page_size_ct;i++ ){
+        this.ct_data[i] !== undefined ? newdata.push(this.ct_data[i]) : '' 
+      }
+      this.ct_data_list=newdata
+    },
+    //dom操作哦
+    hide_filter () {//隐藏筛选条件按钮
+      $('.filter').children().not('.filter_button').not('#filter_time').css('display','none');
+      $('.filter').css('border-top','0px solid white')
+      $('#hide_button').css('display','none');    
+      $('#show_button').css('display','inline-block');
+    },
+    show_filter () {  //显示筛选条件按钮
+      $('.filter').children().not('.filter_button').not('#filter_time').css('display','inline-block');  
+      $('hr').css('display','block')
+      $('#div_tianbu').css('display','block')
+      $('.filter').css('border-top','1px solid #dcdcdc')
+      $('#hide_button').css('display','inline-block');    
+      $('#show_button').css('display','none');           
+    },
+    exchange($event){ //图表中echarts-选项卡切换按钮
+      $('#echarts-'+$event.currentTarget.id.slice($event.currentTarget.id.indexOf('_')+1,$event.currentTarget.id.length)+'').attr('class','opa').siblings().attr('class','nopa');
+      $('#'+$event.currentTarget.id+'').css({
+        'background-color':'#20a0ff',
+        'border-color':'#20a0ff',
+        'color':'white'
+      }).parent().parent().find('button').not($('#'+$event.currentTarget.id+'')).css({
+        'background-color':'#fff',
+        'border-color':'#bfcbd9',
+        'color':'#1f2d3d'
+      }); 
+    },
   },
   watch: {
     queryType (curVal,oldVal) {

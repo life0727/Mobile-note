@@ -28,7 +28,12 @@ const vuex_store=new Vuex.Store({
     org_Data:'',//组织数据
     org_duibiData:'',//组织的对比数据
     media_Data:'',
-    media_duibiData:''//媒体的对比数据
+    media_duibiData:'',//媒体的对比数据
+    refer_articleType:'',//提及率的文章类型
+    refer_time:'',//提及率的搜索时间
+    refer_industry:'',//提及率的行业核心数据
+    refer_enterpriseData:'',//提及率的企业数据
+    refer_data:''//提及率图表数据
 	},
 	mutations:{
         showUser(state){

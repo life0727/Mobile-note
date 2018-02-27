@@ -107,7 +107,7 @@
           </el-dropdown>
         </h3>
       </div>
-      <div class="panel-body" id="personSet" >
+      <div class="panel-body" id="personSet"  >
       </div>
     </div>
     <div class="panel panel-default" >
@@ -298,7 +298,7 @@
                   </tr>
                   <tr v-for="(i,$index) in tableData">
                       <th width="" ><span data-toggle="tooltip" data-placement="top" :title="'事件标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index)" ref="_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
-                      <td v-for="(j,$index) in i.data"><el-checkbox v-model="j.checked" :disabled="j.disabled" @change="handleCheckedCitiesChange($index,i,j,tableData)"></el-checkbox>&nbsp;  <span class="duibi_num" :style="{color: j.max ? 'red' : ''}" @click="look_venn($index,i)">{{j.num}}</span></td>
+                      <td v-for="(j,$index) in i.data"><el-checkbox v-model="j.checked" :disabled="j.disabled" @change="handleCheckedCitiesChange($index,i,j,tableData)"></el-checkbox>&nbsp;  <span class="duibi_num" :style="{color: j.max ? '#f34c81' : ''}" @click="look_venn($index,i)">{{j.num}}</span></td>
                   </tr> 
                    
                   
@@ -319,17 +319,17 @@
              <el-table-column
                label="自身人物"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.per.slice(0,scope.row.per.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_per_arr.indexOf(scope.row.per) != -1 ? '#f34c81' : ''}">{{ scope.row.per.slice(0,scope.row.per.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="竞品人物"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.cp_per.slice(0,scope.row.cp_per.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_per_arr.indexOf(scope.row.cp_per) != -1 ? '#f34c81' : ''}">{{ scope.row.cp_per.slice(0,scope.row.cp_per.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="公共人物"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.similar_per.slice(0,scope.row.similar_per.indexOf('/'))}}</template>
+               <template scope="scope"><span style="color: #f34c81;">{{ scope.row.similar_per.slice(0,scope.row.similar_per.indexOf('/'))}}</span></template>
              </el-table-column>
            </el-table>    
       <!--  分页 strart -->
@@ -353,17 +353,17 @@
              <el-table-column
                label="自身地点"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.loc.slice(0,scope.row.loc.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_loc_arr.indexOf(scope.row.loc) != -1 ? '#f34c81' : ''}">{{ scope.row.loc.slice(0,scope.row.loc.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="竞品地点"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.cp_loc.slice(0,scope.row.cp_loc.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_loc_arr.indexOf(scope.row.cp_loc) != -1 ? '#f34c81' : ''}">{{ scope.row.cp_loc.slice(0,scope.row.cp_loc.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="公共地点"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.similar_loc.slice(0,scope.row.similar_loc.indexOf('/'))}}</template>
+               <template scope="scope"><span style="color: #f34c81;">{{ scope.row.similar_loc.slice(0,scope.row.similar_loc.indexOf('/'))}}</span></template>
              </el-table-column>
            </el-table>    
        <!-- 分页 strart -->
@@ -387,17 +387,17 @@
              <el-table-column
                label="自身组织"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.org.slice(0,scope.row.org.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_org_arr.indexOf(scope.row.org) != -1 ? '#f34c81' : ''}">{{ scope.row.org.slice(0,scope.row.org.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="竞品组织"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.cp_org.slice(0,scope.row.cp_org.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_org_arr.indexOf(scope.row.cp_org) != -1 ? '#f34c81' : ''}">{{ scope.row.cp_org.slice(0,scope.row.cp_org.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="公共组织"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.similar_org.slice(0,scope.row.similar_org.indexOf('/'))}}</template>
+               <template scope="scope"><span style="color: #f34c81">{{ scope.row.similar_org.slice(0,scope.row.similar_org.indexOf('/'))}}</span></template>
              </el-table-column>
            </el-table>    
       <!--  分页 strart -->
@@ -421,17 +421,17 @@
              <el-table-column
                label="自身关键词"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.key.slice(0,scope.row.key.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_key_arr.indexOf(scope.row.key) != -1 ? '#f34c81' : ''}">{{ scope.row.key.slice(0,scope.row.key.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="竞品关键词"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.cp_key.slice(0,scope.row.cp_key.indexOf('/'))}}</template>
+               <template scope="scope"><span :style="{color: similar_key_arr.indexOf(scope.row.cp_key) != -1 ? '#f34c81' : ''}">{{ scope.row.cp_key.slice(0,scope.row.cp_key.indexOf('/'))}}</span></template>
              </el-table-column>
              <el-table-column
                label="公共关键词"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.similar_key.slice(0,scope.row.similar_key.indexOf('/'))}}</template>
+               <template scope="scope"><span style="color: #f34c81">{{ scope.row.similar_key.slice(0,scope.row.similar_key.indexOf('/'))}}</span></template>
              </el-table-column>
            </el-table>    
        <!-- 分页 strart -->
@@ -455,17 +455,17 @@
              <el-table-column
                label="自身文章标题"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.arc.slice(0,scope.row.arc.indexOf('/'))}}</template>
+               <template scope="scope"><a :href="scope.row.arc_url" target="_blank" :style="{color: similar_arc_arr.indexOf(scope.row.arc) != -1 ? '#f34c81' : 'black'}">{{ scope.row.arc}}</a></template>
              </el-table-column>
              <el-table-column
                label="竞品文章标题"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.cp_arc.slice(0,scope.row.cp_arc.indexOf('/'))}}</template>
+               <template scope="scope"><a :href="scope.row.cp_arc_url" target="_blank" :style="{color: similar_arc_arr.indexOf(scope.row.cp_arc) != -1 ? '#f34c81' : 'black'}">{{ scope.row.cp_arc}}</a></template>
              </el-table-column>
              <el-table-column
                label="公共文章标题"
                show-overflow-tooltip>
-               <template scope="scope">{{ scope.row.similar_arc_title.slice(0,scope.row.similar_arc_title.indexOf('/'))}}</template>
+               <template scope="scope"><a :href="scope.row.similar_arc_title_url" target="_blank" style="color: #f34c81;">{{ scope.row.similar_arc_title}}</a></template>
              </el-table-column>
            </el-table>    
        <!-- 分页 strart -->
@@ -486,9 +486,7 @@
 <script >
 import echart from 'echarts'
 import ecStat from 'echarts-stat'
-import { Map }  from '../../assets/js/map.js'
-import { Sort }  from '../../assets/js/index.js'
-//import { time }  from '../../assets/js/setInterval.js'
+import { Sort,Map }  from '../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -596,6 +594,11 @@ import { Sort }  from '../../assets/js/index.js'
           similarData_arc_list:[],
           similarData_arc_currentPage:1,
           similarData_arc_pageSize:7,
+          similar_per_arr:[],
+          similar_loc_arr:[],
+          similar_org_arr:[],
+          similar_key_arr:[],
+          similar_arc_arr:[],
         }
     },
     created:function(){
@@ -607,7 +610,6 @@ import { Sort }  from '../../assets/js/index.js'
     })
   },
     mounted : function () {
-      Map; 
         let _this=this;
 
         let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
@@ -1067,6 +1069,7 @@ import { Sort }  from '../../assets/js/index.js'
               ]
           };
           echart_renwu.setOption(option_echart_renwu);
+          //console.log(echart_renwu.getDataURL())
           echart_renwu.on('click', function (params) {
                 if(params.componentSubType==="scatter"){
                   if(_this.data_Per_index==''){
@@ -1636,6 +1639,8 @@ import { Sort }  from '../../assets/js/index.js'
         this.loading_start=true;
       };
       if(compet_flag){//点击自身查询
+        this.$store.state.ev_duibiData = '';
+        this.current_project_dom_name = JSON.parse(window.sessionStorage.getItem('start'));
          project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
          /*$(function(){
           $('.event .el-tabs__item').removeClass('is-active')
@@ -2569,6 +2574,34 @@ import { Sort }  from '../../assets/js/index.js'
               console.log(current_project_name)
               if(_this.current_project_dom_name!=current_project_name){
                 $('.event .el-tabs__item')[1].className='el-tabs__item';
+                $('.event .el-tabs__item')[0].className='el-tabs__item is-active';
+                _this.dialogDuibiList = false;
+                _this.del_duibi_flag=false;
+                _this.data=_this.$store.state.data;
+                _this.personSet=_this.$store.state.data[0].commonResult.perList;
+                _this.locationSet=_this.$store.state.data[0].commonResult.locList;
+                _this.orgSet=_this.$store.state.data[0].commonResult.orgList;
+                if(_this.personSet.length<_this.current_sort_per){
+                  _this.renwu(true,'personSet','人物','current_sort_per')
+                }else{
+                  _this.renwu(false,'personSet','人物','current_sort_per')
+                };
+                if(_this.locationSet.length<_this.current_sort_loc){
+                  _this.renwu(true,'locationSet','地点','current_sort_loc')
+                }else{
+                  _this.renwu(false,'locationSet','地点','current_sort_loc')
+                };
+                if(_this.orgSet.length<_this.current_sort_org){
+                  _this.renwu(true,'orgSet','组织','current_sort_org')
+                }else{
+                  _this.renwu(false,'orgSet','组织','current_sort_org')
+                };
+                 _this.echart_qipao();
+                 $('.event_card>div').not('#all_event_echart').click(function(){
+                       $(this).addClass('live').siblings().removeClass('live live1')
+                  });
+                 _this.echart_event();
+                     
               }
             }
           })
@@ -2592,11 +2625,15 @@ import { Sort }  from '../../assets/js/index.js'
         this.similarData_key_currentPage=1;        
         this.similarData_arc_currentPage=1;        
         let _this=this,data=dta.Data.commonResult,cp_data=this.duibiData[1].project.data[index].commonResult;
-        let perSize = data.perList.length > cp_data.perList.length ? data.perList.length : cp_data.perList.length,similar_per,perData = [],orgSize = data.orgList.length > cp_data.orgList.length ? data.orgList.length : cp_data.orgList.length,similar_org,orgData = [],locSize = data.locList.length > cp_data.locList.length ? data.locList.length : cp_data.locList.length,similar_loc,locData = [],keySize = data.keywordList.length > cp_data.keywordList.length ? data.keywordList.length : cp_data.keywordList.length,similar_key,keyData = [],arcSize = data.eventArticleList.length > cp_data.eventArticleList.length ? data.eventArticleList.length : cp_data.eventArticleList.length,similar_arc,similar_arc_title = [],arcData = [];
+        let perSize = data.perList.length > cp_data.perList.length ? data.perList.length : cp_data.perList.length,similar_per,perData = [],orgSize = data.orgList.length > cp_data.orgList.length ? data.orgList.length : cp_data.orgList.length,similar_org,orgData = [],locSize = data.locList.length > cp_data.locList.length ? data.locList.length : cp_data.locList.length,similar_loc,locData = [],keySize = data.keywordList.length > cp_data.keywordList.length ? data.keywordList.length : cp_data.keywordList.length,similar_key,keyData = [],arcSize = data.eventArticleList.length > cp_data.eventArticleList.length ? data.eventArticleList.length : cp_data.eventArticleList.length,similar_arc,similar_arc_title = [],similar_arc_url = [],arcData = [];
         similar_per = this.similar(data.perList,cp_data.perList,'mention');
+        this.similar_per_arr = similar_per;
         similar_org = this.similar(data.orgList,cp_data.orgList,'mention');
+        this.similar_org_arr = similar_org;
         similar_loc = this.similar(data.locList,cp_data.locList,'mention');
+        this.similar_loc_arr = similar_loc;
         similar_key = this.similar(data.keywordList,cp_data.keywordList,'mention');
+        this.similar_key_arr = similar_key;
         similar_arc = this.similar(data.eventArticleList,cp_data.eventArticleList,'id');
         for(let i = 0;i < perSize;i++){
           let obj = {};
@@ -2631,12 +2668,17 @@ import { Sort }  from '../../assets/js/index.js'
               return value.id == i;
           });
           similar_arc_title.push(data.eventArticleList[index].title);
+          similar_arc_url.push(data.eventArticleList[index].url);
         };
+        this.similar_arc_arr = similar_arc_title;
         for(let i = 0;i < arcSize;i++){//匹配到相似的id然后转化成title
           let obj = {};
-          obj.arc = data.eventArticleList[i] == undefined ? '无' : data.eventArticleList[i].title;
-          obj.cp_arc = cp_data.eventArticleList[i] == undefined ? '无' : cp_data.eventArticleList[i].title;
-          obj.similar_arc_title = similar_arc_title[i] == undefined ? '无' : similar_arc_title[i];
+          obj.arc = data.eventArticleList[i] == undefined ? '' : data.eventArticleList[i].title;
+          obj.arc_url = data.eventArticleList[i] == undefined ? '' : data.eventArticleList[i].url;
+          obj.cp_arc = cp_data.eventArticleList[i] == undefined ? '' : cp_data.eventArticleList[i].title;
+          obj.cp_arc_url = cp_data.eventArticleList[i] == undefined ? '' : cp_data.eventArticleList[i].url;
+          obj.similar_arc_title = similar_arc_title[i] == undefined ? '' : similar_arc_title[i];
+          obj.similar_arc_title_url = similar_arc_url[i] == undefined ? '' : similar_arc_url[i];
           arcData.push(obj);
         };
         /*console.log(perSize)
@@ -3132,7 +3174,7 @@ import { Sort }  from '../../assets/js/index.js'
        } 
     .duibi_num:hover{
         cursor: pointer;
-        color:red;
+        color:#f34c81;
        }           
     }
 }

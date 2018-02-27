@@ -226,7 +226,7 @@
       },
     notcreate_notag () {
         let notkw = this.notkw;
-        let Tag=this.mustags.concat(this.notags).concat(this.tags)
+        let Tag=this.mustags.concat(this.tags)
         if (notkw) {
           if(Tag.indexOf(notkw)==-1){
             notkw=notkw.replace(/，/ig,','); //转化逗号
@@ -244,7 +244,7 @@
               this.notags=Array.from(new Set(this.notags));   
             }else{
               this.$message({
-                            message: '请不要输入与排除词、关键词重复的内容',
+                            message: '请不要输入与关键词重复的内容',
                             type: 'warning'
                     });
             }
@@ -253,7 +253,7 @@
       },
       t_notcreate_notag () {
         let t_notkw = this.t_notkw;
-        let Tag=this.mustags.concat(this.t_notags).concat(this.tags)
+        let Tag=this.mustags.concat(this.tags)
         if (t_notkw) {
           if(Tag.indexOf(t_notkw)==-1){
             t_notkw=t_notkw.replace(/，/ig,','); //转化逗号
@@ -271,7 +271,7 @@
               this.t_notags=Array.from(new Set(this.t_notags));  
             }else{
               this.$message({
-                            message: '请不要输入与排除词、关键词重复的内容',
+                            message: '请不要输入与关键词重复的内容',
                             type: 'warning'
                     });
             }

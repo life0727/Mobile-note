@@ -19,6 +19,7 @@ import Event from './components/main/event.vue'
 import Org from './components/main/org.vue'
 import Media from './components/main/media.vue'
 import Compet from './components/main/compet.vue'
+import Refer from './components/main/refer.vue'
 
 
 
@@ -26,10 +27,10 @@ Vue.use(VueRouter);
 
 export default new VueRouter({
 	mode: 'hash',
-	routes:[/*{
-		path:'/',
+	routes:[{
+		path:'/login',
 		component:Login
-	},*/{
+	},{
 		path:'/index',
 		component:Index,
 		children:[
@@ -92,6 +93,9 @@ export default new VueRouter({
 			},
 			{path:'/main/compet',
 			component:Compet
+			},
+			{path:'/main/refer',
+			component:Refer
 			},
 			{path:'/',
 				redirect:'/main/list'

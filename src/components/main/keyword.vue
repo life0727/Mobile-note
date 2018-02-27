@@ -159,6 +159,7 @@ export default {
                 _this.notags=_this.notags.concat(data.data);
                 _this.notags=Array.from(new Set(_this.notags));
                 _this.show_moren=0;
+                _this.keyword_flag = true;
                }
           })
       },
@@ -209,6 +210,11 @@ export default {
                 $('.el-tabs__item:eq(1)').removeClass('is-active');*/
              }
           })
+        }else{
+          _this.$message({
+                message: '未修改',
+                type: 'warning'
+              });
         } 
       }     
     },
@@ -261,7 +267,7 @@ export default {
       },
     notcreate_notag () {
         let notkw = this.notkw;
-        let Tag=this.mustags.concat(this.notags).concat(this.tags)
+        let Tag=this.mustags.concat(this.tags)
         if (notkw) {
           if(Tag.indexOf(notkw)==-1){
             notkw=notkw.replace(/，/ig,','); //转化逗号
@@ -280,7 +286,7 @@ export default {
               this.keyword_flag=true;      
             }else{
               this.$message({
-                            message: '请不要输入与排除词、关键词重复的内容',
+                            message: '请不要输入与关键词重复的内容',
                             type: 'warning'
                     });
             }
@@ -289,7 +295,7 @@ export default {
       },
       t_notcreate_notag () {
         let t_notkw = this.t_notkw;
-        let Tag=this.mustags.concat(this.notags).concat(this.tags)
+        let Tag=this.mustags.concat(this.tags)
         if (t_notkw) {
           if(Tag.indexOf(t_notkw)==-1){
             t_notkw=t_notkw.replace(/，/ig,','); //转化逗号
@@ -308,7 +314,7 @@ export default {
               this.keyword_flag=true;  
             }else{
               this.$message({
-                            message: '请不要输入与排除词、关键词重复的内容',
+                            message: '请不要输入与关键词重复的内容',
                             type: 'warning'
                     });
             }

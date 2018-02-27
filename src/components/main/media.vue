@@ -553,8 +553,9 @@ export default {
                       ]
                       };
                     Duibi.setOption(option); 
+                    //console.log(Duibi.getDataURL())
                   })
-        
+                
             }
           });
     },
