@@ -96,34 +96,38 @@
     border-color: #00a17c;color: white;" @click="to_list">保存</button>
   </div>
 </template>
-
 <script>
+import { publicSearch,tipsMessage,successBack,GetSessionStorage }  from '../../assets/js/map.js'
 export default {
   mounted :function () {
-    let _this=this;
-    let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
     $('.keyword').css('height',window.screen.height);
-    $.ajax({
-     type: "GET",
-     url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/keyword',
-     traditional: true,
-     data: {
-         "method": 'get'
-     },
-     success: function(data){
-      for(let i=0;i<data.data.keywordList.length;i++){
-        if(data.data.keywordList[i].isIncluded==1){
-            _this.notags.push(data.data.keywordList[i].name);
-        }else if(data.data.keywordList[i].isIncluded==5){
-          _this.tags.push(data.data.keywordList[i].name)
-        }else if(data.data.keywordList[i].isIncluded==0){
-          _this.t_notags.push(data.data.keywordList[i].name)
-        }else if(data.data.keywordList[i].isIncluded==6){
-          _this.mustags.push(data.data.keywordList[i].name)
-        }
-       }
+    publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/keyword',"GET",{"keywordDto":JSON.stringify({"method": 'get'})}).then((data) =>{//ajax
+      if(successBack(data,this)){
+        this.notags = data.data.contentExcludeKeywordList;
+        this.tags = data.data.includeKeywordList;
+        this.mustags = data.data.mustIncludeKeywordList;
+        this.t_notags = data.data.titleExcludeKeywordList;
+        /*for(let i = 0;i < data.data.keywordList.length;i++){
+          switch(data.data.keywordList[i].isIncluded)  
+                {
+                  case 1:
+                  this.notags.push(data.data.keywordList[i].name);
+                  break;
+                  case 5:
+                  this.tags.push(data.data.keywordList[i].name);
+                  break;
+                  case 0:
+                  this.t_notags.push(data.data.keywordList[i].name);
+                  break;
+                  case 6:
+                  this.mustags.push(data.data.keywordList[i].name);
+                  break;
+                  default:
+                  break;
+                }
+        }*/
       }
-    })
+    });  
   },
   data () {
   	return {
@@ -148,217 +152,173 @@ export default {
   	},
   methods: {
     add_moren(){
-        let _this=this;
-        $.ajax({
-               type: "POST",
-               url: 'http://192.168.0.3:8080/rs/api/v1.1/defaultExcludeKeyword',
-               data: {
-                   "method": 'get'
-               },
-               success: function(data){
-                _this.notags=_this.notags.concat(data.data);
-                _this.notags=Array.from(new Set(_this.notags));
-                _this.show_moren=0;
-                _this.keyword_flag = true;
-               }
-          })
+        publicSearch('rsa/defaultExcludeKeyword/',"POST",{"method": 'get'}).then((data) =>{//ajax
+          if(successBack(data,this)){
+            this.notags = [...this.notags, ...data.data.defaultExcludeKeywords];
+            this.notags = Array.from(new Set(this.notags));
+            this.show_moren = 0;
+            this.keyword_flag = true;
+          }    
+        });  
       },
     to_list () {
-      let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      if(this.mustags.length+this.tags.length==0){
-        this.$message({
-          message: '必须包含关键词和关键词不能同时为空',
-          type: 'warning'
-        });
+      if(this.mustags.length + this.tags.length == 0){
+        tipsMessage('必须包含关键词和关键词不能同时为空','warning',this)
+        return;
+      };
+      if(this.keyword_flag){
+        let data = {
+          'method': 'post',
+          'includeKeywordList': this.tags,
+          'mustIncludeKeywordList':this.mustags,
+          'titleExcludeKeywordList':this.t_notags,
+          'contentExcludeKeywordList': this.notags
+        };
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/keyword',"POST",{'keywordDto':JSON.stringify(data)}).then((data) =>{//ajax
+          if(successBack(data,this)){
+            this.$store.state.list_Data = '';//文章管理模块数据
+            this.$store.state.data = '';//事件模块数据
+            this.$store.state.ev_duibidata = '';//事件的对比数据
+            //_this.$store.state.start_data='';//事件模块原始数据
+            this.$store.state.btn_daochu = false;//事件导出按钮状态
+            this.$store.state.btn_org = false;//组织按钮
+            this.$store.state.org_Data = '';//组织数据
+            this.$store.state.org_duibiData = '';//组织的对比数据
+            this.$store.state.btn_media = false;//媒体按钮
+            this.$store.state.media_Data = '';//媒体数据
+            this.$store.state.media_duibiData = '';//媒体的对比数据
+            tipsMessage('修改成功','success',this)
+          }
+        });  
       }else{
-        if(this.keyword_flag){
-          //console.log('giale')
-          $.ajax({
-             type: "POST",
-             url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/keyword',
-             traditional: true,
-             data: {
-            'method': 'post',
-            'includeKeywords': this.tags,
-            'mustIncludeKeywords':this.mustags,
-            'titleExcludeKeywords':this.t_notags,
-            'contentExcludeKeywords': this.notags
-             },
-             success: function(data){
-              _this.$store.state.list_Data='';//文章管理模块数据
-              _this.$store.state.data='';//事件模块数据
-              _this.$store.state.ev_duibidata='';//事件的对比数据
-              _this.$store.state.start_data='';//事件模块原始数据
-              _this.$store.state.btn_daochu=false;//事件导出按钮状态
-              _this.$store.state.btn_org=false;//组织按钮
-              _this.$store.state.org_Data='';//组织数据
-              _this.$store.state.org_duibiData='';//组织的对比数据
-              _this.$store.state.btn_media=false;//媒体按钮
-              _this.$store.state.media_Data='';//媒体数据
-              _this.$store.state.media_duibiData='';//媒体的对比数据
-                        _this.$message({
-                message: '修改成功',
-                type: 'success'
-              });
-                /*console.log(JSON.stringify(data));
-                console.log(data.success);
-                console.log(data.message);
-                console.log(_this.notags);
-                window.location.href='#/main/list'
-                $('.el-tabs__item:eq(0)').addClass('is-active');
-                $('.el-tabs__item:eq(1)').removeClass('is-active');*/
-             }
-          })
-        }else{
-          _this.$message({
-                message: '未修改',
-                type: 'warning'
-              });
-        } 
+        tipsMessage('未修改','warning',this)
       }     
     },
     handleClose(tag) {
-        this.tags.splice(this.tags.indexOf(tag), 1);
-        this.keyword_flag=true;
-      },
+      this.tags.splice(this.tags.indexOf(tag), 1);
+      this.keyword_flag = true;
+    },
     nothandleClose(tag) {
-        this.notags.splice(this.notags.indexOf(tag), 1);
-        if(this.notags.length==0){
-          this.show_moren=1;//恢复默认排除次提示
-        }
-        this.keyword_flag=true;
-      }, 
-      t_nothandleClose(tag) {
-        this.t_notags.splice(this.t_notags.indexOf(tag), 1);
-        this.keyword_flag=true;
-      },
-     musthandleClose(tag){
+      this.notags.splice(this.notags.indexOf(tag), 1);
+      this.notags.length == 0 ? this.show_moren = 1 : '';
+      this.keyword_flag = true;
+    }, 
+    t_nothandleClose(tag) {
+      this.t_notags.splice(this.t_notags.indexOf(tag), 1);
+      this.keyword_flag = true;
+    },
+    musthandleClose(tag){
       this.mustags.splice(this.mustags.indexOf(tag), 1);
-      this.keyword_flag=true;
-     }, 
+      this.keyword_flag = true;
+    }, 
     create_tag () {
         let kw = this.kw;
-        let Tag=this.mustags.concat(this.notags).concat(this.tags).concat(this.t_notags)
+        let Tag = [...this.mustags,...this.notags,...this.tags,...this.t_notags];
         if (kw) {
-          if(Tag.indexOf(kw)==-1){
-            kw=kw.replace(/，/ig,','); //转化逗号
-              let dd=kw.split(',');
-              if(dd.length>1){ //若输入逗号即添加的数组长度大于一即链接
-                this.tags=this.tags.concat(dd);
-                 for(var j=0;j<this.tags.length;j++){
-                  if(this.tags[j]==''){
+          if(Tag.indexOf(kw) == -1){
+            kw = kw.replace(/，/ig,','); //转化逗号
+              let dd = kw.split(',');
+              if(dd.length > 1){ //若输入逗号即添加的数组长度大于一即链接
+                this.tags = [...this.tags,...dd];
+                for(var j = 0;j < this.tags.length;j++){
+                  if(this.tags[j] == ''){
                     this.tags.splice(j,1)
                   }
-                 }
+                }
               }else{
                 this.tags.push(kw);
               }   
-              this.tags=Array.from(new Set(this.tags));
-              this.keyword_flag=true;     
+              this.tags = Array.from(new Set(this.tags));
+              this.keyword_flag = true;     
             }else{
-              this.$message({
-                            message: '请不要输入与排除词、关键词重复的内容',
-                            type: 'warning'
-                    }); 
+              tipsMessage('请不要输入与排除词、关键词重复的内容','warning',this); 
             }
           }    
-        this.kw=''
-      },
+        this.kw = '';
+    },
     notcreate_notag () {
         let notkw = this.notkw;
-        let Tag=this.mustags.concat(this.tags)
+        let Tag = [...this.mustags,...this.tags];
         if (notkw) {
-          if(Tag.indexOf(notkw)==-1){
-            notkw=notkw.replace(/，/ig,','); //转化逗号
-              let dd=notkw.split(',');
-              if(dd.length>1){ //若输入逗号即添加的数组长度大于一即链接
-                this.notags=this.notags.concat(dd);
-                 for(var j=0;j<this.notags.length;j++){
-                  if(this.notags[j]==''){
+          if(Tag.indexOf(notkw) == -1){
+            notkw = notkw.replace(/，/ig,','); //转化逗号
+              let dd = notkw.split(',');
+              if(dd.length > 1){ //若输入逗号即添加的数组长度大于一即链接
+                this.notags = [...this.notags,...dd];
+                 for(var j = 0;j < this.notags.length;j++){
+                  if(this.notags[j] == ''){
                     this.notags.splice(j,1)
                   }
                  }
               }else{
                 this.notags.push(notkw);
               } 
-              this.notags=Array.from(new Set(this.notags));
-              this.keyword_flag=true;      
+              this.notags = Array.from(new Set(this.notags));
+              this.keyword_flag = true;      
             }else{
-              this.$message({
-                            message: '请不要输入与关键词重复的内容',
-                            type: 'warning'
-                    });
+              
             }
           }   
-        this.notkw=''
-      },
-      t_notcreate_notag () {
-        let t_notkw = this.t_notkw;
-        let Tag=this.mustags.concat(this.tags)
-        if (t_notkw) {
-          if(Tag.indexOf(t_notkw)==-1){
-            t_notkw=t_notkw.replace(/，/ig,','); //转化逗号
-              let dd=t_notkw.split(',');
-              if(dd.length>1){ //若输入逗号即添加的数组长度大于一即链接
-                this.t_notags=this.t_notags.concat(dd);
-                 for(var j=0;j<this.t_notags.length;j++){
-                  if(this.t_notags[j]==''){
-                    this.t_notags.splice(j,1)
-                  }
-                 }
-              }else{
-                this.t_notags.push(t_notkw);
-              }     
-              this.t_notags=Array.from(new Set(this.t_notags));   
-              this.keyword_flag=true;  
+        this.notkw = '';
+    },
+    t_notcreate_notag () {
+      let t_notkw = this.t_notkw;
+      let Tag = [...this.mustags,...this.tags];
+      if (t_notkw) {
+        if(Tag.indexOf(t_notkw) == -1){
+          t_notkw = t_notkw.replace(/，/ig,','); //转化逗号
+            let dd = t_notkw.split(',');
+            if(dd.length > 1){ //若输入逗号即添加的数组长度大于一即链接
+              this.t_notags = [...this.t_notags,...dd];
+               for(var j = 0;j < this.t_notags.length;j++){
+                if(this.t_notags[j] == ''){
+                  this.t_notags.splice(j,1)
+                }
+               }
             }else{
-              this.$message({
-                            message: '请不要输入与关键词重复的内容',
-                            type: 'warning'
-                    });
-            }
-          }   
-        this.t_notkw=''
-      },
-      mustcreate_notag () {
+              this.t_notags.push(t_notkw);
+            }     
+            this.t_notags = Array.from(new Set(this.t_notags));   
+            this.keyword_flag = true;  
+          }else{
+            tipsMessage('请不要输入与排除词、关键词重复的内容','warning',this); 
+          }
+        }   
+      this.t_notkw = '';
+    },
+    mustcreate_notag () {
         let mustkw = this.mustkw;
-        let Tag=this.mustags.concat(this.notags).concat(this.tags).concat(this.t_notags)
+        let Tag = [...this.mustags,...this.notags,...this.tags,...this.t_notags];
         if (mustkw) {
-          if(Tag.indexOf(mustkw)==-1){
-            mustkw=mustkw.replace(/，/ig,','); //转化逗号
-              let dd=mustkw.split(',');
-              if(dd.length>1){ //若输入逗号即添加的数组长度大于一即链接
-                this.mustags=this.mustags.concat(dd);
-                 for(var j=0;j<this.mustags.length;j++){
-                  if(this.mustags[j]==''){
+          if(Tag.indexOf(mustkw) == -1){
+            mustkw = mustkw.replace(/，/ig,','); //转化逗号
+              let dd = mustkw.split(',');
+              if(dd.length > 1){ //若输入逗号即添加的数组长度大于一即链接
+                this.mustags = [...this.mustags,...dd];
+                 for(var j = 0;j < this.mustags.length;j++){
+                  if(this.mustags[j] == ''){
                     this.mustags.splice(j,1)
                   }
                  }
               }else{
                 this.mustags.push(mustkw);
               }      
-              this.mustags=Array.from(new Set(this.mustags)); 
-              this.keyword_flag=true;  
+              this.mustags = Array.from(new Set(this.mustags)); 
+              this.keyword_flag = true;  
             }else{
-              this.$message({
-                        message: '请不要输入与排除词重复的内容',
-                        type: 'warning'
-                    }); 
+              tipsMessage('请不要输入与排除词、关键词重复的内容','warning',this);  
             }
           }    
-        this.mustkw=''
+        this.mustkw = '';
       },
     focus (n) {
         $('#'+n+'').focus();
-      },
-    blur () { 
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
   .keyword{
     ::-webkit-scrollbar {    width: 12px;}/* 滚动槽 */
     ::-webkit-scrollbar-track {    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);    border-radius: 10px;}/* 滚动条滑块 */
@@ -474,9 +434,12 @@ export default {
         }
         .el-tag{
           padding: 0;
+          height: 22px;
+          line-height: 22px;
+          color: white;
           background-color: rgba(239,107,63,.7);
-          i{
-            right:0;
+          .el-icon-close{
+            color: yellow !important;
           }
         }
       }

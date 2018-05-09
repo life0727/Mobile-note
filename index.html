@@ -9,12 +9,9 @@
     <link rel="stylesheet" href="./static/css/animate.min.css"/>
     <link rel="shortcut icon" href="./static/img/p8.jpg">
     <title>RS-舆情</title>
-    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> -->
-    <script type="text/javascript" src="./static/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="./static/js/jquery-2.1.1.min.js"></script>
      <script type="text/javascript" src="./static/js/bootstrap.js"></script>
-     <script type="text/javascript" src="./static/js/echarts.min.js"></script>
-     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+     <!-- <script type="text/javascript" src="./static/js/echarts.min.js"></script> -->
       
      <style type="text/css">
        html{
@@ -23,6 +20,9 @@
        body{
         background: rgba(230,230,230,.5)
        }
+       button:hover{
+        opacity: 0.8;
+        }  
         .mark{
           background-color: rgba(255,255,255,0) !important;
         } 
@@ -49,19 +49,19 @@
   <body>
     <div id="app" ></div>
     <!-- built files will be auto injected -->
-    <script type="text/javascript" src="./static/js/FileSaver.js"></script>
   </body>
   <script type="text/javascript">
     $('#app').css('height',document.documentElement.clientHeight);
-/*      $('.clearfix').click(function(){
-      window.sessionStorage.setItem('Rs_item',JSON.stringify($(this).text().substring(24,42).trim()));
-      window.location.reload();
-    })*/
-$('.el-dropdown-menu .el-dropdown-menu__item').hover(function(){
-  $(this).css('background-color','rgba(0, 179, 138,.1)')
-},function(){
-  $(this).css('background-color','white')
-})
+    $('.el-dropdown-menu .el-dropdown-menu__item').hover(function(){
+      $(this).css('background-color','rgba(0, 179, 138,.1)')
+    },function(){
+      $(this).css('background-color','white')
+    });
+    $('#app').keydown(function(e){
+      if(e.which == 13){
+        e.preventDefault();
+      }
+    });
 
   </script>
 </html>

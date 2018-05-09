@@ -1,5 +1,5 @@
 <template>  
-<div class="login " style="padding: 0;background-color:#fbf6ea ">
+<div class="login " style="padding: 0;background-color:#fbf6ea " >
 <!-- 登录主体strat -->
 	<div class="login_main">
 		<img src="../assets/icon/login.png" style="position: absolute;">
@@ -12,10 +12,10 @@
 				</div>
 				<div style="margin-top: 42px;margin-left: 85px;border-bottom:1px solid #ddd;width: 300px;height: 28px;position: relative;">
 					<img src="../assets/icon/login_password.png">
-					<el-input style="width: 260px;position:absolute;left: 20px;" type="password" v-model="password" placeholder="请输入密码"></el-input>
+					<el-input style="width: 260px;position:absolute;left: 20px;" type="password" v-model="password" @keyup.enter.native="login" placeholder="请输入密码"></el-input>
 				</div>
 				<div style="margin-top: 50px;margin-left: 85px;width: 300px;height: 80px;position: relative;">
-					<el-button type="success" style="width: 100%;padding: 8px 15px;font-size: 16px;background-color:#00b38a;border-color:#00b38a;border-radius: 15px;">登录</el-button>
+					<el-button type="success" style="width: 100%;padding: 8px 15px;font-size: 16px;background-color:#00b38a;border-color:#00b38a;border-radius: 15px;" @click="login" >登录</el-button>
 					<a href="javascript:;" style="position: absolute;right:10px;top:50px;color: gray;" @click="username = '';password = '';">重置</a>
 				</div>
 			</div>
@@ -29,6 +29,7 @@
 </div>	
 </template>
 <script >
+import { tipsMessage,publicSearch,successBack,SetSessionStorage}  from '../assets/js/map.js'
 import topnav from './top_nav.vue'
   export default{
     data : function(){ 
@@ -41,12 +42,31 @@ import topnav from './top_nav.vue'
       topnav
     },
     methods:{
-    	login () {
-    		window.location.href="#index"
+    	login () {//按钮登录点击
+    		let params = {
+    				"method":"POST",
+		            'account':this.username,
+		            "password":this.password
+		        };
+    		publicSearch('rsa/session',"POST",params).then((data) =>{
+    			successBack(data,this)
+    		});    		 
     	}
     },
-    mounted(){
-    	    
+    mounted(){//单独写ajax？因为默认跳转到标签页会加载topnav然后会在topnav里面的ajax就判断了然后会弹窗通知一次然后跳转到登录页面，如果再在登录页面也写了publicsearch又会通知一次。即保证在登录页面加载的时候不要弹窗！因为比如你注销的时候会通知注销成功然后跳到登录页面又会通知未登录了。
+    	let _this = this;
+    	$.ajax({
+	            type: "GET",
+	            url: 'rsa/authentication',
+	            success: function(data){
+		            if(data.code == 1001){	
+		             window.location.href="#main/refer";
+		            };
+	            }
+	          })
+		/*publicSearch('rsa/authentication',"GET",'').then((data) =>{//判断登录状态 
+			if(successBack(data,this)){}
+		});*/
     }
   }
 </script>
@@ -70,6 +90,7 @@ import topnav from './top_nav.vue'
 					border-width: 0px;
 					outline: none;
 					height: 24px;
+					line-height: 24px;
 				}
 				input:-ms-input-placeholder{
 				    color: #ddd;opacity:1;

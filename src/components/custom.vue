@@ -134,19 +134,8 @@
 <script>
 import topnav from './top_nav.vue'
 export default {
-  created () {
-    $(function(){
-      $('.el-message-box .el-message-box__input .el-input__inner').attr('type','password');
-    })
-  },
   mounted :function () {
     this.search();
-    //console.log(this.$store.state.ajax_data)
-    //this.$store.state.start_data= this.$store.state.data;
-    //console.log(this.$store.state.EventIds)
-    $(function(){
-      $('.el-message-box .el-message-box__input .el-input__inner').attr('type','password');
-    })
   },
   data () {
   	return {
@@ -194,6 +183,7 @@ export default {
                       _this.$prompt('请输此账户的密码：', '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
+                            inputType:'password',
                             closeOnClickModal:false,
                           }).then(({ value }) => {
                              $.ajax({

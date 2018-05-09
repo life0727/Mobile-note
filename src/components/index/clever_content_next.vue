@@ -1,6 +1,6 @@
 <template>  
 <div class="clever_content_next ">
-  <el-form :label-position="labelPosition" label-width="120px" :model="formLabelAlign" style="margin-top: 3%; margin-left: 14%;width: 100%;">
+  <el-form :label-position="labelPosition" label-width="120px" :model="formLabelAlign" style="margin-top: 3%; margin-left: 10%;width: 100%;">
     <form class="form-horizontal">
       <div class="form-group" style="margin-bottom: 20px;">
        <!--  <label for="name" class="col-sm-2 control-label">方案名：</label> -->
@@ -26,7 +26,7 @@
           </el-tag>
             <input type="text" class="form-control" id="mustkw"  placeholder="输入必须包含关键词" @blur="mustcreate_notag" v-model="mustkw" @keyup.enter="mustcreate_notag" style="width: 35%;" >
           </div> 
-          <span style="font-size: 10px;margin-left: 56%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>    
+          <span style="font-size: 10px;margin-left: 65%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>    
         </div>  
       </form>
     <form class="form-horizontal">
@@ -45,7 +45,7 @@
         </el-tag>
           <input type="text" class="form-control" id="kw" placeholder="输入关键词" @blur="create_tag" v-model="kw" @keyup.enter="create_tag">
         </div> 
-        <span style="font-size: 10px;margin-left: 56%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>      
+        <span style="font-size: 10px;margin-left: 65%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>      
       </div>  
     </form>  
 
@@ -65,7 +65,7 @@
         </el-tag>
           <input type="text" class="form-control" id="t_notkw" placeholder="输入标题排除词" @blur="t_notcreate_notag" v-model="t_notkw" @keyup.enter="t_notcreate_notag">
         </div> 
-        <span style="font-size: 10px;margin-left: 56%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>    
+        <span style="font-size: 10px;margin-left: 65%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span>    
       </div>  
     </form>
 
@@ -85,7 +85,7 @@
         </el-tag>
           <input type="text" class="form-control" id="notkw" placeholder="输入排除词" @blur="notcreate_notag" v-model="notkw" @keyup.enter="notcreate_notag">
         </div> 
-        <span style="font-size: 10px;margin-left: 56%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
+        <span style="font-size: 10px;margin-left: 65%;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
         <p :style="{color:'#999',transition: '1s',opacity:show_moren}" class="moren">是否添加默认排除词：
         <el-button type="info" :style="{display:show_moren==1? 'inline-block' : 'none'}" @click="add_moren">确 定</el-button> 
         <el-button type="warning" :style="{display:show_moren==1? 'inline-block' : 'none'}"  @click="show_moren=0">取消</el-button></p>   
@@ -112,6 +112,7 @@
 </div>  
 </template>
 <script >
+import { publicSearch,tipsMessage,successBack,GetSessionStorage,SetSessionStorage }  from '../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -130,28 +131,18 @@
           show_moren:0
       }
     },
-    created : function () {
-      //window.localStorage.setItem('sj',JSON.stringify(this.items)) 
-
-    },
     methods:{
       pro_name(){
         this.show_moren=1;
       },
       add_moren(){
-        let _this=this;
-        $.ajax({
-               type: "POST",
-               url: 'http://192.168.0.3:8080/rs/api/v1.1/defaultExcludeKeyword',
-               data: {
-                   "method": 'get'
-               },
-               success: function(data){
-                _this.notags=_this.notags.concat(data.data);
-                _this.notags=Array.from(new Set(_this.notags));
-                _this.show_moren=0;
-               }
-          })
+         publicSearch('rsa/defaultExcludeKeyword',"POST",{"method": 'get'}).then((data) =>{
+          if(successBack,this){
+            this.notags=this.notags.concat(data.data.defaultExcludeKeywords);
+            this.notags=Array.from(new Set(this.notags));
+            this.show_moren=0;
+          }
+         });
       },
       handleClose(tag) {
         this.tags.splice(this.tags.indexOf(tag), 1);
@@ -189,10 +180,7 @@
               }   
               this.tags=Array.from(new Set(this.tags));   
             }else{
-              this.$message({
-                            message: '请不要输入与排除词、关键词重复的内容',
-                            type: 'warning'
-                    }); 
+              tipsMessage('请不要输入与排除词、关键词重复的内容','warning',this);
             }
           }    
         this.kw=''
@@ -216,10 +204,7 @@
               }
               this.mustags=Array.from(new Set(this.mustags));      
             }else{
-              this.$message({
-                        message: '请不要输入与排除词重复的内容',
-                        type: 'warning'
-                    }); 
+              tipsMessage('请不要输入与排除词、关键词重复的内容','warning',this); 
             }
           }    
         this.mustkw=''
@@ -243,10 +228,7 @@
               }   
               this.notags=Array.from(new Set(this.notags));   
             }else{
-              this.$message({
-                            message: '请不要输入与关键词重复的内容',
-                            type: 'warning'
-                    });
+              tipsMessage('请不要输入与关键词重复的内容','warning',this); 
             }
           }   
         this.notkw=''
@@ -270,10 +252,7 @@
               }     
               this.t_notags=Array.from(new Set(this.t_notags));  
             }else{
-              this.$message({
-                            message: '请不要输入与关键词重复的内容',
-                            type: 'warning'
-                    });
+              tipsMessage('请不要输入与关键词重复的内容','warning',this); 
             }
           }   
         this.t_notkw=''
@@ -282,44 +261,30 @@
         $('#'+n+'').focus();
       },
       kw_down () {
-        /*window.localStorage.setItem('kw',JSON.stringify(this.tags))*/
-        //window.sessionStorage.setItem('notkw',JSON.stringify('[this.notags]'))
         if(this.name.length==0||this.mustags.length+this.tags.length==0){
-          this.$message({
-              message: '不要忘了写方案名或者必须关键词和关键词不能同时为空',
-              type: 'warning'
-            });
+          tipsMessage('不要忘了写方案名或者必须关键词和关键词不能同时为空','warning',this);
         }else{
-          $.ajax({
-               type: "POST",
-               url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-               traditional: true,
-               data: {
-                   "method": 'post',
-                   "project.name": this.name,
-                   "project.simpleModelId": JSON.parse(window.sessionStorage.getItem('simpleModelId')),
-                   "project.remark": this.remark,
-                   "includeKeywords": this.tags,
-                   'mustIncludeKeywords':this.mustags,
-                   'titleExcludeKeywords':this.t_notags,
-                    'contentExcludeKeywords': this.notags
-               },
-               success: function(data){
-                console.log(data)
-                  //console.log(JSON.stringify(data));
-                  window.sessionStorage.setItem('start',JSON.stringify(data.data.project.name));
-                  window.sessionStorage.setItem('project_id',JSON.stringify(data.data.project.id));
-                  window.location.href="#/main/list";
-               }
-          })
+          let data = {
+             "method": 'post',
+             "project":{
+              "name":this.name,
+              "simpleModelId": GetSessionStorage('simpleModelId'),
+              "remark": this.remark,
+             },
+             "includeKeywords": this.tags,
+             'mustIncludeKeywords':this.mustags,
+             'titleExcludeKeywords':this.t_notags,
+              'contentExcludeKeywords': this.notags
+          }
+          publicSearch('rsa/project',"POST",{"projectDto":JSON.stringify(data)}).then((data) =>{
+          if(successBack(data,this)){
+            SetSessionStorage('start',data.data.name);
+            SetSessionStorage('project_id',data.data.id);
+            window.location.href="#/main/refer";
+          }
+         });
         }
       }
-    },
-    computed:{
-      
-    },
-    mounted:function () {
-      //console.log(this.$route.path);
     }
   }
 </script>
@@ -428,9 +393,12 @@
         }
         .el-tag{
           padding: 0;
+          height: 22px;
+          line-height: 22px;
+          color: white;
           background-color: rgba(239,107,63,.7);
-          i{
-            right:0;
+          .el-icon-close{
+            color: white;
           }
         }
         input:-webkit-autofill{

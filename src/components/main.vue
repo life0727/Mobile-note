@@ -32,12 +32,12 @@
           <div class="el-tabs__nav-wrap">
             <div class="el-tabs__nav-scroll">
               <div class="el-tabs__nav">
-                <router-link to="/main/list"><div :class="this.$route.path=='/main/list' ? 'el-tabs__item is-active' : 'el-tabs__item'">文章管理</div></router-link>
+               <!-- <router-link to="/main/list"><div :class="this.$route.path=='/main/list' ? 'el-tabs__item is-active' : 'el-tabs__item'">文章管理</div></router-link> -->
                 <router-link to="/main/keyword"><div :class="this.$route.path=='/main/keyword' ? 'el-tabs__item is-active' : 'el-tabs__item'">关键词管理</div></router-link>
-                <router-link to="/main/event"><div :class="this.$route.path=='/main/event' ? 'el-tabs__item is-active' : 'el-tabs__item'">事件管理</div></router-link>
-                <router-link to="/main/org"><div :class="this.$route.path=='/main/org' ? 'el-tabs__item is-active' : 'el-tabs__item'">组织关系管理</div></router-link>
-                <router-link to="/main/media"><div :class="this.$route.path=='/main/media' ? 'el-tabs__item is-active' : 'el-tabs__item'">媒体关系管理</div></router-link>
-                <router-link to="/main/compet"><div :class="this.$route.path=='/main/compet' ? 'el-tabs__item is-active' : 'el-tabs__item'">竞品管理</div></router-link>
+                <router-link to="/main/event"><div :class="this.$route.path=='/main/event' ? 'el-tabs__item is-active' : 'el-tabs__item'">事件管理</div></router-link> 
+                 <!-- <router-link to="/main/org"><div :class="this.$route.path=='/main/org' ? 'el-tabs__item is-active' : 'el-tabs__item'">组织关系管理</div></router-link>
+                <router-link to="/main/media"><div :class="this.$route.path=='/main/media' ? 'el-tabs__item is-active' : 'el-tabs__item'">媒体关系管理</div></router-link>-->
+                <router-link to="/main/compet"><div :class="this.$route.path=='/main/compet' ? 'el-tabs__item is-active' : 'el-tabs__item'">竞品管理</div></router-link> 
                 <router-link to="/main/refer"><div :class="this.$route.path=='/main/refer' ? 'el-tabs__item is-active' : 'el-tabs__item'">提及率</div></router-link>
                 <!-- <router-link to="/main/position"><div :class="this.$route.path=='/main/position' ? 'el-tabs__item is-active' : 'el-tabs__item'" >位置提示</div></router-link>
                 <router-link to="/main/indexnumber"><div :class="this.$route.path=='/main/indexnumber' ? 'el-tabs__item is-active' : 'el-tabs__item'">指数提示</div></router-link> -->
@@ -55,7 +55,11 @@
        </el-tabs>  -->
     </div>
   </div>
-   <transition><router-view></router-view></transition>
+   <transition>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
+  </transition>
 </div>  
 </template>
 <script >
@@ -71,94 +75,11 @@ import topnav from './top_nav.vue'
       topnav
     },
     methods:{
-     Ajax(Data){
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      $.ajax({
-                type: "POST",
-                url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/event/update',
-                data:{
-                  "eventDtoList":JSON.stringify(Data)
-                },
-                success: function(data){
-
-                    console.log(JSON.stringify(data));
-                    console.log(data.success);
-                    console.log(data.message);
-                }
-            })
-     }
     },
     watch:{
       $route (to,from){
         if(from.path==='/main/event'){
           this.$store.state.start_data= this.$store.state.data;
-          //console.log(this.$store.state.EventIds)
-          /*for(let i=0;i<this.$store.state.start_data.length;i++){
-              //data第一层判断
-                if(this.$store.state.start_data[i].label!==this.$store.state.data[i].label||this.$store.state.start_data[i].articleList.length!==this.$store.state.data[i].articleList.length||this.$store.state.start_data[i].keywordList.length!==this.$store.state.data[i].keywordList.length||this.$store.state.start_data[i].perList.length!==this.$store.state.data[i].perList.length||this.$store.state.start_data[i].locList.length!==this.$store.state.data[i].locList.length||this.$store.state.start_data[i].orgList.length!==this.$store.state.data[i].orgList.length){
-                  //console.log(this.$store.state.articleList_idarr)
-                      this.$confirm('是否保存对事件管理模块的修改?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        closeOnClickModal:false,
-                        type: 'warning'
-                      }).then(() => {
-                          this.$store.state.start_data= this.$store.state.data;
-                          //this.Ajax(this.$store.state.ajax_data);
-                      }).catch(() => {
-                        this.$store.state.data=this.$store.state.start_data;
-                        this.$store.state.ajax_data=[];
-                      })
-                }else{  //data 第二层判断
-                  for(let j=0;j<this.$store.state.start_data[i].perList.length;j++){ //data 第二层 perlist判断
-                    if(this.$store.state.start_data[i].perList[j].eventArticleList.length!==this.$store.state.data[i].perList[j].eventArticleList.length){
-                      this.$confirm('是否保存对事件管理模块的修改?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        closeOnClickModal:false,
-                        type: 'warning'
-                        }).then(() => {
-                           this.$store.state.start_data= this.$store.state.data;
-                           //this.Ajax(this.$store.state.ajax_data);
-                        }).catch(() => {
-                          this.$store.state.data=this.$store.state.start_data;
-                          this.$store.state.ajax_data=[];
-                        })
-                      }
-                    }
-                  for(let j=0;j<this.$store.state.start_data[i].locList.length;j++){ //data 第二层 perlist判断
-                    if(this.$store.state.start_data[i].locList[j].eventArticleList.length!==this.$store.state.data[i].locList[j].eventArticleList.length){
-                      this.$confirm('是否保存对事件管理模块的修改?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        closeOnClickModal:false,
-                        type: 'warning'
-                        }).then(() => {
-                           this.$store.state.start_data= this.$store.state.data;
-                          // this.Ajax(this.$store.state.ajax_data);
-                        }).catch(() => {
-                          this.$store.state.data=this.$store.state.start_data;
-                          this.$store.state.ajax_data=[];
-                        })
-                      }
-                    }
-                  for(let j=0;j<this.$store.state.start_data[i].orgList.length;j++){ //data 第二层 perlist判断
-                    if(this.$store.state.start_data[i].orgList[j].eventArticleList.length!==this.$store.state.data[i].orgList[j].eventArticleList.length){
-                      this.$confirm('是否保存对事件管理模块的修改?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        closeOnClickModal:false,
-                        type: 'warning'
-                        }).then(() => {
-                           this.$store.state.start_data= this.$store.state.data;
-                        }).catch(() => {
-                          this.$store.state.data=this.$store.state.start_data;
-                          this.$store.state.ajax_data=[];
-                        })
-                      }
-                    }  
-                  }
-              }*/
         }else{}
       }
     },
@@ -188,6 +109,7 @@ import topnav from './top_nav.vue'
         }
       }
       .el-tabs__nav{
+        border: none;
         a:first-child{
           margin-left: 0px;
         }
@@ -207,6 +129,7 @@ import topnav from './top_nav.vue'
           border-bottom: none;
           background-color: rgb(255,255,255);
          color:black;
+         top:1px;
         }
 
       }

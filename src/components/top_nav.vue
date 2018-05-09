@@ -1,10 +1,10 @@
 <template>
   <div class="index_nav" >     
         <ul class="nav navbar-nav " style="width: 1250px;;margin: 0 auto;position: relative; ">
-          <li><a href="#/main/list"><img src="../assets/icon/793549342520256102.png" style="margin-top: -16px;" ></a></li>
-          <li style="margin-left: 2%;"><a href="#/main/list" :class="this.$route.path=='/main/list' ?  'active' : ''" >舆情监测</a></li>
-          <li><a href="#custom" :class="this.$route.path=='/custom' ?  'active' : ''">客户管理</a></li>
-          <li><a href="#all_net_analysis" :class="this.$route.path=='/all_net_analysis' ?  'active' : ''">全网分析</a></li>
+          <li><a href="#/main/refer"><img src="../assets/icon/793549342520256102.png" style="margin-top: -16px;" ></a></li>
+          <li style="margin-left: 2%;"><a href="#/main/refer" :class="this.$route.path=='/main/refer' ?  'active' : ''" >舆情监测</a></li>
+          <!-- <li><a href="#custom" :class="this.$route.path=='/custom' ?  'active' : ''">客户管理</a></li>
+          <li><a href="#all_net_analysis" :class="this.$route.path=='/all_net_analysis' ?  'active' : ''">全网分析</a></li> -->
           <li><a href="javascript:;" style="line-height:38px;font-size: 18px"><b>. . .</b></a></li>
           <li  style="position: absolute;right: 80px;">
             <span style="color:rgba(255,255,255,0.5);line-height: 78px;font-size: 18px;">当前项目<i class="fa fa-angle-right " style="font-size: 18px;margin-left: 3px;color:rgba(255,255,255,0.5)"></i></span>
@@ -17,122 +17,103 @@
               </el-dropdown-menu>
             </el-dropdown>
           </li>
-          <li style="display: none;">
-            <a href="javascript:;" style="margin-left: 10px;padding-bottom:0;">
-              <el-dropdown  @command="handleCommand_xiaoxi" >
-                <el-badge :value="sum" id="sum" :max="99" style="left:-10px;">
-                  <span class="el-dropdown-link">
-                    <img src="../assets/icon/消息（18X19）.png" >
-                  </span>
-                </el-badge>  
-                <el-dropdown-menu slot="dropdown">
-                 <!--  <router-link to="/main/list"> -->
-                    <el-dropdown-item class="clearfix" v-for="i in data"  :command="i.name"   v-if="this.sum!==0">
-                      {{i.name}}
-                      <el-badge class="mark" :value="i.num" :max="99" />
-                    </el-dropdown-item>
-                  <!-- </router-link> -->
-                    <el-dropdown-item v-if="this.sum==0" style="text-align: center;color:rgb(172,15,2)">无通知</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </a>
-          </li>
+         <!--  <li style="display: none;">
+           <a href="javascript:;" style="margin-left: 10px;padding-bottom:0;">
+             <el-dropdown  @command="handleCommand_xiaoxi" >
+               <el-badge :value="sum" id="sum" :max="99" style="left:-10px;">
+                 <span class="el-dropdown-link">
+                   <img src="../assets/icon/消息（18X19）.png" >
+                 </span>
+               </el-badge>  
+               <el-dropdown-menu slot="dropdown">
+                <router-link to="/main/list">
+                   <el-dropdown-item class="clearfix" v-for="i in data"  :command="i.name"   v-if="this.sum!==0">
+                     {{i.name}}
+                     <el-badge class="mark" :value="i.num" :max="99" />
+                   </el-dropdown-item>
+                 </router-link>
+                   <el-dropdown-item v-if="this.sum==0" style="text-align: center;color:rgb(172,15,2)">无通知</el-dropdown-item>
+               </el-dropdown-menu>
+             </el-dropdown>
+           </a>
+         </li> -->
           <li class="dropdown" style="position: absolute;right: 0;" >
-            <img  src="../assets/p8.jpg" style="width:50px;height:50px;border-radius: 30px;margin-top: 15px;" class="dropdown-toggle" data-toggle="dropdown">
+            <img  src="../../static/img/p8.jpg" style="width:50px;height:50px;border-radius: 30px;margin-top: 15px;" class="dropdown-toggle" data-toggle="dropdown">
             <ul class="dropdown-menu" style="min-width: 80px;" id="admin">         
              <!--  <li><a href="javascript:;">one</a></li>
-             <li><a href="#1">two</a></li>
-             <li><a href="#1">three</a></li>
-             <li role="separator" class="divider"></li> -->
-              <li ><img src="../assets/icon/logout.png" style="padding-left: 5px;"><a href="logout" style="padding: 5px;font-size: 14px;color: #333;line-height: 20px;display: inline-block" @click="logout">注销</a></li>
+             <li><a href="#1">two</a></li> -->
+              <li style="text-align: center"><el-tooltip :content="'账号: '+account" placement="left" effect="light"><a href="javascript:;" style="padding: 5px;font-size: 14px;color: #333;line-height: 20px;display: inline-block;cursor: default;" >{{account.length > 8 ? account.slice(0,8)+'..' : account}}</a></el-tooltip></li>
+              <li role="separator" class="divider"></li>
+              <li ><img src="../assets/icon/logout.png" style="padding-left: 5px;"><a href="javascript:;" style="padding: 5px;font-size: 14px;color: #333;line-height: 20px;display: inline-block" @click="logout">注销</a></li>
             </ul>
           </li>
         </ul>   
 	</div>	
 </template>
 <script >
+import { publicSearch,successBack,GetSessionStorage,SetSessionStorage,notify,GetLocalStorage,tipsMessage }  from '../assets/js/map.js'
 export default{
   data: function () {
   	return {
       data:'',
       sum:'',
       current_item:'',
-      item: ''
+      item: '',
+      account:GetLocalStorage('account_A') == null ? '未登录' : GetLocalStorage('account_A')
   	}
   },
   mounted  :function () {
-    $('#admin li').hover(function(){
+    $('#admin li').not('.divider').hover(function(){
         $(this).css('background-color','rgba(0, 179, 138,.1)')
       },function(){
         $(this).css('background-color','white')
-      })
+      });
     $('#admin li a').hover(function(){
         $(this).css('background-color','rgba(0, 179, 138,0)')
       },function(){
         $(this).css('background-color','rgba(0, 179, 138,0)')
-      })
+      });
     $('#sum .el-badge__content').css({'padding':'1px 5px','border':'0px solid #fff'});
-    /*this.data=JSON.parse(window.sessionStorage.getItem('Rs_item'))||[{name:'艾弗森',num:5},{name:'招商银行',num:14},{name:'暗夜猎手',num:55},{name:'ofo',num:5},{name:'薛之谦',num:100}];*/
-    let t=0
-    for(let i=0;i<this.data.length;i++){
-      t+=this.data[i].num;
-    }
-    this.sum=t;
-
-    if(JSON.parse(window.sessionStorage.getItem('start'))==null){
-      let _this=this; 
-      $.ajax({
-         type: "GET",
-         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-         traditional: true,
-         data: {
-             "method": 'get'
-         },
-         success: function(data){
-            if(data.data.projectList.length<1){
-              window.location.href='#/index/clever';
-            }else{
-               _this.item=data.data.projectList;
-               _this.current_item=data.data.projectList[0].name; 
-              window.sessionStorage.setItem('start',JSON.stringify(_this.current_item));
-            }
-         }
-      })
-    }else{
-      let _this=this; 
-      $.ajax({
-         type: "GET",
-         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-         traditional: true,
-         data: {
-             "method": 'get'
-         },
-         success: function(data){
-            _this.item=data.data.projectList;
-         }
-      })
-       this.current_item=JSON.parse(window.sessionStorage.getItem('start'));
-    }
+    this.search();     
   },
   methods:{
+    search(){
+      let params = {"projectDto": JSON.stringify({"method": 'get'})};
+      publicSearch('rsa/project',"GET",params).then((data) =>{
+        if(successBack(data,this)){
+          console.log(data)
+          if(data.data != null || data.data.length > 0){
+            if(data.data.length<1){//项目列表少于一跳转
+              notify('提示',data.message,'warning',this);
+              window.location.href='#/index/clever';
+            }else{
+                 this.item=data.data;
+              if(GetSessionStorage('start') == null){ //第一次加载时
+                 this.current_item=data.data[0].name;
+                 SetSessionStorage('start',this.current_item);
+                 SetSessionStorage('project_id',data.data[0].id);
+              }else{ //切换第一层tab会加载此模块如果当前项目有的话就用当前
+                this.current_item = GetSessionStorage('start');
+              };
+            }
+          } 
+        }
+      });
+    },
     handleCommand_xiaoxi (command) {
       this.data=this.data.filter(item => { return command.indexOf(item.name) === -1; });//点击消息后删除
-      /*window.sessionStorage.setItem('Rs_item_index',JSON.stringify(command));
-      window.sessionStorage.setItem('Rs_item',JSON.stringify(this.data));*/
       window.location.reload();
       if(this.$route.path!=='/main/list'){
         window.location.href="#/main/list"
       }   
     },
     handleCommand(command){
-        //this.current_item=command;
-        //window.sessionStorage.setItem('current_project',JSON.stringify(command));
-        window.sessionStorage.setItem('start',JSON.stringify(command));
         for(let i=0;i<this.item.length;i++){
-          if(this.item[i].name===command){
-            window.sessionStorage.setItem('project_id',JSON.stringify(this.item[i].id))
+          if(this.item[i].name === command){
+            SetSessionStorage('start',command);
+            SetSessionStorage('project_id',this.item[i].id);
           }
-        }
+        };
         sessionStorage.removeItem('data');
         sessionStorage.removeItem('locationSet');
         sessionStorage.removeItem('orgSet');
@@ -141,100 +122,45 @@ export default{
         sessionStorage.removeItem('time0');
         sessionStorage.removeItem('time1');
         window.location.reload();
-        
       },
     del_item(a) {
-        let _this=this;
         this.$confirm('是否删除'+' '+a.name+' '+'项目?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          if(a.name===_this.current_item){
-              $.ajax({
-                 type: "POST",
-                 url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-                 traditional: true,
-                 data: {
-                     "method": 'delete',
-                     "projectIdList": [a.id],
-                 },
-                 success: function(data){
-                    if(data.success==true){
-                      $.ajax({
-                         type: "GET",
-                         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-                         traditional: true,
-                         data: {
-                             "method": 'get'
-                         },
-                         success: function(data){
-                            if(data.data.projectList.length<1){
-                              window.location.href='#/index/clever'
-                            }else{
-                               _this.item=data.data.projectList;
-                               window.sessionStorage.setItem('start',JSON.stringify(data.data.projectList[0].name));
-                              window.sessionStorage.setItem('project_id',JSON.stringify(data.data.projectList[0].id));
-                              window.location.reload();
-                            }
-                         }
-                      })
-                    }
-                 }
-             }) 
+          let params = {"projectDto": JSON.stringify({"method": 'delete',"projectIdList": [a.id]})};
+          if(a.name === this.current_item){
+            publicSearch('rsa/project',"POST",params).then((data) =>{
+              if(successBack(data,this)){
+                sessionStorage.removeItem('start');
+                window.location.reload();
+              }
+            })
           }else{
-                $.ajax({
-                 type: "POST",
-                 url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-                 traditional: true,
-                 data: {
-                     "method": 'delete',
-                     "projectIdList": [a.id],
-                 },
-                 success: function(data){
-                    if(data.success==true){
-                      $.ajax({
-                         type: "GET",
-                         url: 'http://192.168.0.3:8080/rs/api/v1.1/project',
-                         traditional: true,
-                         data: {
-                             "method": 'get'
-                         },
-                         success: function(data){
-                            if(data.data.projectList.length<1){
-                              window.location.href='#/index/clever'
-                            }else{
-                               _this.item=data.data.projectList;
-                            }
-                         }
-                      })
-                    }
-                 }
-             })        
+            publicSearch('rsa/project',"POST",params).then((data) =>{
+              if(successBack(data,this)){
+                this.item = this.item.filter(item => { return [a.id].indexOf(item.id) === -1; });
+              }
+            })      
           }
-
-          //前端删除
-          /*let idarr=[];
-          idarr.push(a.id)
-          this.item=this.item.filter(item => { return idarr.indexOf(item.id) === -1; });*/
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+          tipsMessage('取消删除','info',this)         
         });
       },
     logout () {
-      window.sessionStorage.clear();
+      publicSearch('rsa/logout',"POST",'').then((data) =>{
+        successBack(data,this);
+      })
     }  
   },
   watch:{
-      $route (to,from){
+      /*$route (to,from){
         console.log(from)
         if(from.path==='/main/event'){
           console.log(4555)
         }
-      }
+      }*/
     }
 }
 </script>

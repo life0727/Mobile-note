@@ -128,9 +128,9 @@
            <h5 class="text-center" id="source"></h5>
       </div>
     </div>  
-    <el-dialog title="相关文章" v-model="dialogVisible" size="tiny" id="dialog_add">
+    <el-dialog title="添加项目" :visible.sync="dialogVisible"  id="dialog_add">
       <clevernext></clevernext>
-      <el-button @click="dialogVisible = false" style="left: 34%;color:white;background-color:#f6a623;border-color: #f6a623;padding: 9px 16px;position: absolute;bottom: 10px;">取 消</el-button>
+      <el-button @click="dialogVisible = false" style="left: 34%;color:white;background-color:#f6a623;border-color: #f6a623;padding: 9px 16px;position: absolute;bottom: 10px;bottom: 28px;">取 消</el-button>
       <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" style="margin-right: 10%;color:white;background-color:#f6a623;border-color: #f6a623;padding: 7px 15px; ">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false" style="margin-right: 35%;background-color:#00b38a;border-color: #00b38a;padding: 7px 15px;">确 定</el-button>
@@ -217,8 +217,8 @@ import clevernext from './clever_content_next.vue'
     #dialog_add{
       .el-dialog{
         .el-dialog__body{
-          padding-top: 20px !important;
-        }
+        padding: 10px 0px 30px 0px;
+      }
         .el-dialog__header{
         height: 44px;
         background: #00b38a;
@@ -232,6 +232,7 @@ import clevernext from './clever_content_next.vue'
             font-weight: 500 !important;
           }
           .el-dialog__headerbtn{
+            top: 13px;
             width: 20px;
             height: 20px;
             margin-right: 10px;

@@ -14,13 +14,13 @@
   "dependencies": {
     "child_process": "^1.0.2",
     "echarts": "^3.8.5",
-    "element-ui": "^1.0.0",
+    "element-ui": "^2.1.0",
     "fs": "0.0.1-security",
     "glyphicons": "^0.2.0",
     "node-sass": "^4.5.0",
     "promise-polyfill": "^6.0.2",
     "sass-loader": "^4.1.1",
-    "vue": "^2.1.0",
+    "vue": "^2.5.16",
     "vue-hot-reload-api": "^2.0.8",
     "vue-popper": "^0.3.8",
     "vue-router": "^2.0.0"
@@ -79,6 +79,7 @@
     "sinon-chai": "^2.8.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
+    "vue": "^2.1.0",
     "vue-loader": "^10.0.0",
     "vue-popper": "^0.3.8",
     "vue-style-loader": "^1.0.0",

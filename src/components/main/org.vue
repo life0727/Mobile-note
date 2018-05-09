@@ -60,7 +60,6 @@
           <el-button :disabled="this.$store.state.btn_org" type="success"  style="padding: 1px 6px;font-size: 16px;margin-left: 20px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="save">导出</el-button>
           </h3>
         </div>
-        <!-- <p v-loading="org_loading" element-loading-text="系统拼命加载中..."  id="loading_org" style="top: 200px;"></p> -->
         <div class="panel-body" :style="{width: tree_width,float: 'left',borderRight:'1px solid #ccc',borderWidth:tree_width=='50%'? '1px' :'0px'}" >
           <h4 v-show="this.data==null" style="text-align: center;">暂无数据</h4>
           <el-tree
@@ -75,7 +74,6 @@
           :indent="30"
           >
         </el-tree>
-          <!-- <div style="height: 800px;position: relative;width: 100%;" id="echart" ></div> -->
         </div>
         <div class="panel-body" :style="{width:tree_width=='50%' ? '50%' : 0,float: 'left',transition: '1s',opacity: tree_width=='50%' ? 1 : 0}"  >
            <h4 v-show="this.duibiData==null" style="text-align: center;">暂无数据</h4>
@@ -90,14 +88,13 @@
           lazy
           >
            </el-tree> 
-           <el-button  type="success"  style="padding: 1px 6px;font-size: 16px;position: absolute;right: 20px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="look">预览</el-button>
-          <!-- <div style="height: 800px;position: relative;width: 100%;" id="echart" ></div> -->
+           <el-button  type="success"  style="padding: 1px 6px;font-size: 16px;position: absolute;right: 35px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="look">预览</el-button>
         </div>
       </div>
   </div> 
   
     <!-- 第一级模态框 - 列表 -->
-      <el-dialog :title="dialo_title" v-model="dialogCt" size="tiny" id="dialog_ct" >
+      <el-dialog :title="dialo_title" :visible.sync="dialogCt" width="1200px" top="2%"  id="dialog_ct" >
         <el-button type="info" style="padding: 6px 6px;font-size: 14px;left: 15px;">相关人物：</el-button>
         <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:580px;height: 445px;left: 15px;">
              <el-table
@@ -171,7 +168,7 @@
             </el-pagination>
       </div>
       <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;top: 530px;left: 15px;">相关文章：</el-button>
-      <div style="position:absolute;left: 15px;bottom: 10px;padding: 10px;border: 1px solid rgb(235, 235, 235);width:1170px;height: 300px;">
+      <div style="position:absolute;left: 15px;top:560px;padding: 10px;border: 1px solid rgb(235, 235, 235);width:1170px;height: 300px;">
             <el-table
               :data="tabledata_articlelist_list"
               :default-sort = "{prop:'publishTime'}"
@@ -211,7 +208,7 @@
      </el-dialog>
 
      <!-- 第二级模态框 -->
-      <el-dialog title="相关新闻" v-model="dialo_org" size="tiny" id="dialog_list_org">
+      <el-dialog title="相关新闻" :visible.sync="dialo_org" size="tiny" id="dialog_list_org">
       <el-button type="danger" style="position: absolute;left: 10px; bottom: 8px;padding: 5px 10px;" @click="del_2('second_selection','id')">删除</el-button>
                 <el-table
                   :data="second_tabledata_list"
@@ -241,7 +238,7 @@
             </el-pagination>
         </el-dialog>
        <!--  对比图 -->
-        <el-dialog title="对比图" v-model="dialo_duibi" size="tiny" id="dialo_duibi">
+        <el-dialog title="对比图" :visible.sync="dialo_duibi" width="100%" top="0" id="dialo_duibi">
             <div :style="{width: '100%',height:duibi_height}" id="Duibi"></div>
         </el-dialog>
   </div>
@@ -249,21 +246,19 @@
 
 <script>
 import echarts from 'echarts'
+import _echart from '../../assets/js/_echart.js'
+import {format_time,_Sort,date_change,SetSessionStorage,GetSessionStorage} from '../../assets/js/map.js'
 export default {
   created:function(){
+    format_time();
     if(this.$store.state.org_duibiData==''){
       this.add_duibi();
-      console.log(this.$store.state.org_duibiData)
      }else{
-        console.log(this.load_flag)
-
         this.duibiData=this.$store.state.org_duibiData;
         this.load_flag=true;
-        console.log(this.$store.state.org_duibiData)
-      }
+      };
   },
   mounted :function () {
-    console.log(this.$store.state.org_duibiData)
     let _this=this;
     this.org_loading=true;
      if(this.$store.state.org_Data==''){
@@ -272,52 +267,19 @@ export default {
      }else{
       this.data=this.$store.state.org_Data;
       for(let i=0;i<this.data.length;i++){
-                let obj={};
-                obj.label=this.data[i].mention;
-                obj.children=[];
-                if(this.data[i].enterpriseDtoList){
-                  for(let j=0;j<this.data[i].enterpriseDtoList.length;j++){
-                    let child_obj={};
-                    child_obj.label=this.data[i].enterpriseDtoList[j].mention+"     ";
-                    obj.children.push(child_obj)
-                  }
-                }
-                _this.data_scond.push(obj);             
-              }  
-     }
-/*
-     if(this.$store.state.org_duibiData==''){
-      this.add_duibi();
-      console.log(this.$store.state.org_duibiData)
-     }else{
-        console.log(this.load_flag)
-
-        this.duibiData=this.$store.state.org_duibiData;
-        this.load_flag=false;
-        console.log(this.$store.state.org_duibiData)
-
-      this.duibiData=[];
-      for(let i=0;i<this.$store.state.org_duibiData.length;i++){
         let obj={};
-        obj.hand=this.$store.state.org_duibiData[i].hand;
-        obj.iid=this.$store.state.org_duibiData[i].iid;
-        obj.label=this.$store.state.org_duibiData[i].label;
+        obj.label=this.data[i].mention;
         obj.children=[];
-        if(this.$store.state.org_duibiData[i].children){
-          for(let j=0;j<this.$store.state.org_duibiData[i].children.length;j++){
+        if(this.data[i].enterpriseDtoList){
+          for(let j=0;j<this.data[i].enterpriseDtoList.length;j++){
             let child_obj={};
-            child_obj.hand=this.$store.state.org_duibiData[i].children[j].hand;
-            child_obj.label=this.$store.state.org_duibiData[i].children[j].label;
-            child_obj.data=this.$store.state.org_duibiData[i].children[j].data;
-            child_obj.children=this.$store.state.org_duibiData[i].children[j].children;
+            child_obj.label=this.data[i].enterpriseDtoList[j].mention+"     ";
             obj.children.push(child_obj)
           }
-        }
-        this.duibiData.push(obj);
-      }
-      console.log(this.$store.state.org_duibiData)
-      //this.duibiData=this.$store.state.org_duibiData;
-     }*/
+        };
+        _this.data_scond.push(obj);             
+      };  
+     };
   //样式
   $('.art_type span').click(function(){
     $(this).addClass('warning').siblings().removeClass('warning');
@@ -335,30 +297,15 @@ export default {
     _this.dialo_duibi=false;
     })
   $('#echart').css('opacity','0');
- /* $(function(){
-    $('#dialo_duibi .el-dialog--tiny').css('height',window.screen.height+'px')
-    $('#dialo_duibi #Duibi').css('height',window.screen.height-200+'px')
-  })*/
-  console.log(window.document.documentElement.clientHeight)
   },
-  /*created: function(){
-      if(JSON.parse(window.sessionStorage.getItem('time'))){
-        this.time[0]=new Date(JSON.parse(window.sessionStorage.getItem('time'))[0].replace(/上午|下午/g,""))
-        this.time[1]=new Date(JSON.parse(window.sessionStorage.getItem('time'))[1].replace(/上午|下午/g,""))
-      }else{
-        this.time=[new Date(new Date().getTime()-604800000), new Date()]
-      }
-      console.log(this.time)
-    },*/
   data () {
     return {
-      input:'',
-      edit:false,
-      time: JSON.parse(window.sessionStorage.getItem('org_time0'))!=null ? [new Date(JSON.parse(window.sessionStorage.getItem('org_time0'))),new Date(JSON.parse(window.sessionStorage.getItem('org_time1')))] : [new Date(new Date().getTime()-604800000), new Date()],
-      sj:[1,2,3,4,5,6,7,8,9,10],
-      articleType:JSON.parse(window.sessionStorage.getItem('org_articleType'))!=null ? JSON.parse(window.sessionStorage.getItem('org_articleType')) : 2,
-      data:'',
-      second_data:'',
+        input:'',
+        edit:false,
+        time:GetSessionStorage('org_time0')!=null ? [new Date(GetSessionStorage('org_time0')),new Date(GetSessionStorage('org_time1'))] : [new Date(new Date().getTime()-604800000), new Date()],
+        sj:[1,2,3,4,5,6,7,8,9,10],
+        articleType:GetSessionStorage('org_articleType')!=null ? GetSessionStorage('org_articleType') : 2,
+        data:'',
         page_size_org:10,
         currentPage_org:1,
         org_List:'',
@@ -368,125 +315,96 @@ export default {
         org_loading:false,
         loading:false,
         dialogCt:false,
-        dropdown_sort_num:['5','10','15','20'],
         dropdown_num:['5','10','15','20'],
-        current_sort_org:10,
-        current_org:JSON.parse(window.sessionStorage.getItem('org_current_sort'))!=null ? JSON.parse(window.sessionStorage.getItem('org_current_sort')) : 10,
-        current_sort_keyword:10,
+        current_org:GetSessionStorage('org_current_sort')!=null ? GetSessionStorage('org_current_sort') : 10,
         perlist:[],
         perlistData:[],
         keywordlistData:[],
         ct_size:'',//二级模态
-      ct_name:'',//二级模态
-      ct_url:'',//二级模态
-      ct_data:[],//二级模态
-      ct_data_list:[],
-      currentPage:1,
-      currentPage_ky:1,
-      currentPage_art:1,
-      page_size:10 ,
-      page_size_art:6 ,
-      data_scond: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
-      table_label_second:'全选',
-      tabledata_perlist:[],
-      tabledata_keywordlist:[],
-      tabledata_articlelist:[],
-      second_tabledata:[],
-      tabledata_perlist_list:[],
-      tabledata_keywordlist_list:[],
-      tabledata_articlelist_list:[],
-      second_tabledata_list:[],
-      first_table_Data:[],
-      second_table_Data:[],
-      perlist_selection:[],
-      keywordlist_selection:[],
-      articlelist_selection:[],
-      second_selection:[],
-      first_data_index:'',
-      second_data_index:'',
-      three_data_index:'',
-      data_label:'',
-      second_flag:'',
-      search_flag:false,
-      dialo_title:'',
-      dropdown_jushuNum:['1','2','3','5','全部'],
-      current_jushuNum:JSON.parse(window.sessionStorage.getItem('org_current_jushuNum'))!=null ? JSON.parse(window.sessionStorage.getItem('org_current_jushuNum')) : 3,
-      loading_start:false,
-      tree_width:JSON.parse(window.sessionStorage.getItem('tree_width'))!=null ? JSON.parse(window.sessionStorage.getItem('tree_width')) : '100%',
-      duibi_height:window.document.documentElement.clientHeight-40+'px',
-      duibiData:[],
-      duibiProps: {
-        label: 'label',
-        hand: 'hand',
-        iid:'iid',
-        data:'data',
-        children:'children'
+        ct_name:'',//二级模态
+        ct_url:'',//二级模态
+        ct_data:[],//二级模态
+        ct_data_list:[],
+        currentPage:1,
+        currentPage_ky:1,
+        currentPage_art:1,
+        page_size:10 ,
+        page_size_art:6 ,
+        data_scond: [],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
         },
-      load_flag:false,//判断有没有对比数据
-      duibiTable_flag:false,
-      compet_proId:'',
-      compet_orgId:'',
-      compet_mention:''
-      }
-    },
-  methods: {
-    format_time () {
-      Date.prototype.Format = function (fmt) {  
-        var o = {
-              "M+": this.getMonth() + 1, //月份 
-              "d+": this.getDate(), //日 
-              "h+": this.getHours(), //小时 
-              "m+": this.getMinutes(), //分 
-              "s+": this.getSeconds(), //秒 
-              "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-              "S": this.getMilliseconds() //毫秒 
-          };
-          if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-          for (var k in o)
-          if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-          return fmt;
+        table_label_second:'全选',
+        tabledata_perlist:[],
+        tabledata_keywordlist:[],
+        tabledata_articlelist:[],
+        second_tabledata:[],
+        tabledata_perlist_list:[],
+        tabledata_keywordlist_list:[],
+        tabledata_articlelist_list:[],
+        second_tabledata_list:[],
+        first_table_Data:[],
+        second_table_Data:[],
+        perlist_selection:[],
+        keywordlist_selection:[],
+        articlelist_selection:[],
+        second_selection:[],
+        first_data_index:'',
+        second_data_index:'',
+        three_data_index:'',
+        data_label:'',
+        second_flag:'',
+        search_flag:false,
+        dialo_title:'',
+        dropdown_jushuNum:['1','2','3','5','全部'],
+        current_jushuNum:GetSessionStorage('org_current_jushuNum')!=null ? GetSessionStorage('org_current_jushuNum') : 3,
+        loading_start:false,
+        tree_width:GetSessionStorage('tree_width')!=null ? GetSessionStorage('tree_width') : '100%',
+        duibi_height:window.document.documentElement.clientHeight-40+'px',
+        duibiData:[],
+        duibiProps: {
+          label: 'label',
+          hand: 'hand',
+          iid:'iid',
+          data:'data',
+          children:'children'
+          },
+        load_flag:false,//判断有没有对比数据
+        duibiTable_flag:false,
+        compet_proId:'',
+        compet_orgId:'',
+        compet_mention:''
         }
     },
+  methods: {
+    //改变页数的表格数据变化
+    format_tabledata_ (crrtpage,pageSize,dta,dtaList) {
+        let newdata=[],
+        pageNum=this[crrtpage]-1;
+        for(let i=this[pageSize]*pageNum;i<this[pageSize]*pageNum+this[pageSize];i++ ){
+          this[dta][i] !== undefined ? newdata.push(this[dta][i]) : '' 
+        }
+        this[dtaList]=newdata;       
+    },
+      //初始化表格
     format_table (a,b) {
       this.currentPage=1;
       this.currentPage_ky=1;
       this.currentPage_art=1;
-      let newdata=[];
       if(a==='tabledata_articlelist'){
-        if(this[a].length>6){
-          for(let c=0;c<6;c++){
-          newdata.push(this[a][c])
-          }
-        }else{
-          newdata=this[a]
-        }
-        this[b]=newdata;
+        this[a].length > 6 ? this[b] = this[a].slice(0,6) : this[b] = this[a] ;
       }else{
-        if(this[a].length>10){
-          for(let c=0;c<10;c++){
-          newdata.push(this[a][c])
-          }
-        }else{
-          newdata=this[a]
-        }
-        this[b]=newdata; 
-      }
+        this[a].length > 10 ? this[b] = this[a].slice(0,10) : this[b] = this[a] ;
+      };
     },
     look(){
-      console.log(this.duibiData);
-      let idarr=[];
-      let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let idarr = [],_this = this,project_id = GetSessionStorage('project_id');
       for(let i=0;i<this.duibiData.length;i++){
           if(this.duibiData[i].hand=='取消'){
             idarr.push(this.duibiData[i].iid)
           }
-      }
-      console.log(idarr)
+      };
       this.dialo_duibi=true;
       $.ajax({
             url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/cpa",
@@ -498,102 +416,12 @@ export default {
               "cpIdArr":idarr //竞品id数组 
             },
             success:function(data){
-                  console.log(data);
-                  //let leg=data.data.orgCateList;
-                  let cate=data.data.orgCateList.slice(0,idarr.length+1),cate_=data.data.orgCateList.slice(idarr.length+1,data.data.orgCateList.length);
-
-                  /*for(let i=0;i<leg.length;i++){
-                    let obj={};
-                    obj.name=leg[i].category
-                    if(leg[i].nodeType!=0){
-                      cate.push(obj)
-                    }else{
-                      cate_.push(obj)
-                    }
-                  };*/
-                  /*console.log(cate)
-                  console.log(cate_)*/
-                  $(function(){
-                    let Duibi = echarts.init(document.getElementById('Duibi'));
-                    let option={
-                      backgroundColor:'#222222',
-                      color:['#f34c81','#ffe75f','#688dff','#855df3','#23aacf','#d706ff','#ff6f7a','#60b680','#fd9c35','#dd4444'],
-                      title: {
-                          text: ''
-                      },
-                      tooltip: {},
-                      toolbox: {
-                        show : true,
-                        feature : {
-                            saveAsImage : {show: true}
-                        }
-                      },
-                      legend: [{
-                              data:cate,
-                              textStyle: {
-                                              color: 'white'
-                                          }
-                             },{
-                              top:'3%',
-                              data:cate_,
-                              textStyle: {
-                                              color: 'white'
-                                          }
-                             }],
-                      animationDurationUpdate: 1500,
-                      animationEasingUpdate: 'quinticInOut',
-                      series : [
-                          {
-                            categories :data.data.orgCateList,
-                              type: 'graph',
-                              layout: 'none',
-                              symbolSize: 50,
-                              roam: true,
-                              label: {
-
-                                  normal: {
-                                    formatter:function(a){
-                                      if(a.name.indexOf('/')!=-1){
-                                        return a.name.slice(0,a.name.indexOf('/'))
-                                      }else{
-                                        return a.name
-                                      }
-                  
-                                    },
-                                      show: true,
-                                      textStyle: {
-                                          fontSize: 10
-                                      }
-                                  }
-                              },
-                              edgeSymbol: ['circle', 'arrow'],
-                              edgeSymbolSize: [0, 0],
-                              edgeLabel: {
-                                  normal: {
-                                      textStyle: {
-                                          fontSize: 20
-                                      }
-                                  }
-                              },
-                              data: data.data.orgDataList,
-                              // links: [],
-                              links:data.data.orgLinkList,
-                              lineStyle: {
-                                  normal: {
-                                      opacity: 0.9,
-                                      width: 2,
-                                      curveness: 0.3
-                                  }
-                              }
-                          }
-                      ]
-                      };
-                    Duibi.setOption(option); 
-                  })
-        
+              let cate = data.data.orgCateList.slice(0,idarr.length+1),cate_ = data.data.orgCateList.slice(idarr.length+1,data.data.orgCateList.length),_categories = data.data.orgCateList,_data = data.data.orgDataList,_links =  data.data.orgLinkList;
+              $(function(){
+                  _echart.build_graph('Duibi',cate,cate_,_categories,_data,_links);
+              });
             }
-          });
-      
+          });   
     },
     node_expand(a,b){
       this.loading = true;
@@ -604,9 +432,8 @@ export default {
           _this5.loading = false;
           _this5.childNodes = [];
         };
-      console.log(a)
       if(a.label.indexOf('/')!=-1){//点击的组织
-        console.log(this.duibiData)
+        //console.log(this.duibiData)
         this.compet_proId=a.proId;
         this.compet_orgId=a.iid;
         this.duibiTable_flag=true;
@@ -626,18 +453,14 @@ export default {
       }else{//点击的竞品
         if(a.children.length==0){
          this.load_flag=false;
-         //this.loadNode(b,resolve);
         }
-      } 
+      }; 
     },
-     loadNode(node, resolve) {
+    loadNode(node, resolve) {
       console.log('进了nodelode')
-      //console.log(node)
-     // console.log(resolve)
-      let _this=this;
-       let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      //console.log(node) console.log(resolve)
+      let _this = this,project_id = GetSessionStorage('project_id');
        //console.log('鸡杂'+this.load_flag)
-       //console.log(this.duibiData)
       if(this.load_flag){//有数据了
         console.log(this.duibiData)
           let children1=[];
@@ -650,78 +473,73 @@ export default {
           }  
          resolve(this.duibiData);
           resolve(children1);
-        //console.log('我市'+children1)   
-        //console.log(this.duibiData)
+        //console.log('我市'+children1)  console.log(this.duibiData)
       }else{
         //console.log('从新加载')
         _this.loading_start=true;
         if(node.label){
-        if(node.label.indexOf('/')!=-1){//竞品
-           resolve([]); 
-        }else{
-          $.ajax({
-            url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org",
-            type:"GET",
-            traditional:true,
-            data:{
-              "method":"GET", //http方法
-              "proId":node.data.iid, //项目id
-              "articleType":_this.articleType, //文章类型
-              "orgNum0":_this.current_org,
-              "keywordNum":20,
-              "perNum":20,
-              "orgNum":20,  
-              "locNum":20,
-              "startTime":_this.time[0],
-              "endTime":_this.time[1],
-              "sentenceNum":_this.current_jushuNum=='全部' ? 0 : _this.current_jushuNum,
-              "type":2
-            },
-            success:function(data){
-              _this.loading_start=false;
-                      console.log(data)        
-                      console.log(_this.duibiData)
-                      if(data.data == null || data.data.length <=0){
-                        _this.$message({
-                            message: '暂无数据,请调整时间区间后再试',
-                            type: 'warning'
-                          }); 
-                        resolve();
-                        _this.load_flag=false;
-                      }else{
-                        for(let i=0;i<_this.duibiData.length;i++){
-                          if(node.label==_this.duibiData[i].label){
-                            _this.duibiData[i].children=[];
-                            for(let j=0;j<data.data.length;j++){
-                              let obj={};
-                              obj.label=data.data[j].mention;
-                              obj.hand='删除';
-                              obj.iid=data.data[j].id;
-                              obj.proId=data.data[j].proId;
-                              obj.children=[];
-                              obj.data=data.data[j].commonResult;
-                              _this.duibiData[i].children.push(obj)
-                              _this.$store.state.org_duibiData=_this.duibiData;
-                            }
-                          }
-                        }  
-                        console.log(_this.duibiData)
-                          resolve(_this.duibiData);
-                          _this.load_flag=true;
-                      }
-                      
-            }
-          });
-        }
-      }   
-    }
+          if(node.label.indexOf('/')!=-1){//竞品
+             resolve([]); 
+          }else{
+            $.ajax({
+              url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org",
+              type:"GET",
+              traditional:true,
+              data:{
+                "method":"GET", //http方法
+                "proId":node.data.iid, //项目id
+                "articleType":_this.articleType, //文章类型
+                "orgNum0":_this.current_org,
+                "keywordNum":20,
+                "perNum":20,
+                "orgNum":20,  
+                "locNum":20,
+                "startTime":_this.time[0],
+                "endTime":_this.time[1],
+                "sentenceNum":_this.current_jushuNum=='全部' ? 0 : _this.current_jushuNum,
+                "type":2
+              },
+              success:function(data){
+                        _this.loading_start=false;       
+                        //console.log(_this.duibiData)
+                        if(data.data == null || data.data.length <=0){
+                          _this.$message({
+                              message: '暂无数据,请调整时间区间后再试',
+                              type: 'warning'
+                            }); 
+                          resolve();
+                          _this.load_flag=false;
+                        }else{
+                          for(let i=0;i<_this.duibiData.length;i++){
+                            if(node.label==_this.duibiData[i].label){
+                              _this.duibiData[i].children=[];
+                              for(let j=0;j<data.data.length;j++){
+                                let obj={};
+                                obj.label=data.data[j].mention;
+                                obj.hand='删除';
+                                obj.iid=data.data[j].id;
+                                obj.proId=data.data[j].proId;
+                                obj.children=[];
+                                obj.data=data.data[j].commonResult;
+                                _this.duibiData[i].children.push(obj)
+                                _this.$store.state.org_duibiData=_this.duibiData;
+                              }
+                            };
+                          };  
+                            resolve(_this.duibiData);
+                            _this.load_flag=true;
+                        };                      
+              }
+            });
+          }
+        }   
+      }
     },
     add_duibi(){
       this.tree_width='50%';
       this.duibiData=[];
-      let _this=this;
-      window.sessionStorage.setItem('tree_width',JSON.stringify('50%'));
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let _this = this,project_id = GetSessionStorage('project_id');
+      SetSessionStorage('tree_width','50%');
       let data={
             "method": 'get',
             "project" : {
@@ -734,7 +552,6 @@ export default {
             traditional: true,
             data:{'projectDto1':JSON.stringify(data)},
             success: function(data){
-              console.log(data.data)
               if(data.data!=null||data.data.length>0){
                 for(let i=0;i<data.data.length;i++){
                   let obj={};
@@ -744,11 +561,9 @@ export default {
                   obj.iid=data.data[i].project.id;
                   _this.duibiData.push(obj); 
                   _this.$store.state.org_duibiData=_this.duibiData;
-                  console.log(_this.$store.state.org_duibiData)            
+                  //console.log(_this.$store.state.org_duibiData)            
                 }
               }
-               
-            //console.log(data.message);
             }
           })
     },  
@@ -768,225 +583,101 @@ export default {
         this.search();
       }
     },
-   search(){
-    let _this=this;
-    this.search_flag=false;
-    this.org_loading=true;
-    this.loading_start=true;
-    this.$store.state.btn_org=false;
-    this.data_scond=[];
-    this.duibiData=[];
-    this.tree_width='100%';
-    window.sessionStorage.setItem('tree_width',JSON.stringify('100%'));
-    $('#echart').css('opacity','0');
-    let Aorg_str=[];
-    let inparr;
-    function Sort(property){
-        return function(a,b){
-            var value1 = a[property];
-            var value2 = b[property];
-            return value2 - value1;
-        }
-      }
-    if(_this.input){
-      _this.input=_this.input.replace(/，/ig,','); //转化逗号
-      inparr=_this.input.split(',');
-      };
-    _this.format_time ();  
-    let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-    let project_name=JSON.parse(window.sessionStorage.getItem('start'));
-    window.sessionStorage.setItem('org_time0',JSON.stringify(_this.time[0].getTime()))
-    window.sessionStorage.setItem('org_time1',JSON.stringify(_this.time[1].getTime()))
-    window.sessionStorage.setItem('org_articleType',JSON.stringify(_this.articleType))
-    window.sessionStorage.setItem('org_current_sort',JSON.stringify(_this.current_org))
-    window.sessionStorage.setItem('org_current_jushuNum',JSON.stringify(_this.current_jushuNum))
-    $.ajax({
-      url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org",
-      type:"GET",
-      traditional:true,
-      data:{
-        "method":"GET", //http方法
-        "proId":project_id, //项目id
-        "articleType":_this.articleType, //文章类型
-        "orgNum0":_this.current_org, 
-        "keywordNum":20,
-        "perNum":20,
-        "orgNum":20, 
-        "locNum":20,
-        "startTime":_this.time[0],
-        "endTime":_this.time[1],
-        "sentenceNum":_this.current_jushuNum=='全部' ? 0 : _this.current_jushuNum
-      },
-      success:function(data){
-        _this.org_loading=false;
-        _this.loading_start=false;
-        $('#echart').css('opacity','1');
-        _this.data=data.data; 
-        console.log(data.data);
-        if(data.data==null||data.data.length==0){
-          _this.$message({
-                            message: '暂无数据,请调整时间区间或增加关键词后再试',
-                            type: 'warning'
-                          }); 
-        }else{
-            data.data.sort(Sort('count'));
-            _this.$store.state.org_Data=data.data;
-            for(let i=0;i<data.data.length;i++){
-                let obj={};
-                obj.label=data.data[i].mention;
-                obj.children=[];
-                /*if(data.data[i].enterpriseDtoList){
-                  for(let j=0;j<data.data[i].enterpriseDtoList.length;j++){
-                    let child_obj={};
-                    child_obj.label=data.data[i].enterpriseDtoList[j].mention+"     ";
-                    obj.children.push(child_obj)
-                  }
-                }*/
-                _this.data_scond.push(obj);             
-              }   
-        }                 
-      }
-    });
-   },
-   date_change(){
-    if(this.time[0]==undefined||this.time[1]==undefined||this.time[1].getTime()<this.time[0].getTime()){
-          this.time=[new Date(new Date().getTime()-604800000), new Date()];
-          this.$message({
-              message: '请检查您的时间格式',
-              type: 'warning'
-            });
-         }
-   },
-    handleCurrentChange(val){
-      this.currentPage = val;
-      let newdata=[],
-        pageNum=this.currentPage-1;
-        for(let i=this.page_size*pageNum;i<this.page_size*pageNum+this.page_size;i++ ){
-          this.tabledata_perlist[i] !== undefined ? newdata.push(this.tabledata_perlist[i]) : '' 
-        }
-        this.tabledata_perlist_list=newdata; 
+    search(){
+        let _this = this,Aorg_str = [],project_id = GetSessionStorage('project_id'),project_name = GetSessionStorage('start');
+        this.search_flag=false;
+        this.org_loading=true;
+        this.loading_start=true;
+        this.$store.state.btn_org=false;
+        this.data_scond=[];
+        this.duibiData=[];
+        this.tree_width='100%';
+        $('#echart').css('opacity','0');
+        let inparr;
+        if(_this.input){
+          _this.input=_this.input.replace(/，/ig,','); //转化逗号
+          inparr=_this.input.split(',');
+          }; 
+        SetSessionStorage('tree_width','100%');  
+        SetSessionStorage('org_time0',_this.time[0].getTime());  
+        SetSessionStorage('org_time1',_this.time[1].getTime());  
+        SetSessionStorage('org_articleType',_this.articleType);  
+        SetSessionStorage('org_current_sort',_this.current_org);  
+        SetSessionStorage('org_current_jushuNum',_this.current_jushuNum);  
+        $.ajax({
+          url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org",
+          type:"GET",
+          traditional:true,
+          data:{
+            "method":"GET", //http方法
+            "proId":project_id, //项目id
+            "articleType":_this.articleType, //文章类型
+            "orgNum0":_this.current_org, 
+            "keywordNum":20,
+            "perNum":20,
+            "orgNum":20, 
+            "locNum":20,
+            "startTime":_this.time[0],
+            "endTime":_this.time[1],
+            "sentenceNum":_this.current_jushuNum=='全部' ? 0 : _this.current_jushuNum
+          },
+          success:function(data){
+            _this.org_loading=false;
+            _this.loading_start=false;
+            $('#echart').css('opacity','1');
+            _this.data=data.data; 
+            if(data.data==null||data.data.length==0){
+              _this.$message({
+                                message: '暂无数据,请调整时间区间或增加关键词后再试',
+                                type: 'warning'
+                              }); 
+            }else{
+                data.data.sort(_Sort('count'));
+                _this.$store.state.org_Data=data.data;
+                for(let i=0;i<data.data.length;i++){
+                    let obj={};
+                    obj.label=data.data[i].mention;
+                    obj.children=[];
+                    _this.data_scond.push(obj);             
+                  }   
+            };                 
+          }
+        });
     },
-    handleCurrentChange_ky(val){
-      this.currentPage_ky = val;
-      let newdata=[],
-        pageNum=this.currentPage_ky-1;
-        for(let i=this.page_size*pageNum;i<this.page_size*pageNum+this.page_size;i++ ){
-          this.tabledata_keywordlist[i] !== undefined ? newdata.push(this.tabledata_keywordlist[i]) : '' 
-        }
-        this.tabledata_keywordlist_list=newdata; 
-    },
-    handleCurrentChange_art(val){
-      this.currentPage_art = val;
-      let newdata=[],
-        pageNum=this.currentPage_art-1;
-        for(let i=this.page_size_art*pageNum;i<this.page_size_art*pageNum+this.page_size_art;i++ ){
-          this.tabledata_articlelist[i] !== undefined ? newdata.push(this.tabledata_articlelist[i]) : '' 
-        }
-        this.tabledata_articlelist_list=newdata;
-    },
-    handleCurrentChange_org (val) {
-    this.currentPage_org = val;
-        let newdata=[],
-        pageNum=this.currentPage_org-1;
-        for(let i=this.page_size_org*pageNum;i<this.page_size_org*pageNum+this.page_size_org;i++ ){
-          this.second_tabledata[i] !== undefined ? newdata.push(this.second_tabledata[i]) : '' 
-        }
-        this.second_tabledata_list=newdata; 
-    },
-    dropdown_org(command){
-      this.current_org=command
-    },
-    renderContent(h, { node, data, store }) {
-        return (
-          <span>
-            <span>
-              <span>{node.label}</span>
-            </span>
-            <span style="position:absolute;right:20px">
-              <el-button size="mini" style="display:none;" on-click={ () => this.append(store,data,node) }>详情</el-button>
-              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.remove(store,data,node,event) }>删除</el-button>
-            </span>
-          </span>);
-      },
-      renderContent_duibi(h, { node, data, store }) {
-        if(data.hand=='删除'){
-          return (
-          <span>
-            <span>
-              <span>{node.label}</span>
-            </span>
-            <span style="position:absolute;right:20px">
-              <el-button size="mini"  style="display:none;" on-click={ () => this.append(store,data,node) }>{data.hand}</el-button>
-              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
-            </span>
-          </span>);
-        }else if(data.hand=='添加'){
-          return (
-          <span>
-            <span>
-              <span>{node.label}</span>
-            </span>
-            <span style="position:absolute;right:20px">
-              <el-button size="mini"  style="background-color:rgba(19,206,102,.8);border-color:#13ce66;color:white" on-click={ () => this.append(store,data,node,event) }>{data.hand}</el-button>
-              <el-button size="mini" style="display:none;background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
-            </span>
-          </span>);
-        }else{
-          return (
-          <span>
-            <span>
-              <span>{node.label}</span>
-            </span>
-            <span style="position:absolute;right:20px">
-              <el-button size="mini"  style="background-color:rgba(246,166,35,.8);border-color:#f6a623;color:white" on-click={ () => this.append(store,data,node,event) }>{data.hand}</el-button>
-              <el-button size="mini" style="display:none;background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
-            </span>
-          </span>);
-        }
-        
-      },
-      del_org(a,b,c,d){
+    del_org(a,b,c,d){
+      //console.log(b);console.log(c);
         d.stopPropagation();
-          console.log(b);
-          console.log(c);
-          let _this=this;
-          $.ajax({
-            url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+b.proId+"/org ",
-            type:"POST",
-            traditional:true,
-            data:{
-              "method":"DELETE", //http方法
-              "proId":b.proId, //项目id
-              "orgIdArr":[b.iid] //组织id数组，一般只有一个
-              },
-            success:function(data){
-              console.log(data.message)
-              console.log(_this.duibiData)
-              for(let i=0;i<_this.duibiData.length;i++){
-                if(_this.duibiData[i].iid==b.proId){
-                  _this.duibiData[i].children=_this.duibiData[i].children.filter(item => { return [b.iid].indexOf(item.iid) === -1; });//前台删除
-                }
+        let _this=this;
+        $.ajax({
+          url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+b.proId+"/org ",
+          type:"POST",
+          traditional:true,
+          data:{
+            "method":"DELETE", //http方法
+            "proId":b.proId, //项目id
+            "orgIdArr":[b.iid] //组织id数组，一般只有一个
+            },
+          success:function(data){
+            //console.log(data.message) console.log(_this.duibiData)
+            for(let i=0;i<_this.duibiData.length;i++){
+              if(_this.duibiData[i].iid==b.proId){
+                _this.duibiData[i].children=_this.duibiData[i].children.filter(item => { return [b.iid].indexOf(item.iid) === -1; });//前台删除
               }
-              _this.search_flag=true;
             }
-          });
-      },
-      append(a,b,c,d){
+            _this.search_flag=true;
+          }
+        });
+    },
+    append(a,b,c,d){
         if(b.hand=='添加'){
           b.hand='取消';
         }else if(b.hand=='取消'){
           b.hand='添加';
-        }
-      },
+        };
+    },
     remove(a,b,c,d){
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;
+      let project_id = GetSessionStorage('project_id'),_this = this; 
       d.stopPropagation();
-     // console.log(a)
-      console.log(b)
-      console.log(c.parent)
-      console.log(this.data_scond);
-      console.log(this.data);
       if(c.parent.parent==null){
         let oid;//获取组织id
         for(let i=0;i<this.data.length;i++){
@@ -1005,7 +696,6 @@ export default {
               "orgIdArr":[oid] //组织id数组，一般只有一个
               },
             success:function(data){
-              console.log(data.message)
               _this.data_scond=_this.data_scond.filter(item => { return [b.label].indexOf(item.label) === -1; });
               _this.data=_this.data.filter(item => { return [oid].indexOf(item.id) === -1; });//前台删除
               _this.$store.state.org_Data=_this.data;
@@ -1032,7 +722,6 @@ export default {
                     "method":"DELETE", //http方法
                     "proId":project_id, //项目id
                     "orgId":oid,//组织id
-                    //"enterpriseNameArr":[b.label]
                     },
                   success:function(data){
                     console.log(data.message)
@@ -1045,14 +734,12 @@ export default {
         }
     },
     node_click(a,b,c){
-      let _this=this;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
+      let _this = this,project_id=GetSessionStorage('project_id');
       _this.tabledata_perlist=[];
       _this.first_data_index=_this.second_data_index='';
       _this.dialo_title=a.label.slice(0,a.label.indexOf('/'))+'组织详情'
       _this.duibiTable_flag=false;
       _this.dialogCt=true;
-      _this.format_time();
         if(b.data.label.slice(b.data.label.length-5,b.data.label.length)!='     '){
           _this.second_flag=true;
           for(let i=0;i<_this.data.length;i++){
@@ -1093,27 +780,13 @@ export default {
         _this.format_table('tabledata_perlist','tabledata_perlist_list');
         _this.format_table('tabledata_keywordlist','tabledata_keywordlist_list');
         _this.format_table('tabledata_articlelist','tabledata_articlelist_list');
-
-    },
-    perlist_select(a){
-      this.perlist_selection=a;
-    },
-    keywordlist_select(a){
-      this.keywordlist_selection=a;
-    },
-    articlelist_select(a){
-      this.articlelist_selection=a;
     },
     del_(a,b,c,d,e){  //('perlist_selection','perList','mention','tabledata_perlist','tabledata_perlist_list')
-      console.log(this.perlist_selection);
-      console.log(this.first_data_index)
-      console.log(this.second_data_index);
-      let arr=[];
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;
+      //console.log(this.perlist_selection); console.log(this.first_data_index) console.log(this.second_data_index);
+      let _this = this,project_id=GetSessionStorage('project_id'),arr = [];
       for(let i=0;i<this[a].length;i++){
         arr.push(this[a][i][c]);
-      }
+      };
       if(this.second_data_index===''){//点击父级即组织下的操作
         if(a==='articlelist_selection'){//判断删除组织父级下的文章
           if(this.duibiTable_flag){//竞品的
@@ -1262,15 +935,10 @@ export default {
           }
         } 
     },
-    second_select(a){
-      this.second_selection=a;
-    },
     del_2(a,b){
-      console.log(this.second_data_index);
-      console.log(this[a]);
-      let arr=[];
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let _this=this;
+      //console.log(this.second_data_index);
+      //console.log(this[a]);
+      let _this = this,project_id=GetSessionStorage('project_id'),arr = [];
       for(let i=0;i<this[a].length;i++){
         arr.push(this[a][i][b]);
       }
@@ -1356,13 +1024,10 @@ export default {
                     _this.search_flag=true;
                   }
             });
-      }
-     
+      }; 
     },
     table_click(a,b,c){
-      console.log(a);
-     /*console.log(b);
-      console.log(c);*/
+      //console.log(a);
       if(b.type=='default'){
         if(a.url){
           window.open(a.url)
@@ -1378,14 +1043,14 @@ export default {
             this.compet_mention=a.mention;
             this.second_tabledata=a.eventArticleList;
             this.format_table('second_tabledata','second_tabledata_list');
-            console.log(this.duibiData)
+            //console.log(this.duibiData)
           }else{
-            console.log('zishen')
+            //console.log('zishen')
             this.dialo_org=true;
             this.second_tabledata=a.eventArticleList;
             this.format_table('second_tabledata','second_tabledata_list');
             if(this.second_data_index===''){
-              console.log(this.data[this.first_data_index].commonResult[this.data_label])
+              //console.log(this.data[this.first_data_index].commonResult[this.data_label])
               for(let i=0;i<this.data[this.first_data_index].commonResult[this.data_label].length;i++){
                   if(a.mention===this.data[this.first_data_index].commonResult[this.data_label][i].mention){
                     this.three_data_index=i;
@@ -1403,18 +1068,14 @@ export default {
       }
     },
     save(){
-      let _this=this;
+      let _this = this,project_id=GetSessionStorage('project_id'),idarr = [];
       this.org_loading=true;
       this.loading_start=true;
-      let project_id=JSON.parse(window.sessionStorage.getItem('project_id'));
-      let idarr=[];
-      console.log(this.duibiData)
       for(let i=0;i<this.duibiData.length;i++){
           if(this.duibiData[i].hand=='取消'){
             idarr.push(this.duibiData[i].iid)
           }
-      }
-      console.log(idarr)
+      };
       $.ajax({
           url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/sysborg",
           type:"POST",
@@ -1425,7 +1086,6 @@ export default {
             "cpIdArr":idarr
         },
           success:function(data){
-            console.log(data)
             _this.$message({
               message: data.message,
               type: 'success'
@@ -1437,15 +1097,82 @@ export default {
           }
         });
     },
-    dropdown_jushu(command){
-      this.current_jushuNum=command
+    handleCurrentChange(val){
+      this.currentPage = val;
+      this.format_tabledata_('currentPage','page_size','tabledata_perlist','tabledata_perlist_list');
+    },
+    handleCurrentChange_ky(val){
+      this.currentPage_ky = val;
+      this.format_tabledata_('currentPage_ky','page_size','tabledata_keywordlist','tabledata_keywordlist_list');
+    },
+    handleCurrentChange_art(val){
+      this.currentPage_art = val;
+      this.format_tabledata_('currentPage_art','page_size_art','tabledata_articlelist','tabledata_articlelist_list');
+    },
+    handleCurrentChange_org (val) {
+      this.currentPage_org = val;
+      this.format_tabledata_('currentPage_org','page_size_org','second_tabledata','second_tabledata_list');
+    },
+    dropdown_org(command){ this.current_org = command ;},
+    dropdown_jushu(command){ this.current_jushuNum = command ;},
+    perlist_select(a){ this.perlist_selection = a ;},
+    keywordlist_select(a){ this.keywordlist_selection = a ;},
+    articlelist_select(a){ this.articlelist_selection = a ;},
+    second_select(a){ this.second_selection = a ;},
+    date_change (){date_change(this);},
+    renderContent(h, { node, data, store }) {
+        return (
+          <span>
+            <span>
+              <span>{node.label}</span>
+            </span>
+            <span style="position:absolute;right:20px">
+              <el-button size="mini" style="display:none;" on-click={ () => this.append(store,data,node) }>详情</el-button>
+              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white;padding:2px 10px;" on-click={ () => this.remove(store,data,node,event) }>删除</el-button>
+            </span>
+          </span>);
+    },
+    renderContent_duibi(h, { node, data, store }) {
+        if(data.hand=='删除'){
+          return (
+          <span>
+            <span>
+              <span>{node.label}</span>
+            </span>
+            <span style="position:absolute;right:20px">
+              <el-button size="mini"  style="display:none;" on-click={ () => this.append(store,data,node) }>{data.hand}</el-button>
+              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white;padding:2px 10px;padding:2px 10px;" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
+            </span>
+          </span>);
+        }else if(data.hand=='添加'){
+          return (
+          <span>
+            <span>
+              <span>{node.label}</span>
+            </span>
+            <span style="position:absolute;right:20px">
+              <el-button size="mini"  style="background-color:rgba(19,206,102,.8);border-color:#13ce66;color:white;padding:2px 10px;" on-click={ () => this.append(store,data,node,event) }>{data.hand}</el-button>
+              <el-button size="mini" style="display:none;background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
+            </span>
+          </span>);
+        }else{
+          return (
+          <span>
+            <span>
+              <span>{node.label}</span>
+            </span>
+            <span style="position:absolute;right:20px">
+              <el-button size="mini"  style="background-color:rgba(246,166,35,.8);border-color:#f6a623;color:white;padding:2px 10px;" on-click={ () => this.append(store,data,node,event) }>{data.hand}</el-button>
+              <el-button size="mini" style="display:none;background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
+            </span>
+          </span>);
+        }
     }
   }
 }
 </script>
  
 <style lang="scss" >
-
   .el-message-box__close{
     display: none !important;
   }
@@ -1466,6 +1193,15 @@ export default {
         opacity: 0.8;
       }
     }
+    .el-date-editor--datetime{
+        input{
+          height: 23px !important;
+          padding-right: 0 ;
+        }
+        .el-input__icon{
+          line-height: 22px;
+        }
+       }
     #content{
       .panel{
         .panel-title{
@@ -1522,17 +1258,21 @@ export default {
         ul>li{
           opacity: 1;
         }
-        .el-pager .active {
-          border-color: #00b38a;
-          background-color: #00b38a;
-        }
         .el-pagination__jump{
           display: none;
+        }
+        .el-pager .active {
+          color:#00b38a;
         }
        }
       .el-dialog{
         .el-dialog__body{
           padding:10px 20px 45px 10px;
+          .el-table{
+            td{
+              padding: 5px 0;
+            }
+          }
         }
         border-radius: 4px;
         width: 33%;
@@ -1566,6 +1306,7 @@ export default {
   #dialog_ct,#dialo_duibi{
     .el-table td, .el-table th{
         height: 35px !important;
+        padding: 0px;
     }
     .el-dialog--tiny{
         width: 1200px !important;
@@ -1583,8 +1324,7 @@ export default {
           opacity: 1;
         }
         .el-pager .active {
-          border-color: #00b38a;
-          background-color: #00b38a;
+          color:#00b38a;
         }
         .el-pagination__jump{
           display: none;
@@ -1618,15 +1358,23 @@ export default {
         }
     
   }
-  #dialo_duibi{
-   .el-dialog__body{
-      padding:0px !important;
-    }
-    .el-dialog--tiny{
-        width: 100% !important;
-        //height: 868px;
-        top:0px !important;
+  #dialog_ct{
+    .el-dialog__body{
+        height: 850px;
       }
+  }
+  #dialo_duibi{
+    .el-dialog{
+      margin: 0px !important;
+      .el-dialog__body{
+         padding:0px !important;
+      }
+      .el-dialog__header{
+        .el-dialog__headerbtn{
+          top:13px;
+        }
+      }
+    }
   }
   .el-tree-node__children>.el-tree-node>.el-tree-node__content>.el-tree-node__expand-icon{
     display: none;

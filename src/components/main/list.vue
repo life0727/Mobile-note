@@ -83,7 +83,6 @@
               <el-button v-show="this.data.length!==0" data-target="#carousel-example-generic" data-slide-to="1"  style="background-color: #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;position:absolute;top:-40px;right: 0;;" @click="show_echarts">更多<i class="fa fa-angle-right" style="margin-left: 8px;"></i></el-button> 
             </li>
             <li >
-               <!-- <img data-target="#carousel-example-generic" data-slide-to="0" src="../../assets/img/table.jpg" @click="first_options=[];second_options=[];" style="cursor:pointer;width:84px;height:20px;position:absolute;left:2px;" >  -->
                <el-button data-target="#carousel-example-generic" data-slide-to="0"  style="background-color: #00b38a;border-color:  #00b38a;border-radius: 4px !important;font-size: 17px;width: 85px;height: 40px;color: white;position:absolute;top:-40px;right: 0;;" @click="hide_echarts">信息<i class="fa fa-angle-left" style="margin-left: 8px;"></i></el-button> 
             </li>
           </ol>
@@ -227,13 +226,7 @@
                   <div id="echarts_newsnumber" v-show="echarts_show==0||echarts_show==1"></div> 
                 </div>                
                 <div class="nopa" id="echarts-user_defind_mdeia">
-                  <!-- <h1>我是自定义媒体分析</h1>
-                  <div class="third_card">
-                    <el-button-group>
-                      <el-button v-for="i in third_card" :class="{bgcolor:i.bg}" @click="toggleclass(i)">{{i.name}}<i class="fa fa-times" @click.stop="del_third_card(i)"></i></el-button>
-                      <el-button id="third_card_add" type="primary" icon="plus" @click="dialogVisible = true"></el-button>
-                    </el-button-group>
-                  </div> -->
+                  <!-- 我是自定义媒体分析  static存在 -->
                   <el-tabs v-model="activeName3" >
                     <el-tab-pane label="新闻" name="first">
                      <span ><b>类型:</b> &nbsp;&nbsp;&nbsp;</span>
@@ -387,19 +380,9 @@
         </div>
       </div>
     <!-- 信息显示与图表部分end --> 
-
-    <!--    添加自定义媒体分析模态框 -start -->
-      <el-dialog title="添加方案" v-model="dialogVisible" size="tiny">
-        <span>方案名称：</span>
-        <input type="text" v-model="third_card_input" placeholder="方案名称">
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="add_third_card">确 定</el-button>
-        </span>
-      </el-dialog>
-    <!--    添加自定义媒体分析模态框 -end -->
+      <!-- 添加自定义媒体分析模态框 static存在 -->
     <!--    转发合并模态框 -start -->
-      <el-dialog title="合并详情" v-model="dialogReprintList" class="dialogList" >
+      <el-dialog title="合并详情" :visible.sync="dialogReprintList" width="1200px" class="dialogList" >
         <hr> 
           <div class="block">
             <span class="wrapper">
@@ -505,7 +488,7 @@
       </el-dialog>
     <!--   转发合并模态框 -end -->
     <!--    回收站模态框 -start -->
-    <el-dialog title="回收站列表" v-model="dialog_recycle" class="dialogList" >
+    <el-dialog title="回收站列表" :visible.sync="dialog_recycle" width="1200px" class="dialogList" >
       <hr> 
           <div class="block">
             <span class="wrapper">
@@ -619,8 +602,8 @@
     </el-dialog>
     <!--    回收站模态框 -end -->
     <!-- 新闻地域省份模态框 start-->
-     <el-dialog title="相关文章" v-model="dialogEchart_xw_province" size="tiny" >
-      <div class="el-steps is-vertical" id="steps">
+     <el-dialog title="相关文章" :visible.sync="dialogEchart_xw_province" width="580px" >
+      <div class="el-steps el-steps--vertical" id="steps">
         <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;" v-for="(i,$index) in dialog_xw_provinceMap" @mouseover="Mover_articleList($index)" @mouseout="Mout_articleList($index)">
           <div class="el-step__head  is-text" style="color: white;">
             <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
@@ -636,30 +619,7 @@
       <span slot="footer" class="dialog-footer" ></span>
     </el-dialog>
     <!-- 新闻地域省份模态框 end-->
-   <!--  mention 图start -->
-   <!-- <el-dialog title="详情" v-model="dialogCt" size="tiny" id="dialog_ct" >
-       <p style="font-size: 16px;color: #333;"><img src="../../assets/icon/ev_shu.png" style="margin-top: -3px;display: inline-block;margin-right: 10px;"> 出现频次: <span style="color: #666;">{{ct_size}}</span></p>
-       <p style="font-size: 16px;color: #333;"><img src="../../assets/icon/ev_shu.png" style="margin-top: -3px;display: inline-block;margin-right: 10px;"> 知识图谱: <img src="../../assets/icon/ct_link.png" style="margin-top: -3px;display: inline-block;"> <a :href="ct_url" target="_blank" style="color: #fec330;text-decoration: none;">{{ct_name}}</a></p>
-       <p style="font-size: 16px;color: #333;"><img src="../../assets/icon/ev_shu.png" style="margin-top: -3px;display: inline-block;margin-right: 10px;"> 相关文章</p>
-       <div class="list-group" style="width: 531px;" id="dialog_ct_list">
-          <p v-loading="this.ct_data_list.length==0" element-loading-text="系统拼命加载中..."  id="loading_ct" style="margin-bottom: 0;"></p>
-          <div style="padding: 8px 5px;color: #999;cursor: pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;" class="list-group-item" ref="ct_list" @mouseover="Mover_ct_list($index)" @mouseout="Mout_ct_list($index)" @click="click_ct_list(i)" v-for="(i,$index) in ct_data_list">{{($index+1)+(currentPage_ct-1)*page_size_ct}}.&nbsp;{{i.article.title}}</div>
-      </div>
-      分页 strart
-        <el-pagination
-            id="page_ct"
-            @current-change="handleCurrentChange_ct"
-            :current-page="currentPage_ct"
-            :page-sizes="[ 12, 20, 25]"
-            :page-size="page_size_ct"
-            layout="total,  prev, pager, next, jumper"
-            :total="this.ct_data.length"
-            v-show="this.ct_data.length!==0">
-        </el-pagination>
-     分页 end
-   </el-dialog> -->
-   <!--  mention 图end -->
-
+      <!-- mention模态框  -static存在 -->
   </div>
 </div>  
 </template>
@@ -670,8 +630,7 @@ import { filter_polar,Sort_up,Sort_down,Sort,_Sort,SetSessionStorage,GetSessionS
 //import { wordExport }  from '../../assets/js/wordexport.js'
 export default {
   mounted :function () {
-    format_time()
-    
+    format_time();
   //判断是否初始化
    if(this.$store.state.list_Data===''){
     this.loading_start=true;
@@ -696,6 +655,7 @@ export default {
            }
         })
       }else{
+        console.log('wei初始化');
         let project_id=GetSessionStorage('project_id');
         this.search_data(this.current_jushuNum,project_id,-1,this.articleType,[],[],[],this.queryType,[-1,0,1],0,this.time[0],this.time[1]);
       }
@@ -706,11 +666,9 @@ export default {
       $('.filter_button').hover(function(){
         $(this).css('border-color','#00b38a');
         $(this).css('color','#00b38a');
-        //$('.filter').css('border-bottom-color','rgb(240,173,78)')
       },function(){
         $(this).css('border-color','#ccc');
-        $(this).css('color','black');
-        //$('.filter').css('border-bottom-color','#ccc')        
+        $(this).css('color','black');      
       });
       //监测是否兼容ie?
       if (!!window.ActiveXObject || "ActiveXObject" in window){
@@ -724,41 +682,17 @@ export default {
       $(this).addClass('warning').siblings().removeClass('warning')
      });
      let _this=this;
-    /* $('.polar').click(function(){
-        $(this).toggleClass('warning');
-        //文章调性回传数据 polar_arr
-        let polar_arr=[];
-        let polar= $('#polar .warning').not('#filter_polar_all');
-        for(let i=0;i<polar.length;i++){
-          polar_arr.push(polar[i].innerHTML);
-        }
-        for( let i=0;i<polar_arr.length;i++){
-          if(polar_arr[i]=='正面'){  polar_arr[i]=1   };
-          if(polar_arr[i]=='中性'){  polar_arr[i]=0   };
-          if(polar_arr[i]=='负面'){  polar_arr[i]=-1   };    
-        }
-        //console.log(_this.polar_arr)
-        _this.polar_arr=polar_arr;      
-     });
-    $('#filter_polar_all').click(function(){
-      if( _this.polar_arr.length==3){
-        $('.polar').removeClass('warning');
-         _this.polar_arr=[];
-      }else{
-         $('.polar').addClass('warning');
-         _this.polar_arr=[-1,0,1];
-      }
-    })*/
+    /* this.polar_arr 生成格式---static文件存在 */
     //点击筛选按钮直接搜索数据
      $('.filter .btn').not('.filter_name').not('.filter_button').click(function(){
       _this.loading_start=true;
       let project_id=GetSessionStorage('project_id');
 
-      if(_this.time[0]==undefined||_this.time[1]==undefined||_this.time[1].getTime()<_this.time[0].getTime()){
-      _this.$message({
-          message: '请检查您的时间格式',
-          type: 'warning'
-        });
+     if(_this.time[0]==undefined||_this.time[1]==undefined||_this.time[1].getTime()<_this.time[0].getTime()){
+        _this.$message({
+            message: '请检查您的时间格式',
+            type: 'warning'
+          });
      }else{
         //必须包含关键词回传数据 mustIncludeKeywordList
        let allkeyword=_this.allkeyword;
@@ -822,13 +756,8 @@ export default {
       reprintList_data:'',//转发的模态框的数据
       reprintList_id:'',//点击转发的相对应的总数据的id
       tabledata:[],//表格数据
-      fix_data:[],//右边固定fix地图数据
-      fix_media:'',//右边固定fix地图 媒体名称数据
       fix_media_xinwen:'',//右边固定fix地图 媒体名称数据 xinwen
       fix_media_wx:'',//右边固定fix地图 媒体名称数据 weixin
-      fix_media_size:'',
-      fix_media_xinwen_size:'',
-      fix_media_wx_size:'',
       currentPage: 1,
       page_size:12,
       reprintList_size:'',
@@ -839,13 +768,6 @@ export default {
       dialogEchart_xw_province:false,
       dialogCt:false,
       classify:[{name:'全部','bg':true,'fa':true,id:-1}],
-      third_card:[{name:'方案一','bg':false},{name:'方案二','bg':false},{name:'方案三','bg':false}],
-      third_card_input:'',
-      classify_input:'',
-      tags:[],
-      notags:[],
-      kw:[],//关键词
-      notkw:[],
       includeKeywords:[],
       excludeKeywords:[],
       dialog_type:'',//分类模态框名称
@@ -886,13 +808,6 @@ export default {
       personSet:'',
       locationSet:'',
       orgSet:'',
-      ct_size:'',
-      ct_name:'',
-      ct_url:'',
-      ct_data:[],
-      ct_data_list:[],
-      currentPage_ct:1,
-      page_size_ct:10,
       current_sort_loc:'5',
       current_sort_per:'5',
       current_sort_org:'5',
@@ -905,7 +820,6 @@ export default {
   },
   methods: {
     //通用methods方法
-
     //格式表格数据
     format_tabledata () {
       let newdata=[],
@@ -917,9 +831,7 @@ export default {
     },
     // 通过筛选条件搜索数据 this保存的前提下(_this)
     search_data (jushu,proId,categoryId,articleType,mustIncludeKeywordList,anyIncludeKeywordList,notIncludeKeywordList,queryType,polar,timeType,startTime,endTime,echart,more_echarts,type_echarts) {
-      if(jushu=='全部'){
-        jushu=0;
-      };
+      jushu == '全部' ? jushu = 0 : '' ;
       let _this=this;   
       SetSessionStorage('list_time0',_this.time[0].getTime());
       SetSessionStorage('list_time1',_this.time[1].getTime());
@@ -944,7 +856,6 @@ export default {
                   "endTime":endTime//截止时间  
                   },
                   success:function(data){
-                    //console.log("成功回调函数-------------------")
                     _this.loading_start=false;
                     if(data.data==null||data.data.length<=0){
                       $('#table').css('display','none');
@@ -975,59 +886,27 @@ export default {
               }
               _this.data=data;
               _this.$store.state.list_Data=data;
-              //初始表格数据
-            let newdata=[];
-            if(_this.data.length>12){
-              for(let c=0;c<12;c++){
-              newdata.push(_this.data[c])
-              }
-            }else{
-              for(let c=0;c<_this.data.length;c++){
-              newdata.push(_this.data[c]);                  
-              }
-            }
-            _this.tabledata=newdata;
-              //fix 右边固定数据
-              _this.fix_data=data;
-              let media_map=[];
+            //初始表格数据
+              _this.tabledata = _this.data.length > 12 ? _this.data.slice(0,12) : _this.data;
+              //fix 右边固定数据以及媒体声量top10
               let media_map_xinwen=[];
               let media_map_wx=[];
                for(let i=0;i<_this.data.length;i++){
-                media_map.push(_this.data[i].article.media);
                 if(_this.data[i].article.articleType==1){
                   media_map_xinwen.push(_this.data[i].article.media)
                 }else if(_this.data[i].article.articleType==2){
                   media_map_wx.push(_this.data[i].article.media)
                 }
-              }
+              };
               //console.log(media_map_xinwen)
               //console.log(media_map_wx)
-              let media_map_data=media_map;
-              let media_map_data_xinwen=media_map_xinwen;
-              let media_map_data_wx=media_map_wx;
-              _this.fix_media_size=media_map.length;//总个数
-              _this.fix_media_xinwen_size=media_map_xinwen.length;//总个数
-              _this.fix_media_wx_size=media_map_wx.length;//总个数
-              let fix_map=new Map()//生成{媒体名称：个数} 的map
               let fix_map_xinwen=new Map()//生成{媒体名称：个数} 的map
               let fix_map_wx=new Map()//生成{媒体名称：个数} 的map
-              for(let t=0;t<media_map_data.length;t++){
-                  if(fix_map.get(media_map_data[t])==null){
-                    fix_map.put(media_map_data[t],1)
-                  }else{
-                    fix_map.put(media_map_data[t],fix_map.get(media_map_data[t])+1)
-                  }   
-                }
               if(_this.articleType==0){
-                  for(let t=0;t<media_map_data_xinwen.length;t++){
-                  if(fix_map_xinwen.get(media_map_data_xinwen[t])==null){
-                    fix_map_xinwen.put(media_map_data_xinwen[t],1)
-                  }else{
-                    fix_map_xinwen.put(media_map_data_xinwen[t],fix_map_xinwen.get(media_map_data_xinwen[t])+1)
-                  }   
+                  for(let t=0;t<media_map_xinwen.length;t++){
+                    fix_map_xinwen.get(media_map_xinwen[t]) == null ? fix_map_xinwen.put(media_map_xinwen[t],1) : fix_map_xinwen.put(media_map_xinwen[t],fix_map_xinwen.get(media_map_xinwen[t])+1);  
                 };
                 let media_map_arr_xinwen=[];
-                let media_map_arr_big_xinwen=[];
                 for(let k in fix_map_xinwen.data){
                   let obj={};
                   obj.name=k;
@@ -1035,64 +914,24 @@ export default {
                   obj.fontbg=false;
                   media_map_arr_xinwen.push(obj)
                 }
-                media_map_arr_xinwen.sort(_Sort('num'))
-                if(media_map_arr_xinwen.length<10){
-                  _this.fix_media_xinwen=media_map_arr_xinwen;
-                }else{
-                  for(let i=0;i<10;i++){
-                    media_map_arr_big_xinwen.push(media_map_arr_xinwen[i])
-                  }
-                  _this.fix_media_xinwen=media_map_arr_big_xinwen;
-                }
-              
-                for(let t=0;t<media_map_data_wx.length;t++){
-                  if(fix_map_wx.get(media_map_data_wx[t])==null){
-                    fix_map_wx.put(media_map_data_wx[t],1)
-                  }else{
-                    fix_map_wx.put(media_map_data_wx[t],fix_map_wx.get(media_map_data_wx[t])+1)
-                  }   
+                media_map_arr_xinwen.sort(_Sort('num'));
+                _this.fix_media_xinwen = media_map_arr_xinwen.length < 10 ? media_map_arr_xinwen : media_map_arr_xinwen.slice(0,10);
+                for(let t=0;t<media_map_wx.length;t++){
+                  fix_map_wx.get(media_map_wx[t]) == null ? fix_map_wx.put(media_map_wx[t],1) : fix_map_wx.put(media_map_wx[t],fix_map_wx.get(media_map_wx[t])+1);  
                 };
                 let media_map_arr_wx=[];
-                let media_map_arr_big_wx=[];
                 for(let k in fix_map_wx.data){
                   let obj={};
                   obj.name=k;
                   obj.num=fix_map_wx.data[k];
                   obj.fontbg=false;
                   media_map_arr_wx.push(obj)
-                }
-                media_map_arr_wx.sort(_Sort('num'))
-                if(media_map_arr_wx.length<10){
-                  _this.fix_media_wx=media_map_arr_wx;
-                }else{
-                  for(let i=0;i<10;i++){
-                    media_map_arr_big_wx.push(media_map_arr_wx[i])
-                  }
-                  _this.fix_media_wx=media_map_arr_big_wx;
-                }
-              
-              }
-                let media_map_arr=[];
-                let media_map_arr_big=[];
-                for(let k in fix_map.data){
-                  let obj={};
-                  obj.name=k;
-                  obj.num=fix_map.data[k];
-                  obj.fontbg=false;
-                  media_map_arr.push(obj)
-                }
-                media_map_arr.sort(_Sort('num'))
-                if(media_map_arr.length<10){
-                  _this.fix_media=media_map_arr;
-                }else{
-                  for(let i=0;i<10;i++){
-                    media_map_arr_big.push(media_map_arr[i])
-                  }
-                  _this.fix_media=media_map_arr_big;
-                }
-                
-               /* console.log(_this.fix_media)                
-                console.log(_this.fix_media_wx)                
+                };
+                media_map_arr_wx.sort(_Sort('num'));
+                _this.fix_media_wx = media_map_arr_wx.length < 10 ? media_map_arr_wx : media_map_arr_wx.slice(0,10);     
+              };
+             
+                /* console.log(_this.fix_media_wx)                
                 console.log(_this.fix_media_xinwen) */               
             //初始化总数据的publishTime转化
              let t=0;
@@ -1105,18 +944,11 @@ export default {
                   t++;
                 }
                }
-            }
+            };
              _this.reprintList_size=t;
-            if(echart){
-                _this.show_echarts()
-              }
-            if(more_echarts){
-              _this.more_echarts()
-            } 
-            if(type_echarts){
-              _this.type_echarts_xinwen();
-              _this.type_echarts_wx();
-            } 
+             echart ? _this.show_echarts() : '' ;
+             more_echarts ? _this.more_echarts() : '' ;
+             type_echarts ? (_this.type_echarts_xinwen(),_this.type_echarts_wx()) : '' ;
     },
     write_polar (article_id,article_articleType,articlePolar,article_polar) {
       let _this=this;
@@ -1130,13 +962,10 @@ export default {
           "modifiedPolar":article_polar //修改后的调性
         },
         success:function(data){
-          //console.log("调性修改-----成功回调函数-------------------");
-          //console.log(JSON.stringify(data));
           if(data.success==true){
             articlePolar.article.polar=article_polar;
-            _this.diaoxing_visible=''
-          }
-          
+            _this.diaoxing_visible='';
+          } 
         }
       });
     },
@@ -1202,42 +1031,14 @@ export default {
       });
     },      
     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
         this.page_size=val;
         this.format_tabledata();
         $('.main').css('height',80*(val-10)+1300+'px');//表格动态高度
         $('#item_table').css('height',$('.main').height()-410+'px')//表格动态高度
-      },
+    },
     handleCurrentChange(val) {
       this.currentPage = val;
         this.format_tabledata();
-      },
-    del_third_card (i) {
-      this.$confirm('是否删除'+' '+i.name+' '+'方案?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.third_card.splice(this.third_card.indexOf(i), 1);//shanchu
-      }).catch(() => {        
-      });
-    },
-    add_third_card () {
-      $.each(this.third_card,function(i,j){
-        j.bg=false;
-      })
-      this.dialogVisible = false;
-      this.third_card.push({
-        name:this.third_card_input ? this.third_card_input : '无名称',
-        bg:true
-      });
-      this.third_card_input='';
-    },
-    toggleclass (i) {
-      $.each(this.third_card,function(i,j){
-        j.bg=false;
-      })
-      i.bg=true;
     },
     sort_dropdown (command) {
       this.current_sort=command;
@@ -1261,27 +1062,18 @@ export default {
         }
       }
       //阅读数降序
-      if(command=='阅读数降序'){
-        this.data.sort(Sort_down('article','readCount'));
-      }
+      command == '阅读数降序' ? this.data.sort(Sort_down('article','readCount')) : '' ;
       //阅读数升序
-      if(command=='阅读数升序'){
-        this.data.sort(Sort_up('article','readCount'));
-      }
+      command == '阅读数升序' ? this.data.sort(Sort_up('article','readCount')) : '' ;
       //新闻指数降序
-      if(command=='新闻指数降序'){
-        this.data.sort(Sort_down('article','newsIndex'));
-      }
+      command == '新闻指数降序' ? this.data.sort(Sort_down('article','newsIndex')) : '' ;
       //新闻指数升序
-      if(command=='新闻指数升序'){
-        this.data.sort(Sort_up('article','newsIndex'));
-      }
+      command == '新闻指数升序' ? this.data.sort(Sort_up('article','newsIndex')) : '' ;
       //格式表格数据
       this.format_tabledata();
     },
     show_echarts (a) {
-      $('#echarts_more_direction_xinwen').css('display','none')
-       
+      $('#echarts_more_direction_xinwen').css('display','none')       
       //多纬度input的val
       this.first_schemeId=[];
       this.second_schemeId=[];
@@ -1292,20 +1084,17 @@ export default {
       this.second_options=[];
       this.wx_first_options=[];
       this.wx_second_options=[];
-      if(a){
-        this.hide_filter();
-      }  
+      a ? this.hide_filter() : '' ;
       let _this=this;
-
       // 新闻微信数据过滤
       let newsData=[];//新闻数据
       let weixinData=[];//新闻数据
       for(let i=0;i<this.data.length;i++){
         if(this.data[i].article.articleType==1){
           newsData.push(this.data[i])
-        }if(this.data[i].article.articleType==2){
+        }else if(this.data[i].article.articleType==2){
           weixinData.push(this.data[i])
-        }
+        };
       }
       //obj 格式
       //生成 总数据对象
@@ -1329,12 +1118,8 @@ export default {
         //生成 新闻省份地域热图数据
         for(let j=0;j<newsData[i].provinceMap.length;j++){
           let province=newsData[i].provinceMap[j];  //获取新闻省
-          if(map.get(province)==null){
-            map.put(province,1)
-          }else{
-            map.put(province,map.get(province)+1)
-          }   
-        }
+          map.get(province) == null ? map.put(province,1) : map.put(province,map.get(province)+1); 
+        };
 
         //新闻发布时间格式转化 生成每小时的newsIndex_map
           let news_time=newsData[i].article.publishTime.slice(0,13);
@@ -1348,44 +1133,40 @@ export default {
           polar='中'
         }else{
           polar='正'
-        }
-        if(map.get(polar)==null){
-            map.put(polar,1)
-          }else{
-            map.put(polar,map.get(polar)+1)
-          } 
-      }
+        };
+        map.get(polar) == null ? map.put(polar,1) : map.put(polar,map.get(polar)+1) ;
+      };
       //创建新闻走势图的横坐标与纵坐标数据
       var newsnumber_data=[];
       var newsnumber_xdata=[];
       //判断时间是否大于7天的
-        if(this.time[1].getTime()-this.time[0].getTime()<604800000){
-          //7天以内的数据数组newsnumber_data
-            for(let z in newsIndex_map.data){
-              newsnumber_data.push(newsIndex_map.data[z]);
-              let z_time=z.slice(5,13)+':00';
-              newsnumber_xdata.push(z_time);
-             }
-          }else{//时间大于7天的
-                let strat_time=this.time[0].getTime();
-                while(strat_time<this.time[1].getTime()){
-                var curTime = new Date(strat_time).Format("yyyy-MM-dd");
-                newsIndex_max_map.put(curTime,0);
-                strat_time=strat_time+3600000*24;
-              }
-              //遍历时间为小时的map 叠加为每天的 生成每天的newsIndex_max_map
-             for(let l in newsIndex_map.data){
-                let Day_time= l.slice(0,10);
-                newsIndex_max_map.put(Day_time,newsIndex_max_map.get(Day_time)+newsIndex_map.get(l))
-             } 
-             //7天以上的数据数组newsnumber_data
-              for(let k in newsIndex_max_map.data){
-                newsnumber_data.push(newsIndex_max_map.data[k]);
-                //console.log(k)
-                let k_time=k.slice(5,13)+' 08:00';
-                newsnumber_xdata.push(k_time);
-              }
-          }
+      if(this.time[1].getTime()-this.time[0].getTime()<604800000){
+        //7天以内的数据数组newsnumber_data
+          for(let z in newsIndex_map.data){
+            newsnumber_data.push(newsIndex_map.data[z]);
+            let z_time=z.slice(5,13)+':00';
+            newsnumber_xdata.push(z_time);
+           }
+        }else{//时间大于7天的
+              let strat_time=this.time[0].getTime();
+              while(strat_time<this.time[1].getTime()){
+              var curTime = new Date(strat_time).Format("yyyy-MM-dd");
+              newsIndex_max_map.put(curTime,0);
+              strat_time=strat_time+3600000*24;
+            }
+            //遍历时间为小时的map 叠加为每天的 生成每天的newsIndex_max_map
+           for(let l in newsIndex_map.data){
+              let Day_time= l.slice(0,10);
+              newsIndex_max_map.put(Day_time,newsIndex_max_map.get(Day_time)+newsIndex_map.get(l))
+           } 
+           //7天以上的数据数组newsnumber_data
+            for(let k in newsIndex_max_map.data){
+              newsnumber_data.push(newsIndex_max_map.data[k]);
+              //console.log(k)
+              let k_time=k.slice(5,13)+' 08:00';
+              newsnumber_xdata.push(k_time);
+            }
+        };
         // console.log(newsnumber_data)
           //console.log(newsnumber_xdata)
           /*console.log(newsIndex_map.data)
@@ -1395,23 +1176,13 @@ export default {
         //生成 微信省份地域热图数据
         for(let j=0;j<weixinData[i].provinceMap.length;j++){
           let province=weixinData[i].provinceMap[j];  //获微信取省
-          if(wxmap.get(province)==null){
-            wxmap.put(province,1)
-          }else{
-            wxmap.put(province,wxmap.get(province)+1)
-          }   
-        }
+          wxmap.get(province) == null ? wxmap.put(province,1) : wxmap.put(province,wxmap.get(province)+1); 
+        };
         //生成 微信媒体省份地域热图数据
         for(let j=0;j<weixinData[i].mediaProvinceMap.length;j++){
-           //console.log(weixinData[i])
           let media_province=weixinData[i].mediaProvinceMap[j];  //获取微信媒体省
-
-          if(wx_media_map.get(media_province)==null){
-            wx_media_map.put(media_province,1)
-          }else{
-            wx_media_map.put(media_province,wx_media_map.get(media_province)+1)
-          }   
-        }      
+          wx_media_map.get(media_province) == null ? wx_media_map.put(media_province,1) : wx_media_map.put(media_province,wx_media_map.get(media_province)+1);
+        };      
         // 微信正负性数据
         let polar;
         if(weixinData[i].article.polar==-1){
@@ -1420,12 +1191,8 @@ export default {
           polar='中'
         }else{
           polar='正'
-        }
-        if(wxmap.get(polar)==null){
-            wxmap.put(polar,1)
-          }else{
-            wxmap.put(polar,wxmap.get(polar)+1)
-          } 
+        };
+        wxmap.get(polar) == null ? wxmap.put(polar,1) : wxmap.put(polar,wxmap.get(polar)+1);
       }     
         //新闻省份地域热图数据且过滤（'正，中，负'）后的数据
         let province = [];
@@ -1511,7 +1278,7 @@ export default {
           });
         }else{
            $('#echarts_hot_xinwen').html(`<h4>新闻中地点出现的地域分布</h4><br><p>暂无数据</p>`)
-        }
+        };
         
         if(wx_province.length!=0){
           _echart.build_list_map(wxmap,wx_province,'echarts_hot_weixin_article','微信中地点出现的地域分布');
@@ -1535,7 +1302,7 @@ export default {
           })
         }else{
           $('#echarts_hot_weixin_article').html(`<h4>微信中地点出现的地域分布</h4><br><p>暂无数据</p>`)
-        }
+        };
 
         if(media_province.length!=0){
           _echart.build_list_map(wx_media_map,media_province,'echarts_hot__weixin_media','微信文章发布媒体所在地域分布');
@@ -1559,7 +1326,7 @@ export default {
           })
         }else{
           $('#echarts_hot__weixin_media').html(`<h4>微信文章发布媒体所在地域分布</h4><br><p>暂无数据</p>`)
-        }         
+        };        
       // top20 开始 
         if(news_top_data.length!=0){
           _echart.build_list_bar_top20(news_top_data_title,news_top_data_num,'echarts_top_xinwen','新闻指数top20','新闻','指数');
@@ -1569,7 +1336,7 @@ export default {
           }) 
         }else{
             $('#echarts_top_xinwen').html(`<h4>新闻指数top20</h4><br><p>暂无数据</p>`)
-        } 
+        }; 
          
         if(weixin_top_data.length!=0){
           _echart.build_list_bar_top20(weixin_top_data_title,weixin_top_data_num,'echarts_top_weixin','微信阅读数top20','微信','阅读数');
@@ -1579,7 +1346,7 @@ export default {
           })
         }else{
            $('#echarts_top_weixin').html(`<h4>微信阅读数top20</h4><br><p>暂无数据</p>`)
-        }  
+        };  
       //媒体声量top10
         //新闻
         let xinwen_top_media_data_num=[];
@@ -1588,11 +1355,9 @@ export default {
           for(let i=0;i<_this.fix_media_xinwen.length;i++){
             xinwen_top_media_data_num.push(_this.fix_media_xinwen[i].num);
             xinwen_top_media_data_name.push(_this.fix_media_xinwen[i].name);
-          }
-        }
-        xinwen_top_media_data_num.sort(function(a,b){return a-b;});
-        xinwen_top_media_data_name.reverse();
-        if(_this.fix_media_xinwen.length!=0){
+          };
+          xinwen_top_media_data_num.sort(function(a,b){return a-b;});
+          xinwen_top_media_data_name.reverse();
           _echart.build_list_bar_mediaTop10(xinwen_top_media_data_name,xinwen_top_media_data_num,'echarts_top_media_xinwen','新闻媒体声量top10','新闻');
           //点击事件
           _echart.build_list_bar_mediaTop10(xinwen_top_media_data_name,xinwen_top_media_data_num,'echarts_top_media_xinwen','新闻媒体声量top10','新闻').on('click', function (params) {
@@ -1606,7 +1371,7 @@ export default {
           })
         }else{
             $('#echarts_top_media_xinwen').html(`<h4>新闻媒体声量top10</h4><br><p>暂无数据</p>`)
-        } 
+        };
         //微信
         let weixin_top_media_data_num=[];
         let weixin_top_media_data_name=[];
@@ -1614,21 +1379,24 @@ export default {
           for(let i=0;i<_this.fix_media_wx.length;i++){
             weixin_top_media_data_num.push(_this.fix_media_wx[i].num);
             weixin_top_media_data_name.push(_this.fix_media_wx[i].name);
-          }
-        }
-        weixin_top_media_data_num.sort(function(a,b){return a-b;});
-        weixin_top_media_data_name.reverse();
-        _echart.build_list_bar_mediaTop10(weixin_top_media_data_name,weixin_top_media_data_num,'echarts_top_media_weixin','微信媒体声量top10','微信'); 
-        //点击事件 
-        _echart.build_list_bar_mediaTop10(weixin_top_media_data_name,weixin_top_media_data_num,'echarts_top_media_weixin','微信媒体声量top10','微信').on('click', function (params) {
-              _this.dialogEchart_xw_province=true;
-              _this.dialog_xw_provinceMap=[];
-              for(let i=0;i<weixinData.length;i++){
-                  if(weixinData[i].article.media===params.name){
-                    _this.dialog_xw_provinceMap.push(weixinData[i])
-                  };
-               };
-          })
+          };
+          weixin_top_media_data_num.sort(function(a,b){return a-b;});
+          weixin_top_media_data_name.reverse();
+          _echart.build_list_bar_mediaTop10(weixin_top_media_data_name,weixin_top_media_data_num,'echarts_top_media_weixin','微信媒体声量top10','微信'); 
+          //点击事件 
+          _echart.build_list_bar_mediaTop10(weixin_top_media_data_name,weixin_top_media_data_num,'echarts_top_media_weixin','微信媒体声量top10','微信').on('click', function (params) {
+                _this.dialogEchart_xw_province=true;
+                _this.dialog_xw_provinceMap=[];
+                for(let i=0;i<weixinData.length;i++){
+                    if(weixinData[i].article.media===params.name){
+                      _this.dialog_xw_provinceMap.push(weixinData[i])
+                    };
+                 };
+            });
+        }else{
+            $('#echarts_top_media_weixin').html(`<h4>微信媒体声量top10</h4><br><p>暂无数据</p>`)
+        };
+        
         //正负性开始
         if(newsData.length!=0){
           _echart.build_list_pie_polar(map,'echarts_diaoxing_xinwen','新闻正负性对比分析');
@@ -1652,7 +1420,7 @@ export default {
             });
         }else{
           $('#echarts_diaoxing_xinwen').html(`<h4>新闻正负性对比分析</h4><br><p>暂无数据</p>`)
-        }
+        };
          
         if(weixinData.length!=0){
           _echart.build_list_pie_polar(wxmap,'echarts_diaoxing_weixin','微信正负性对比分析');
@@ -1676,7 +1444,7 @@ export default {
           });
         }else{
           $('#echarts_diaoxing_weixin').html(`<h4>微信正负性对比分析</h4><br><p>暂无数据</p>`)
-        }              
+        };              
 
         //新闻指数开始
         _echart.build_list_line_newsNum(newsnumber_xdata,newsnumber_data,'echarts_newsnumber');
@@ -1707,12 +1475,11 @@ export default {
       for(let i=0;i<this.data.length;i++){
           if(this.data[i].article.articleType==1){
             more_newsData.push(this.data[i])
-          }if(this.data[i].article.articleType==2){
+          }else if(this.data[i].article.articleType==2){
             more_weixinData.push(this.data[i])
           } 
-      }
-      /*console.log(this.data)
-      console.log(more_weixinData)*/
+      };
+     /* console.log(more_weixinData)*/
       //判断新闻数据
       if(more_newsData.length==0){
         console.log('新闻数据 0');
@@ -1737,7 +1504,6 @@ export default {
           this.wx_first_options.push(fisrt_obj)
           this.wx_second_options.push(fisrt_obj)
         }
-        //console.log(this.wx_first_options)
         this.wx_first_schemeId=this.wx_first_options[0].schemeId;
       };
     },
@@ -1799,7 +1565,6 @@ export default {
       this.wx_second_options=[];
     },
     more_echarts () {   
-      //obj 格式
       //console.log(this.first_schemeId)
       //console.log(this.second_schemeId)
       //判断方案是否一致
@@ -1900,51 +1665,21 @@ export default {
           obj.data=more_map.data[i];
           bar_series.push(obj)
         }
-        console.log(bar_series)
+        /*console.log(bar_series)
         console.log(more_map.data)
         console.log(x_data)
-        console.log(y_data)
+        console.log(y_data)*/
         $('.echarts_content').css('display','block')
         //多维度分析开始
-        let echarts_more_direction_xinwen = echarts.init(document.getElementById('echarts_more_direction_xinwen'));
-        let  option_more_direction = {
-           tooltip : {
-              trigger: 'axis',
-              axisPointer : {            
-                  type : 'shadow'        
-            }
-           },
-           grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    data : x_data
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : bar_series
-         }
-         echarts_more_direction_xinwen.setOption(option_more_direction);
+         _echart.build_list_bar_more_direction(bar_series,x_data,'echarts_more_direction_xinwen');
       }
     },
     type_echarts_xinwen () {
        let _this=this;
       let newsData=[];//新闻数据
       for(let i=0;i<this.data.length;i++){
-          if(this.data[i].article.articleType==1){
-            newsData.push(this.data[i])
-          } 
+        this.data[i].article.articleType == 1 ? newsData.push(this.data[i]) : '' ;
       };
-      console.log(newsData)
       let xinwen_arr=[];
       for(let i=0;i<newsData.length;i++){
           if(newsData[i].article.newsSchemeDtoList!=null){
@@ -1957,91 +1692,41 @@ export default {
        } 
        let type_xinwen_map=new Map();
        for(let j=0;j<xinwen_arr.length;j++){
-          if(type_xinwen_map.get(xinwen_arr[j])==null){
-            type_xinwen_map.put(xinwen_arr[j],1)
-          }else{
-            type_xinwen_map.put(xinwen_arr[j],type_xinwen_map.get(xinwen_arr[j])+1)
-          }   
-        }
+          type_xinwen_map.get(xinwen_arr[j]) == null ? type_xinwen_map.put(xinwen_arr[j],1) : type_xinwen_map.put(xinwen_arr[j],type_xinwen_map.get(xinwen_arr[j])+1);
+        };
         let xinwen_data=[];
-      for(let i in type_xinwen_map.data){
-        let obj={};
-        obj.value=type_xinwen_map.data[i];
-        obj.name=i;
-        xinwen_data.push(obj)
-      }
+        for(let i in type_xinwen_map.data){
+          let obj={};
+          obj.value=type_xinwen_map.data[i];
+          obj.name=i;
+          xinwen_data.push(obj)
+       };
       xinwen_data.sort(Sort('value'));
-      let echarts_type_xinwen=echarts.init(document.getElementById('echarts_type_xinwen'));
       if(xinwen_data.length!=0){
-        let option_echarts_type_xinwen={
-          backgroundColor: '#2c343c',
-          title: {
-              text: '新闻媒体类型分析',
-              left: 'center',
-              top: 20,
-              textStyle: {
-                  color: '#ccc'
+        _echart.build_list_pie_mediaType(xinwen_data,'echarts_type_xinwen','新闻媒体类型分析');
+        //点击事件
+        _echart.build_list_pie_mediaType(xinwen_data,'echarts_type_xinwen','新闻媒体类型分析').on('click', function (params) {
+          _this.dialogEchart_xw_province=true;
+          _this.dialog_xw_provinceMap=[];
+          for(let i=0;i<newsData.length;i++){
+            if(newsData[i].article.newsSchemeDtoList!=null){
+              for(let j=0;j<newsData[i].article.newsSchemeDtoList.length;j++){
+                if(newsData[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName===params.data.name){
+                    _this.dialog_xw_provinceMap.push(newsData[i])
+                }
               }
-          },
-          toolbox: {
-                  show : true,
-                  feature : {
-                      dataView : {show: true, readOnly: false},
-                      restore : {show: true},
-                      saveAsImage : {show: true}
-                  }
-              },
-          tooltip : {
-              trigger: 'item',
-              formatter: "{a} <br/>{b} : {c} ({d}%)"
-          },
-          series : [
-              {
-                  name:'媒体类型',
-                  type:'pie',
-                  radius : '55%',
-                  center: ['50%', '50%'],
-                  data:xinwen_data,
-                  itemStyle: {
-                      normal: {
-                          shadowBlur: 200,
-                          shadowColor: 'rgba(0, 0, 0, 0.5)'
-                      }
-                  },
-
-                  animationType: 'scale',
-                  animationEasing: 'elasticOut',
-                  animationDelay: function (idx) {
-                      return Math.random() * 200;
-                  }
-              }
-          ]
-        }
-        echarts_type_xinwen.setOption(option_echarts_type_xinwen);
+            }  
+          }  
+        });
       }else{
         $('#echarts_type_xinwen').html(`<h4>新闻类型分析</h4><br><p>暂无数据</p>`)
-      }
-      echarts_type_xinwen.on('click', function (params) {
-        _this.dialogEchart_xw_province=true;
-        _this.dialog_xw_provinceMap=[];
-        for(let i=0;i<newsData.length;i++){
-          if(newsData[i].article.newsSchemeDtoList!=null){
-            for(let j=0;j<newsData[i].article.newsSchemeDtoList.length;j++){
-            if(newsData[i].article.newsSchemeDtoList[j].newsMediaCategory.newsMediaCategoryName===params.data.name){
-                _this.dialog_xw_provinceMap.push(newsData[i])
-                    }
-                }
-              }  
-             }  
-          }) 
+      }; 
     },
     type_echarts_wx() {
       let _this=this;
       let wxData=[];//新闻数据
       for(let i=0;i<this.data.length;i++){
-          if(this.data[i].article.articleType==2){
-            wxData.push(this.data[i])
-          } 
+        this.data[i].article.articleType == 2 ? wxData.push(this.data[i]) : '' ; 
       };
       let wx_arr=[];
       for(let i=0;i<wxData.length;i++){
@@ -2052,86 +1737,39 @@ export default {
               }
           }
         }  
-       } 
-       let type_wx_map=new Map();
-       for(let j=0;j<wx_arr.length;j++){
-          if(type_wx_map.get(wx_arr[j])==null){
-            type_wx_map.put(wx_arr[j],1)
-          }else{
-            type_wx_map.put(wx_arr[j],type_wx_map.get(wx_arr[j])+1)
-          }   
-        }
-        let wx_data=[];
+      }; 
+      let type_wx_map=new Map();
+      for(let j=0;j<wx_arr.length;j++){
+        type_wx_map.get(wx_arr[j]) == null ? type_wx_map.put(wx_arr[j],1) : type_wx_map.put(wx_arr[j],type_wx_map.get(wx_arr[j])+1); 
+      };
+      let wx_data=[];
       for(let i in type_wx_map.data){
         let obj={};
         obj.value=type_wx_map.data[i];
         obj.name=i;
         wx_data.push(obj)
-      }
+      };
       wx_data.sort(Sort('value'));
-      console.log(wx_data)
-      let echarts_type_wx=echarts.init(document.getElementById('echarts_type_wx'));
+      //console.log(wx_data)
       if(wx_data.length!=0){
-        let option_echarts_type_wx={
-          backgroundColor: '#2c343c',
-          title: {
-              text: '微信媒体类型分析',
-              left: 'center',
-              top: 20,
-              textStyle: {
-                  color: '#ccc'
+        _echart.build_list_pie_mediaType(wx_data,'echarts_type_wx','微信媒体类型分析');
+        //点击事件
+        _echart.build_list_pie_mediaType(wx_data,'echarts_type_wx','微信媒体类型分析').on('click', function (params) {
+          _this.dialogEchart_xw_province=true;
+          _this.dialog_xw_provinceMap=[];
+          for(let i=0;i<wxData.length;i++){
+            if(wxData[i].article.wxSchemeDtoList!=null){
+              for(let j=0;j<wxData[i].article.wxSchemeDtoList.length;j++){
+                if(wxData[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName===params.data.name){
+                    _this.dialog_xw_provinceMap.push(wxData[i])
+                }
               }
-          },
-          toolbox: {
-                  show : true,
-                  feature : {
-                      dataView : {show: true, readOnly: false},
-                      restore : {show: true},
-                      saveAsImage : {show: true}
-                  }
-              },
-          tooltip : {
-              trigger: 'item',
-              formatter: "{a} <br/>{b} : {c} ({d}%)"
-          },
-          series : [
-              {
-                  name:'媒体类型',
-                  type:'pie',
-                  radius : '55%',
-                  center: ['50%', '50%'],
-                  data:wx_data,
-                  itemStyle: {
-                      normal: {
-                          shadowBlur: 200,
-                          shadowColor: 'rgba(0, 0, 0, 0.5)'
-                      }
-                  },
-                  animationType: 'scale',
-                  animationEasing: 'elasticOut',
-                  animationDelay: function (idx) {
-                      return Math.random() * 200;
-                  }
-              }
-          ]
-        }
-        echarts_type_wx.setOption(option_echarts_type_wx);
+            }  
+          }  
+        }); 
       }else{
         $('#echarts_type_wx').html(`<h4>微信类型分析</h4><br><p>暂无数据</p>`)
-      }
-      echarts_type_wx.on('click', function (params) {
-        _this.dialogEchart_xw_province=true;
-        _this.dialog_xw_provinceMap=[];
-        for(let i=0;i<wxData.length;i++){
-          if(wxData[i].article.wxSchemeDtoList!=null){
-            for(let j=0;j<wxData[i].article.wxSchemeDtoList.length;j++){
-            if(wxData[i].article.wxSchemeDtoList[j].wxMediaCategory.wxMediaCategoryName===params.data.name){
-                _this.dialog_xw_provinceMap.push(wxData[i])
-                    }
-                }
-              }  
-             }  
-          }) 
+      };  
     },
     more_echarts_wx() {
       console.log(this.wx_first_schemeId)
@@ -2142,7 +1780,6 @@ export default {
               message: '请检查您的方案格式',
               type: 'warning'
             });
-        return
       }else{
         $('#echarts_more_direction_wx').css('display','block')
         let x_data=[];//横坐标
@@ -2193,7 +1830,7 @@ export default {
               }
             }
           }else{}    
-        }
+        };
         //根据echarts数据格式计算相对应的已维护与为维护数组
         let more_map=new Map();
         let more_arr=new Array(); 
@@ -2202,13 +1839,9 @@ export default {
           //计算bar_data_map的为维护与已维护个数叠加 map
           let bar_map = new Map();
           for(let j=0;j<bar_data_map.data[i].length;j++){
-            if(bar_map.get(bar_data_map.data[i][j])==null){
-              bar_map.put(bar_data_map.data[i][j],1)
-            }else{
-              bar_map.put(bar_data_map.data[i][j],bar_map.get(bar_data_map.data[i][j])+1)
-            }
-          }  
-          console.log(bar_map.data)
+            bar_map.get(bar_data_map.data[i][j]) == null ? bar_map.put(bar_data_map.data[i][j],1) : bar_map.put(bar_data_map.data[i][j],bar_map.get(bar_data_map.data[i][j])+1);
+          }; 
+          //console.log(bar_map.data)
           for(let t in bar_map.data){
             if(more_map.get(t)==null){
               more_arr=[];
@@ -2216,13 +1849,11 @@ export default {
               more_map.put(t,more_arr)
             }else{
               let aa=more_map.get(t);
-              //console.log(aa)
-              aa.push(bar_map.data[t])   
-              //console.log(aa); 
+              aa.push(bar_map.data[t])    
               more_map.put(t,aa)  
             }
           }   
-        }
+        };
         //echarts的series格式
         let bar_series=[];
         for(let i in more_map.data){
@@ -2233,66 +1864,14 @@ export default {
           obj.data=more_map.data[i];
           bar_series.push(obj)
         }
-        console.log(bar_series)
+        /*console.log(bar_series)
         console.log(more_map.data)
         console.log(x_data)
-        console.log(y_data)
+        console.log(y_data)*/
         $('.echarts_content').css('display','block')
         //多维度分析开始
-        let echarts_more_direction_wx = echarts.init(document.getElementById('echarts_more_direction_wx'));
-        let  option_more_direction = {
-           tooltip : {
-              trigger: 'axis',
-              axisPointer : {            
-                  type : 'shadow'        
-            }
-           },
-           grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    data : x_data
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : bar_series
-         }
-         echarts_more_direction_wx.setOption(option_more_direction);
+        _echart.build_list_bar_more_direction(bar_series,x_data,'echarts_more_direction_wx');
       }
-    },
-    handleClose(tag) {
-        this.kw.splice(this.kw.indexOf(tag), 1);
-        this.tags.unshift(tag)
-    },
-    nothandleClose(tag) {
-        this.notkw.splice(this.notkw.indexOf(tag), 1);
-        this.notags.unshift(tag)
-    },
-    kw_dropdown (command) {
-      this.kw.push(command);
-      this.tags.splice(this.tags.indexOf(command), 1)
-    },
-    notkw_dropdown (command) {
-      this.notkw.push(command);
-      this.notags.splice(this.notags.indexOf(command), 1)
-    },
-    sort_dropdown_per (command) {
-        this.current_sort_per=command;
-    },
-    sort_dropdown_loc (command) {
-      this.current_sort_loc=command;
-    },
-    sort_dropdown_org(command) {
-      this.current_sort_org=command;
     },
     dialog_ReprintList (a) {
       this.dialogReprintList=true;
@@ -2301,17 +1880,6 @@ export default {
       reprintList_arr.push(a.article);
       reprintList_arr=reprintList_arr.concat(a.article.reprintList);
       this.reprintList_data=reprintList_arr;
-    },
-    Selection(val) {
-        this.selection = val;
-    },
-    Changerow (val) {
-      this.currentRow = val;
-    },
-    selectable(row, index){
-      if(index!==0){
-        return true;
-      }
     },
     del_reprintList () {
       let _this=this;
@@ -2340,12 +1908,12 @@ export default {
             let idarr=[];
             for(let t=0;t<_this.selection.length;t++){
               idarr.push(_this.selection[t].id)
-            }
+            };
             for(let i=0;i<_this.data.length;i++){
               if(_this.data[i].article.id==_this.reprintList_id){
                 _this.data[i].article.reprintList= _this.data[i].article.reprintList.filter(item => { return idarr.indexOf(item.id) === -1; });
               }
-            }
+            };
             _this.reprintList_data=_this.reprintList_data.filter(item => { return idarr.indexOf(item.id) === -1; });
             _this.$refs.table.clearSelection(_this.selection);  
           }       
@@ -2364,37 +1932,29 @@ export default {
         "method":"GET",
         "proId":project_id
         }
-      ]
-      console.log(JSON.stringify(articleRecycleDtoList))
+      ];
       $.ajax({
-      url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
-      type:"POST",//此处只能选用POST请求
-      dataType:"json",
-      contentType:"application/json",
-      data:JSON.stringify(articleRecycleDtoList),
-      success:function(data){
-          if(data.data==null||data.data.length<=0){
-            _this.$message({
-                message: '木有数据哦',
-                type: 'warning'
-              });
-             $('#loading_recycle').css('display','none')
-          }else{
-            _this.recycle_data=data.data;
-
-            //初始化总数据的publishTime转化
-            for(let i=0;i< _this.recycle_data.length;i++){
-                _this.recycle_data[i].article.publishTime=new Date( _this.recycle_data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
-             }
-          }       
+        url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
+        type:"POST",//此处只能选用POST请求
+        dataType:"json",
+        contentType:"application/json",
+        data:JSON.stringify(articleRecycleDtoList),
+        success:function(data){
+            if(data.data==null||data.data.length<=0){
+              _this.$message({
+                  message: '木有数据哦',
+                  type: 'warning'
+                });
+               $('#loading_recycle').css('display','none')
+            }else{
+              _this.recycle_data=data.data;
+              //初始化总数据的publishTime转化
+              for(let i=0;i< _this.recycle_data.length;i++){
+                  _this.recycle_data[i].article.publishTime=new Date( _this.recycle_data[i].article.publishTime).Format("yyyy-MM-dd hh:mm:ss");
+               }
+            };      
         }    
       }); 
-    },
-    Selection_recycle(val) {
-        this.selection_recycle = val;
-    },
-    Changerow_recycle(val) {
-      this.currentRow_recycle = val;
     },
     recovery_recycle () {
       let _this=this;
@@ -2410,66 +1970,37 @@ export default {
         articleDtoList.push(obj);
       }
       $.ajax({
-      url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
-      type:"POST",//此处只能选用POST请求
-      dataType:"json",
-      contentType:"application/json",
-      data:JSON.stringify(articleDtoList),
-      success:function(data){
-        if(data.success==true){
-            //前台删除以及总数据添加
-            let idarr=[];
-            _this.data=_this.selection_recycle.concat(_this.data);
-            _this.format_tabledata();
-            for(let t=0;t<_this.selection_recycle.length;t++){
-                idarr.push(_this.selection_recycle[t].article.id)
-             }
-            _this.recycle_data=_this.recycle_data.filter(item => { return idarr.indexOf(item.article.id) === -1; });
-            _this.$refs.table.clearSelection(_this.selection_recycle);
-         }
+        url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/recycle/article",
+        type:"POST",//此处只能选用POST请求
+        dataType:"json",
+        contentType:"application/json",
+        data:JSON.stringify(articleDtoList),
+        success:function(data){
+          if(data.success==true){
+              //前台删除以及总数据添加
+              let idarr=[];
+              _this.data=_this.selection_recycle.concat(_this.data);
+              _this.format_tabledata();
+              for(let t=0;t<_this.selection_recycle.length;t++){
+                  idarr.push(_this.selection_recycle[t].article.id)
+               }
+              _this.recycle_data=_this.recycle_data.filter(item => { return idarr.indexOf(item.article.id) === -1; });
+              _this.$refs.table.clearSelection(_this.selection_recycle);
+           }
         }
       });       
     },
-    Mover(a){
-      this.$refs.list[a].style.boxShadow='7px 7px 6px rgba(220,220,220,.6)'
-      this.$refs.del_img[a].style.display='inline-block'
-    }, 
-    Mout(a){
-      this.$refs.list[a].style.boxShadow=''
-      this.$refs.del_img[a].style.display='none'
-    },
-    Mover_articleList (i) {
-        this.$refs.dialog_xw_articlelist[i].style.color="#00a17c"
-      },
-    Mout_articleList (i) {
-        this.$refs.dialog_xw_articlelist[i].style.color="rgb(72,87,106)"
-      },
-    date_change (){date_change(this);},//修改时间验证
-    dropdown_jushu(command){
-      this.current_jushuNum=command
-    },
-    ct_click(i,n){
-      console.log(i)
-      window.open(i.linkedUrl)
-    },
-    click_ct_list(i){
-       window.open(i.article.url)
-    },
-    Mover_ct_list(i){
-      this.$refs.ct_list[i].style.color="#00a17c"
-    },
-    Mout_ct_list(i) {
-      this.$refs.ct_list[i].style.color="#999"
-    },
-    handleCurrentChange_ct (val) {
-      this.currentPage_ct= val;
-      let newdata=[],
-      pageNum=this.currentPage_ct-1;
-      for(let i=this.page_size_ct*pageNum;i<this.page_size_ct*pageNum+this.page_size_ct;i++ ){
-        this.ct_data[i] !== undefined ? newdata.push(this.ct_data[i]) : '' 
-      }
-      this.ct_data_list=newdata
-    },
+    date_change () { date_change(this); },//修改时间验证
+    dropdown_jushu (command) { this.current_jushuNum = command; },
+    ct_click (i,n) { window.open(i.linkedUrl); },
+    Selection_recycle (val) { this.selection_recycle = val; },
+    Changerow_recycle (val) { this.currentRow_recycle = val; },
+    sort_dropdown_per (command) { this.current_sort_per = command; },
+    sort_dropdown_loc (command) { this.current_sort_loc=command; },
+    sort_dropdown_org (command) { this.current_sort_org=command; },
+    Selection (val) { this.selection = val; },
+    Changerow (val) { this.currentRow = val; },
+    selectable(row, index){ if(index!==0){ return true;}},
     //dom操作哦
     hide_filter () {//隐藏筛选条件按钮
       $('.filter').children().not('.filter_button').not('#filter_time').css('display','none');
@@ -2497,6 +2028,18 @@ export default {
         'color':'#1f2d3d'
       }); 
     },
+    Mover_ct_list(i){ this.$refs.ct_list[i].style.color = "#00a17c"; },
+    Mout_ct_list(i) { this.$refs.ct_list[i].style.color = "#999"; },
+    Mover(a){
+      this.$refs.list[a].style.boxShadow='7px 7px 6px rgba(220,220,220,.6)';
+      this.$refs.del_img[a].style.display='inline-block';
+    }, 
+    Mout(a){
+      this.$refs.list[a].style.boxShadow='';
+      this.$refs.del_img[a].style.display='none';
+    },
+    Mover_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "#00a17c"; },
+    Mout_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "rgb(72,87,106)"; },
   },
   watch: {
     queryType (curVal,oldVal) {
@@ -2508,45 +2051,6 @@ export default {
 
 <style lang="scss" >
   .list{
-    #dialog_ct{
-      #page_ct{
-          position: absolute;
-          right: 15px; 
-          bottom: 15px;
-          display: inline-block;
-          .el-pagination__total{
-            color:#999;
-          }
-          ul>li{
-            opacity: 1;
-          }
-          .el-pager .active {
-            border-color: #00b38a;
-            background-color: #00b38a;
-          }
-          .el-pagination__jump{
-            display: none;
-          }
-      }
-      .el-dialog__body{
-            padding-bottom: 45px !important;
-            padding-top: 20px !important;
-          }
-      .el-dialog--tiny{
-        width: 571px;
-      }
-      .list-group{
-        :last-child{
-          border-bottom:0px solid #ddd !important;
-        }
-        .list-group-item{
-          width: 95%;
-          margin: 0 auto;
-          border-width: 0px;
-          border-bottom: 1px solid #ebebeb;
-        }
-      }
-    }
     button:hover{
         opacity: 0.8;
       }  
@@ -2572,6 +2076,10 @@ export default {
       .el-date-editor--datetime{
         input{
           height: 23px !important;
+          padding-right: 0 ;
+        }
+        .el-input__icon{
+          line-height: 22px;
         }
        }
       background-color: #f7f7f7;
@@ -2663,52 +2171,7 @@ export default {
       display: block !important;
      transition: all 1s;
     }
-    #carousel-example-generic{
-       /*     左边分类数据-css start */ 
-      .left_type{
-        border:none;
-        width:3%;
-        border-right:0;
-        padding: 20px 0 0 0;
-        ul{
-          .bgcolor{
-            background: #00b38a;
-            border-color:#00b38a;
-            color:white !important;
-          }
-          margin:0 1px 0 0;
-          border:none;
-          li:hover i{
-            display: inline-block ;
-          }
-        }
-        ul li{
-          opacity: 1;
-          padding: 2px 0 10px 2px;
-          word-wrap: break-word; 
-          letter-spacing: 3px;
-          text-align: center;
-          cursor:pointer;
-          .display{
-            display: none !important;
-          }
-          p i{
-            float: left;
-            font-size: 13px;
-            margin-left: 1px;
-            line-height: 13px;
-            display: none;
-          }
-        }
-        ul>li:first-child{
-          padding: 6px 0  8px 2px;
-          p{
-            display: none;
-          }
-        }
-      }
-      /*     左边分类数据-css end */ 
-    }
+
     .carousel-inner .el-checkbox .el-checkbox_inner{
       width:15px;
       height:15px;
@@ -2774,8 +2237,7 @@ export default {
           opacity: 1;
         }
         .el-pager .active {
-          border-color: #00b38a;
-          background-color: #00b38a;
+          color: #00b38a;
         }
       } 
       /*     分页-css end */      
@@ -2906,30 +2368,6 @@ export default {
             height: 450px;
             border: 1px solid rgb(240,240,240);
             transition: all 1s;
-            .third_card{
-              position: relative;
-              .el-button-group{
-                position: absolute;
-                left:60px;
-                .bgcolor{
-                  background-color:#20a0ff !important;
-                  border-color:#20a0ff !important;
-                  color:white !important;
-                  }
-                >button{
-                  position: relative;
-                  .fa-times{
-                    position: absolute;
-                    top:0;
-                    right: 0;
-                    display: none;
-                  }
-                }
-                >button:hover .fa-times{
-                  display: inline-block;
-                }
-              }
-            }
           }
         }
         .opa{
