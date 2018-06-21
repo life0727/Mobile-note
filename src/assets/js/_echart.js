@@ -1,4 +1,4 @@
-//const Map = require('./map') //map.js方法
+const pubilcMap = require('./map') //map.js方法
 const echarts = require('echarts');
 const color = ['#243591','#2d7dc2','#7055a2','#52a4bc','#cbcbcb','#196883'];
 const quse = function () {  //随机取色方法
@@ -18,9 +18,6 @@ const objToStrMap = function (obj) {
     strMap.set(k, obj[k]);
   }
   return strMap;
-};
-const jsonToStrMap = function (jsonStr) {
-  return new Map(JSON.parse(jsonStr));
 };      
 const huanhang = function (params) {
                 params = params.length > 20 ? params.substring(0,18)+'..' : params;
@@ -449,11 +446,13 @@ var echart = {
               if(a){
                     for(let i=0;i<_this[b].length;i++){
                           perData[i][2]=_this[b][i].mention;                   
+                          perData[i][3]=_this[b][i].articleCount;                   
                       };
                       perData=perData.slice(0,_this[b].length);
                 }else{
                   for(let i=0;i<_this[d];i++){
                       perData[i][2]=_this[b][i].mention;
+                      perData[i][3]=_this[b][i].articleCount; 
                   };
                   perData=perData.slice(0,_this[d]);
                 }; 
@@ -631,13 +630,14 @@ var echart = {
                       _this.dialogCt=true;
                       console.log(b)
                       console.log(params)
-                      console.log(params.data[2])
-                      console.log(_this.data[_this.data_Per_index].id);
+                      console.log(_this.data[_this.data_Per_index]);
                       _this.dialo_title = params.data[2].slice(0,params.data[2].indexOf('/'))+'的'+c+'详情';
                       _this.entityType = b.slice(0,3);
                       _this.entityName = params.data[2];
                       _this.pageShow = false;
                       _this.currentPage = 1;
+                      _this.ct_data_total = params.data[3];
+                      _this.currentPage*_this.page_size > _this.ct_data_total ? _this.currentPage = Math.ceil(_this.ct_data_total/_this.page_size) : '';//判断如果页数大于文章总数
                       _this.handleCurrentChange(_this.currentPage,b.slice(0,3),params.data[2]);
                       
                         //console.log(params)
@@ -745,63 +745,68 @@ var echart = {
           /*for(let t=0;t<_this.data[i].eventArticleList.length;t++){
                     _this.data[i].eventArticleList[t].publishTime=new Date(_this.data[i].eventArticleList[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
                 };*/
-              let echart_card = echarts.init(document.getElementById('echart_card'+i+'')); 
-               //_this.data[i].commonResult.keywordList.sort(Map.Sort('score'));
-                let keywordArr=[];
-                if(inx==i){//判断下拉是不是当前的
-                  if(_this.data[i].keywordList.length<num){
-                    _this.$message({
-                            message: '所选数量大于数据数量',
-                            type: 'warning'
-                          });
-                    keywordArr=_this.data[i].keywordList;
-                  }else{
-                    keywordArr=_this.data[i].keywordList.slice(0,num);
-                  }
-                }else{
-                    _this.data[i].keywordList.length < 11 ? keywordArr=_this.data[i].keywordList : keywordArr=_this.data[i].keywordList.slice(0,_this.data[i].sortArr);
-                };            
-              /*console.log(keywordArr)*/
-              let dataBJ=[];
-              for(let k=0;k<keywordArr.length;k++){
-                let dataB=new Array();
-                    dataB[0]=k;
-                    dataB[1]=parseInt(Math.random()*260);
-                    dataB[2]=keywordArr[k].score;
-                    dataB[3]=keywordArr[k].mention;
-                    dataBJ.push(dataB)
-                  };
-                  echart_card.setOption(echart.echart_option_event_qipao(dataBJ));
-                  echart_card.on('click', function (params) {
-                    console.log(params)
-                    params.event.event.stopPropagation() ;
-                   // console.log(_this.data[i].keywordList)
-                    _this.qipao_idarr.push(params.data[3]);
-                   // console.log(  _this.data[i].keywordList)
-                    _this.$confirm('是否删除 '+params.data[3].slice(0,params.data[3].indexOf('/'))+'?', '提示', {
-                      confirmButtonText: '确定',
-                      cancelButtonText: '取消',
-                      type: 'warning'
-                      }).then(() => {
-                        _this.del_keywordList(i,params.data[3],_this.qipao_idarr);
-                        _this.data[i].keywordList=_this.data[i].keywordList.filter(item => { return _this.qipao_idarr.indexOf(item.mention) === -1; });//前台删除
-                          if(_this.del_duibi_flag){//自身与竞品的数据分支
-                              for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                                if(_this.$store.state.ev_duibiData[h].project.id==_this.del_duibi_id){
-                                    _this.$store.state.ev_duibiData[h].project.data[i].keywordList=_this.data[i].keywordList;
-                                  }
-                                }
-                           }
-                        //num=num-1;
-                        console.log(2)
-                        _this.echart_qipao(_this,inx,num)
-                      }).catch(() => {
+               $(function(){
+                     let echart_card = echarts.init(document.getElementById('echart_card'+i+'')); 
+                   //_this.data[i].commonResult.keywordList.sort(Map.Sort('score'));
+                    let keywordArr=[];
+                    if(inx==i){//判断下拉是不是当前的
+                      if(_this.data[i].keywordList.length<num){
                         _this.$message({
-                          type: 'warning',
-                          message: '已取消删除'
-                        });          
-                      });            
-                  });
+                                message: '所选数量大于数据数量',
+                                type: 'warning'
+                              });
+                        keywordArr=_this.data[i].keywordList;
+                      }else{
+                        keywordArr=_this.data[i].keywordList.slice(0,num);
+                      }
+                    }else{
+                        _this.data[i].keywordList.length < 11 ? keywordArr=_this.data[i].keywordList : keywordArr=_this.data[i].keywordList.slice(0,_this.data[i].sortArr);
+                    };            
+                  /*console.log(keywordArr)*/
+                  let dataBJ=[];
+                  for(let k=0;k<keywordArr.length;k++){
+                    let dataB=new Array();
+                        dataB[0]=k;
+                        dataB[1]=parseInt(Math.random()*260);
+                        dataB[2]=keywordArr[k].score;
+                        dataB[3]=keywordArr[k].mention;
+                        dataBJ.push(dataB)
+                      };
+                      echart_card.setOption(echart.echart_option_event_qipao(dataBJ));
+                      echart_card.on('click', function (params) {
+                        console.log(params)
+                        params.event.event.stopPropagation() ;
+                       // console.log(_this.data[i].keywordList)
+                        _this.qipao_idarr.push(params.data[3]);
+                       // console.log(  _this.data[i].keywordList)
+                        _this.$confirm('是否删除 '+params.data[3].slice(0,params.data[3].indexOf('/'))+'?', '提示', {
+                          confirmButtonText: '确定',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                          }).then(() => {
+                            _this.del_keywordList(i,params.data[3],_this.qipao_idarr).then((data) =>{
+                              if(pubilcMap.successBack(data,_this)){
+                                _this.data[i].keywordList=_this.data[i].keywordList.filter(item => { return _this.qipao_idarr.indexOf(item.mention) === -1; });//前台删除
+                                if(_this.del_duibi_flag){//自身与竞品的数据分支
+                                    for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
+                                      if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
+                                          _this.$store.state.ev_duibiData[h].data.topicList[i].keywordList=_this.data[i].keywordList;
+                                        }
+                                      }
+                                 }
+                                echart.build_event_qipao(_this,inx,num)
+                              };
+                            });
+                            
+                          }).catch(() => {
+                            _this.$message({
+                              type: 'warning',
+                              message: '已取消删除'
+                            });          
+                          });            
+                      });
+               }); 
+              
           };
   },
   build_graph(domID,cate,cate_,_categories,_data,_links){ //组织，媒体 对比图 
@@ -939,7 +944,9 @@ var echart = {
       let option = {
         color,
         legend: {
-            data:xAxisData
+            data:xAxisData,
+            bottom:2,
+            right:30
         },
         tooltip : {
             trigger: 'axis',
@@ -956,7 +963,7 @@ var echart = {
         grid: {
             left: '3%',
             right: '4%',
-            bottom: '3%',
+            bottom: '15%',
             containLabel: true
         },
         xAxis : [
@@ -1059,10 +1066,16 @@ var echart = {
               formatter: "{a} <br/>{b} : {c} ({d}%)"
           },
           legend: {
-              orient: 'vertical',
-              left: 'left',
-              data: xAxisData
+              data: xAxisData,
+              bottom:1,
+              right:30
           },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '15%',
+            containLabel: true
+        },
           series : [
             {
                 name: '内容第一提及率',
@@ -1118,7 +1131,6 @@ var echart = {
       return _echart;
   },
   build_refer_bar2(domID,Data){//refer-柱状图-议题领导力
-    
 
     echarts.dispose($('#'+domID+'')[0]);
     let _echart = echarts.init($('#'+domID+'')[0]); 
@@ -1230,7 +1242,9 @@ var echart = {
             }
         },
         legend: {
-            data: xAxisData1
+            data: xAxisData1,
+            bottom:2,
+            right:30
         },
         grid: [{
                 left: '2%',
@@ -1385,8 +1399,16 @@ var echart = {
                 saveAsImage: {}
             }
         },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '15%',
+            containLabel: true
+        },
         legend : {
-          data : legendData
+          data : legendData,
+          bottom:2,
+          right:30
         },
         xAxis : [
           {

@@ -12,12 +12,12 @@
         <div class="panel-heading" style="padding: 6px 15px;height: 40px;background-color: #f7f7f7;border-color: #ebebeb">
           <h3 class="panel-title" style="color: #333333;line-height: 30px;">
             <div style="display: inline-block;" class="art_type">
-              <span :class="articleType==2 ? 'warning' : '' " style="cursor: pointer;" @click="articleType=2;">微信</span>
-              <span :class="articleType==1 ? 'warning' : '' " style="cursor: pointer;margin-left: 20px;margin-right: 10px;"  @click="articleType=1;">新闻</span>|
+              <span :class="articleType==2 ? 'warning' : '' " style="cursor: pointer;background-color: rgb(247,247,247);" @click="articleType=2;">微信</span>
+              <span :class="articleType==1 ? 'warning' : '' " style="cursor: pointer;margin-left: 20px;margin-right: 10px;background-color: rgb(247,247,247);"  @click="articleType=1;">新闻</span>|
             </div>
-            <span :class="time[1]-time[0]==604800000 ? 'warning' : '' " style="cursor: pointer;margin-left: 10px;" @click="time=[new Date(new Date().getTime()-604800000), new Date()]">一周</span>
-            <span :class="time[1]-time[0]==86400000 ? 'warning' : '' " style="cursor: pointer;margin-left: 20px;" @click="time=[new Date(new Date().getTime()-86400000), new Date()]">今天</span>
-            <span :class="time[1]-time[0]==172800000 ? 'warning' : '' " style="cursor: pointer;margin:0 20px;" @click="time=[new Date(new Date().getTime()-172800000), new Date()]">两天</span>
+            <span :class="time[1]-time[0]==604800000 ? 'warning' : '' " style="cursor: pointer;margin-left: 10px;background-color: rgb(247,247,247)" @click="time=[new Date(new Date().getTime()-604800000), new Date()]">一周</span>
+            <span :class="time[1]-time[0]==86400000 ? 'warning' : '' " style="cursor: pointer;margin-left: 20px;background-color: rgb(247,247,247)" @click="time=[new Date(new Date().getTime()-86400000), new Date()]">今天</span>
+            <span :class="time[1]-time[0]==172800000 ? 'warning' : '' " style="cursor: pointer;margin:0 20px;background-color: rgb(247,247,247)" @click="time=[new Date(new Date().getTime()-172800000), new Date()]">两天</span>
             <div class="block" style="display: inline-block;">
               <el-date-picker
               style="position: relative;width:170px;font-size: 12px;"
@@ -56,7 +56,7 @@
                       </el-dropdown-menu>
           </el-dropdown>
           <el-button  type="success"  style="padding: 1px 6px;font-size: 16px;margin-left: 10px;border-radius: 4px !important;" @click="_search" v-loading.fullscreen.lock="loading_start" element-loading-text="系统拼命加载中...">搜索</el-button>
-          <el-button  type="success"  style="padding: 1px 6px;font-size: 16px;margin-left: 20px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="add_duibi" >添加对比</el-button>
+          <el-button  type="success" :disabled="this.data_scond.length == 0" style="padding: 1px 6px;font-size: 16px;margin-left: 20px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="add_duibi_modal" >竞品对比</el-button>
           <el-button :disabled="this.$store.state.btn_org" type="success"  style="padding: 1px 6px;font-size: 16px;margin-left: 20px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="save">导出</el-button>
           </h3>
         </div>
@@ -67,7 +67,7 @@
           empty-text=""
           :props="defaultProps"
           node-key="id"
-           default-expand-all
+          default-expand-all
           :expand-on-click-node="false"
           :render-content="renderContent"
           @node-click="node_click"
@@ -80,6 +80,7 @@
           <el-tree
           :data="duibiData"
           empty-text=""
+          node-key="id"
           :props="duibiProps"
           :render-content="renderContent_duibi"
           :load="loadNode"
@@ -88,7 +89,7 @@
           lazy
           >
            </el-tree> 
-           <el-button  type="success"  style="padding: 1px 6px;font-size: 16px;position: absolute;right: 35px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="look">预览</el-button>
+           <el-button  type="success"  style="padding: 1px 6px;font-size: 16px;position: absolute;right: 35px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;" @click="look">查看对比结果</el-button>
         </div>
       </div>
   </div> 
@@ -168,7 +169,10 @@
             </el-pagination>
       </div>
       <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;top: 530px;left: 15px;">相关文章：</el-button>
-      <div style="position:absolute;left: 15px;top:560px;padding: 10px;border: 1px solid rgb(235, 235, 235);width:1170px;height: 300px;">
+      <div style="position:absolute;left: 15px;top:560px;padding: 10px;border: 1px solid rgb(235, 235, 235);width:1170px;height: 300px;" v-loading="org_articleTableLoading"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.1)">
             <el-table
               :data="tabledata_articlelist_list"
               :default-sort = "{prop:'publishTime'}"
@@ -185,30 +189,23 @@
                 show-overflow-tooltip>
                 <template scope="scope">{{ scope.row.title}}</template>
               </el-table-column>
-              <el-table-column
-                label="时间"
-                prop="publishTime"
-                width="255"
-                sortable
-                show-overflow-tooltip>
-              </el-table-column>
             </el-table> 
             <el-button type="danger" style="position: absolute;left: 10px; bottom: 6px;padding: 5px 10px;" @click="del_('articlelist_selection','eventArticleList','id','tabledata_articlelist','tabledata_articlelist_list')">删除</el-button>
             <el-pagination
+                v-if="pageShow"
                 class="page"
-                @current-change="handleCurrentChange_art"
+                @current-change="handleCurrentChange_article"
                 :current-page="currentPage_art"
-                :page-sizes="[ 12, 20, 25]"
                 :page-size="page_size_art"
                 layout="total,  prev, pager, next, jumper"
-                :total="this.tabledata_articlelist.length"
-                v-show="this.tabledata_articlelist.length!==0">
+                :total="this.tabledata_articlelist_total"
+                v-show="this.tabledata_articlelist_total!==0">
             </el-pagination>
       </div>
      </el-dialog>
 
      <!-- 第二级模态框 -->
-      <el-dialog title="相关新闻" :visible.sync="dialo_org" size="tiny" id="dialog_list_org">
+      <el-dialog title="相关新闻" :visible.sync="dialo_org"  id="dialog_list_org">
       <el-button type="danger" style="position: absolute;left: 10px; bottom: 8px;padding: 5px 10px;" @click="del_2('second_selection','id')">删除</el-button>
                 <el-table
                   :data="second_tabledata_list"
@@ -227,59 +224,42 @@
                   </el-table-column>
                 </el-table>
           <el-pagination
+                v-if="pageShow"
                 class="page"
                 @current-change="handleCurrentChange_org"
                 :current-page="currentPage_org"
-                :page-sizes="[ 12, 20, 25]"
                 :page-size="page_size_org"
                 layout="total,  prev, pager, next, jumper"
-                :total="this.second_tabledata.length"
-                v-show="this.second_tabledata.length!==0">
+                :total="this.second_tabledata_total"
+                v-show="this.second_tabledata_total!==0">
             </el-pagination>
         </el-dialog>
        <!--  对比图 -->
         <el-dialog title="对比图" :visible.sync="dialo_duibi" width="100%" top="0" id="dialo_duibi">
             <div :style="{width: '100%',height:duibi_height}" id="Duibi"></div>
         </el-dialog>
+        <!-- 选择对比项目 -->
+      <el-dialog title="选择对比项目" :visible.sync="dialogDuibiList" >
+        <p v-show="this.duibiList.length == 0" style="margin: 10% 42%;color: #f34c81">暂无数据，请添加竞品</p>
+        <el-checkbox-group v-model="checkDuibiList" :max="2">
+          <el-checkbox v-for="i in duibiList" :label="i.name"></el-checkbox>
+        </el-checkbox-group>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogDuibiList = false">取 消</el-button>
+          <el-button type="primary" @click="add_duibi">确 定</el-button>
+        </span>
+      </el-dialog> 
   </div>
 </template>
 
 <script>
 import echarts from 'echarts'
 import _echart from '../../assets/js/_echart.js'
-import {format_time,_Sort,date_change,SetSessionStorage,GetSessionStorage} from '../../assets/js/map.js'
+import {format_time,_Sort,date_change,SetSessionStorage,GetSessionStorage,tipsMessage,GetLocalStorage,publicSearch,successBack} from '../../assets/js/map.js'
 export default {
-  created:function(){
-    format_time();
-    if(this.$store.state.org_duibiData==''){
-      this.add_duibi();
-     }else{
-        this.duibiData=this.$store.state.org_duibiData;
-        this.load_flag=true;
-      };
-  },
   mounted :function () {
-    let _this=this;
-    this.org_loading=true;
-     if(this.$store.state.org_Data==''){
-        this.loading_start=true;
-        this.search ();
-     }else{
-      this.data=this.$store.state.org_Data;
-      for(let i=0;i<this.data.length;i++){
-        let obj={};
-        obj.label=this.data[i].mention;
-        obj.children=[];
-        if(this.data[i].enterpriseDtoList){
-          for(let j=0;j<this.data[i].enterpriseDtoList.length;j++){
-            let child_obj={};
-            child_obj.label=this.data[i].enterpriseDtoList[j].mention+"     ";
-            obj.children.push(child_obj)
-          }
-        };
-        _this.data_scond.push(obj);             
-      };  
-     };
+    let _this = this;
+    this.search();
   //样式
   $('.art_type span').click(function(){
     $(this).addClass('warning').siblings().removeClass('warning');
@@ -302,9 +282,9 @@ export default {
     return {
         input:'',
         edit:false,
-        time:GetSessionStorage('org_time0')!=null ? [new Date(GetSessionStorage('org_time0')),new Date(GetSessionStorage('org_time1'))] : [new Date(new Date().getTime()-604800000), new Date()],
+        time:[new Date(new Date().getTime()-604800000), new Date()],
         sj:[1,2,3,4,5,6,7,8,9,10],
-        articleType:GetSessionStorage('org_articleType')!=null ? GetSessionStorage('org_articleType') : 2,
+        articleType:2,
         data:'',
         page_size_org:10,
         currentPage_org:1,
@@ -312,11 +292,10 @@ export default {
         org_article_list:'',
         dialo_org:false,
         dialo_duibi:false,
-        org_loading:false,
         loading:false,
         dialogCt:false,
         dropdown_num:['5','10','15','20'],
-        current_org:GetSessionStorage('org_current_sort')!=null ? GetSessionStorage('org_current_sort') : 10,
+        current_org:10,
         perlist:[],
         perlistData:[],
         keywordlistData:[],
@@ -331,6 +310,7 @@ export default {
         page_size:10 ,
         page_size_art:6 ,
         data_scond: [],
+        tree_width:'100%',
         defaultProps: {
           children: 'children',
           label: 'label'
@@ -358,23 +338,30 @@ export default {
         search_flag:false,
         dialo_title:'',
         dropdown_jushuNum:['1','2','3','5','全部'],
-        current_jushuNum:GetSessionStorage('org_current_jushuNum')!=null ? GetSessionStorage('org_current_jushuNum') : 3,
+        current_jushuNum:3,
         loading_start:false,
-        tree_width:GetSessionStorage('tree_width')!=null ? GetSessionStorage('tree_width') : '100%',
+        duibiList:[],//项目下的竞品数组
         duibi_height:window.document.documentElement.clientHeight-40+'px',
         duibiData:[],
         duibiProps: {
           label: 'label',
-          hand: 'hand',
-          iid:'iid',
-          data:'data',
+          /*hand: 'hand',
+          id:'id',
+          data:'data',*/
           children:'children'
           },
+        dialogDuibiList:false,//选择对比项目模态框  
+        checkDuibiList:[],//选中的对比项目
         load_flag:false,//判断有没有对比数据
-        duibiTable_flag:false,
+        duibiTable_flag:false,//false 则为点击的自身项目下的组织 true 为点击竞品项目下的组织
         compet_proId:'',
         compet_orgId:'',
-        compet_mention:''
+        compet_mention:'',//自身或竞品的实体名称
+        org_articleTableLoading:false,//模态框里的相关文章loading
+        orgId:'',//组织的id 查找组织下的相关文章
+        pageShow:false, //page页面异步交互
+        tabledata_articlelist_total:'',//组织下的文章总数
+        second_tabledata_total:''//组织下的实体的文章总数        
         }
     },
   methods: {
@@ -391,22 +378,48 @@ export default {
     format_table (a,b) {
       this.currentPage=1;
       this.currentPage_ky=1;
-      this.currentPage_art=1;
-      if(a==='tabledata_articlelist'){
-        this[a].length > 6 ? this[b] = this[a].slice(0,6) : this[b] = this[a] ;
-      }else{
-        this[a].length > 10 ? this[b] = this[a].slice(0,10) : this[b] = this[a] ;
-      };
+      this[a].length > 10 ? this[b] = this[a].slice(0,10) : this[b] = this[a] ;
     },
     look(){
-      let idarr = [],_this = this,project_id = GetSessionStorage('project_id');
+      this.dialo_duibi = true;
+      let idarr = [];
+      for(let i of this.duibiData){
+        if(i.hand == '取消'){
+          idarr.push(i.id);
+        }
+      }; 
+      let params = {
+        "method":"GET", //http方法
+        "proId":GetSessionStorage('project_id'), //项目id
+        "cpIdList[]":idarr //竞品id数组
+      };
+      this.loading_start = true;
+      publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/cpa',"GET",params).then((data) =>{//ajax
+        this.loading_start = false;
+        if(successBack(data,this)){
+           let cate = data.data.cateList.slice(0,idarr.length+1),cate_ = data.data.cateList.slice(idarr.length+1,data.data.cateList.length),_categories = data.data.cateList,_data = data.data.dataList,_links =  data.data.linkList;
+            $(function(){
+                _echart.build_graph('Duibi',cate,cate_,_categories,_data,_links);
+            });
+        };
+       }) 
+      /*
+      let idarr = [];
       for(let i=0;i<this.duibiData.length;i++){
           if(this.duibiData[i].hand=='取消'){
-            idarr.push(this.duibiData[i].iid)
+            idarr.push(this.duibiData[i].id)
           }
       };
-      this.dialo_duibi=true;
-      $.ajax({
+      this.dialo_duibi = true;
+      let params = {
+        "method":"GET", //http方法
+        "proId":GetSessionStorage('project_id'), //项目id
+        "cpIdArr":idarr //竞品id数组 
+      };
+      publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/cpa',"GET",params).then((data) =>{//ajax
+        console.log(data)
+      }) */   
+     /* $.ajax({
             url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/cpa",
             type:"GET",
             traditional:true,
@@ -416,156 +429,127 @@ export default {
               "cpIdArr":idarr //竞品id数组 
             },
             success:function(data){
-              let cate = data.data.orgCateList.slice(0,idarr.length+1),cate_ = data.data.orgCateList.slice(idarr.length+1,data.data.orgCateList.length),_categories = data.data.orgCateList,_data = data.data.orgDataList,_links =  data.data.orgLinkList;
-              $(function(){
-                  _echart.build_graph('Duibi',cate,cate_,_categories,_data,_links);
-              });
+              
             }
-          });   
+          }); */  
     },
     node_expand(a,b){
-      this.loading = true;
-      let _this5 = this;
-      var defaultProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var resolve = function resolve(children) {
-          _this5.loaded = true;
-          _this5.loading = false;
-          _this5.childNodes = [];
-        };
-      if(a.label.indexOf('/')!=-1){//点击的组织
-        //console.log(this.duibiData)
-        this.compet_proId=a.proId;
-        this.compet_orgId=a.iid;
-        this.duibiTable_flag=true;
-        this.dialogCt=true;
-        this.dialo_title=a.label.slice(0,a.label.indexOf('/'))+'组织详情'
-        this.tabledata_perlist=a.data.perList;
-        this.tabledata_keywordlist=a.data.keywordList;
-        this.tabledata_articlelist=a.data.eventArticleList;
-        if(a.data.eventArticleList){
-          for(let t=0;t<a.data.eventArticleList.length;t++){
-                 a.data.eventArticleList[t].publishTime=new Date(a.data.eventArticleList[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-              }
-        } 
+      console.log('node_expand')
+      console.log(a)
+      console.log(b)
+      if(a.label.indexOf('(') != -1){//点击的组织
+        console.log('点击的组织')
+        this.compet_proId = a.proId;
+        this.compet_orgId = a.id;
+        this.duibiTable_flag = true;
+        this.dialogCt = true;
+        this.dialo_title = a.label.slice(0,a.label.indexOf('('))+'组织详情'
+        this.tabledata_perlist = a.data.perList;
+        this.tabledata_keywordlist = a.data.keywordList;
         this.format_table('tabledata_perlist','tabledata_perlist_list');
         this.format_table('tabledata_keywordlist','tabledata_keywordlist_list');
-        this.format_table('tabledata_articlelist','tabledata_articlelist_list');
+        this.pageShow = false;
+        this.tabledata_articlelist_total = a.data.articleCount;
+        this.currentPage_art = 1;
+        this.handleCurrentChange_article(this.currentPage_art);
       }else{//点击的竞品
-        if(a.children.length==0){
-         this.load_flag=false;
-        }
-      }; 
+        console.log('点击的竞品')
+      };
     },
     loadNode(node, resolve) {
       console.log('进了nodelode')
-      //console.log(node) console.log(resolve)
-      let _this = this,project_id = GetSessionStorage('project_id');
-       //console.log('鸡杂'+this.load_flag)
-      if(this.load_flag){//有数据了
-        console.log(this.duibiData)
-          let children1=[];
-          for(let i=0;i<this.duibiData.length;i++){
-            if(node.label==this.duibiData[i].label){
-              for(let j=0;j<this.duibiData[i].children.length;j++){
-                children1.push(this.duibiData[i].children[j])
-              }
-            }
-          }  
-         resolve(this.duibiData);
-          resolve(children1);
-        //console.log('我市'+children1)  console.log(this.duibiData)
-      }else{
-        //console.log('从新加载')
-        _this.loading_start=true;
+      console.log(node)
         if(node.label){
-          if(node.label.indexOf('/')!=-1){//竞品
+          if(node.label.indexOf('(') != -1){//竞品下的组织
              resolve([]); 
           }else{
-            $.ajax({
-              url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org",
-              type:"GET",
-              traditional:true,
-              data:{
-                "method":"GET", //http方法
-                "proId":node.data.iid, //项目id
-                "articleType":_this.articleType, //文章类型
-                "orgNum0":_this.current_org,
-                "keywordNum":20,
-                "perNum":20,
-                "orgNum":20,  
-                "locNum":20,
-                "startTime":_this.time[0],
-                "endTime":_this.time[1],
-                "sentenceNum":_this.current_jushuNum=='全部' ? 0 : _this.current_jushuNum,
-                "type":2
-              },
-              success:function(data){
-                        _this.loading_start=false;       
-                        //console.log(_this.duibiData)
-                        if(data.data == null || data.data.length <=0){
-                          _this.$message({
-                              message: '暂无数据,请调整时间区间后再试',
-                              type: 'warning'
-                            }); 
-                          resolve();
-                          _this.load_flag=false;
-                        }else{
-                          for(let i=0;i<_this.duibiData.length;i++){
-                            if(node.label==_this.duibiData[i].label){
-                              _this.duibiData[i].children=[];
-                              for(let j=0;j<data.data.length;j++){
-                                let obj={};
-                                obj.label=data.data[j].mention;
-                                obj.hand='删除';
-                                obj.iid=data.data[j].id;
-                                obj.proId=data.data[j].proId;
-                                obj.children=[];
-                                obj.data=data.data[j].commonResult;
-                                _this.duibiData[i].children.push(obj)
-                                _this.$store.state.org_duibiData=_this.duibiData;
-                              }
-                            };
-                          };  
-                            resolve(_this.duibiData);
-                            _this.load_flag=true;
-                        };                      
+            this.loading_start = true;
+            let Dta = {
+              "proId": node.data.id, //项目id
+              "articleType": this.articleType, //文章类型
+              "startTime": this.time[0].getTime(),
+              "endTime": this.time[1].getTime(),
+              "orgTopN":this.current_org,//生成的组织数量
+              "perNum": "10", //组织下人物数量
+              "locNum": "10",//地点数量
+              "orgNum": "10",//组织数量
+              "keywordNum": "10"//关键词数量
+            };
+            let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
+            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org',"GET",params).then((data) =>{//ajax
+              this.loading_start = false;
+              if(successBack(data,this)){
+                console.log(data)
+                for(let i = 0;i < this.duibiData.length;i++){
+                  if(node.label == this.duibiData[i].label){
+                    this.duibiData[i].children = [];
+                    for(let j = 0;j < data.data.orgList.length;j++){
+                      let obj = {};
+                      obj.label = data.data.orgList[j].name.slice(0,data.data.orgList[j].name.indexOf('/')) + '('+data.data.orgList[j].count+')';
+                      obj.hand = '删除';
+                      obj.id = data.data.orgList[j].id;
+                      obj.proId = data.data.orgList[j].proId;
+                      obj.children = [];
+                      obj.data = {};
+                      obj.data.keywordList = data.data.orgList[j].keywordList;
+                      obj.data.perList = data.data.orgList[j].perList;
+                      obj.data.articleCount = data.data.orgList[j].articleCount;
+                      this.duibiData[i].children.push(obj)
+                      this.$store.state.org_duibiData = this.duibiData;
+                    }
+                  };
+                };  
+                resolve(this.duibiData);
+              }else{
+                for(let i = 0;i < this.duibiData.length;i++){
+                  if(node.label == this.duibiData[i].label){
+                    this.duibiData[i].hand = '暂无数据'
+                  }
+                }
+                resolve([]);
               }
-            });
+            });  
           }
         }   
-      }
+    },
+    add_duibi_modal(){
+      this.dialogDuibiList = true;
+      let data = {
+          "method": 'get',
+          "project" : {
+            'parentId':GetSessionStorage('project_id')//当前项目id,
+          }
+        };
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+          if(successBack(data,this)){
+            this.duibiList = data.data;
+            console.log(this.duibiList)
+          }
+        });
     },
     add_duibi(){
-      this.tree_width='50%';
+      this.dialogDuibiList = false;
       this.duibiData=[];
-      let _this = this,project_id = GetSessionStorage('project_id');
-      SetSessionStorage('tree_width','50%');
-      let data={
-            "method": 'get',
-            "project" : {
-              'id':project_id//当前项目id,
-            }
-          };
-        $.ajax({
-            type: "GET",
-            url: 'http://192.168.0.3:8080/rs/api/v1.1/project/'+project_id+'/competitor',
-            traditional: true,
-            data:{'projectDto1':JSON.stringify(data)},
-            success: function(data){
-              if(data.data!=null||data.data.length>0){
-                for(let i=0;i<data.data.length;i++){
-                  let obj={};
-                  obj.label=data.data[i].project.name;
-                  obj.children=[];
-                  obj.hand='添加';
-                  obj.iid=data.data[i].project.id;
-                  _this.duibiData.push(obj); 
-                  _this.$store.state.org_duibiData=_this.duibiData;
-                  //console.log(_this.$store.state.org_duibiData)            
-                }
-              }
-            }
-          })
+      if(this.checkDuibiList.length == 0){
+        this.tree_width='100%';
+        return;
+      };
+      this.tree_width='50%';
+      for(let i of this.duibiList){
+        for(let j of this.checkDuibiList){
+          if(j == i.name){
+            let obj = {};
+                obj.label = i.name;
+                obj.children = [];
+                obj.hand = '加入对比';
+                obj.id = i.id;
+                this.duibiData.push(obj); 
+                this.$store.state.org_duibiData = this.duibiData;
+          }
+        }
+      };
+      console.log(this.checkDuibiList)
+      console.log(this.$store.state.org_duibiData)
     },  
     _search(){
       if(this.search_flag){
@@ -584,109 +568,134 @@ export default {
       }
     },
     search(){
-        let _this = this,Aorg_str = [],project_id = GetSessionStorage('project_id'),project_name = GetSessionStorage('start');
-        this.search_flag=false;
-        this.org_loading=true;
+        this.search_flag = false;
         this.loading_start=true;
-        this.$store.state.btn_org=false;
-        this.data_scond=[];
-        this.duibiData=[];
-        this.tree_width='100%';
-        $('#echart').css('opacity','0');
-        let inparr;
-        if(_this.input){
-          _this.input=_this.input.replace(/，/ig,','); //转化逗号
-          inparr=_this.input.split(',');
-          }; 
-        SetSessionStorage('tree_width','100%');  
-        SetSessionStorage('org_time0',_this.time[0].getTime());  
-        SetSessionStorage('org_time1',_this.time[1].getTime());  
-        SetSessionStorage('org_articleType',_this.articleType);  
-        SetSessionStorage('org_current_sort',_this.current_org);  
-        SetSessionStorage('org_current_jushuNum',_this.current_jushuNum);  
-        $.ajax({
-          url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org",
-          type:"GET",
-          traditional:true,
-          data:{
-            "method":"GET", //http方法
-            "proId":project_id, //项目id
-            "articleType":_this.articleType, //文章类型
-            "orgNum0":_this.current_org, 
-            "keywordNum":20,
-            "perNum":20,
-            "orgNum":20, 
-            "locNum":20,
-            "startTime":_this.time[0],
-            "endTime":_this.time[1],
-            "sentenceNum":_this.current_jushuNum=='全部' ? 0 : _this.current_jushuNum
-          },
-          success:function(data){
-            _this.org_loading=false;
-            _this.loading_start=false;
-            $('#echart').css('opacity','1');
-            _this.data=data.data; 
-            if(data.data==null||data.data.length==0){
-              _this.$message({
-                                message: '暂无数据,请调整时间区间或增加关键词后再试',
-                                type: 'warning'
-                              }); 
-            }else{
-                data.data.sort(_Sort('count'));
-                _this.$store.state.org_Data=data.data;
-                for(let i=0;i<data.data.length;i++){
-                    let obj={};
-                    obj.label=data.data[i].mention;
-                    obj.children=[];
-                    _this.data_scond.push(obj);             
-                  }   
-            };                 
-          }
-        });
+        this.$store.state.btn_org = false;
+        this.data_scond = [];
+        this.duibiData = [];
+        this.tree_width = '100%';
+        let Dta = {
+          "proId": GetSessionStorage('project_id'), //项目id
+          "articleType": this.articleType, //文章类型
+          "startTime": this.time[0].getTime(),
+          "endTime": this.time[1].getTime(),
+          "orgTopN":this.current_org,//生成的组织数量
+          "perNum": "10", //组织下人物数量
+          "locNum": "10",//地点数量
+          "orgNum": "10",//组织数量
+          "keywordNum": "10"//关键词数量
+        };
+        let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org',"GET",params).then((data) =>{//ajax
+          this.loading_start=false;
+          if(successBack(data,this)){
+            if(data.data.orgList == null || data.data.orgList.length == 0){
+              tipsMessage('暂无数据,请调整时间区间或增加关键词后再试','warning',this);
+              return;
+            };
+            data.data.orgList.sort(_Sort('count'));
+            this.$store.state.org_Data = this.data = data.data.orgList; 
+            for(let i = 0;i < data.data.orgList.length;i++){
+                let obj = {};
+                obj.label = data.data.orgList[i].name.slice(0,data.data.orgList[i].name.indexOf('/')) + '('+data.data.orgList[i].count+')';
+                obj.data = {};
+                obj.data.keywordList = data.data.orgList[i].keywordList;//组织下的关键词list
+                obj.data.perList = data.data.orgList[i].perList;//组织下的人物list
+                obj.data.articleCount = data.data.orgList[i].articleCount;//组织下的文章总数
+                obj.data.orgId = data.data.orgList[i].id;//组织id
+                obj.children=[];
+                this.data_scond.push(obj);             
+            }; 
+          };
+        });  
     },
     del_org(a,b,c,d){
       //console.log(b);console.log(c);
+      /*console.log(a)
+      console.log(b)
+      console.log(c)
+      console.log(d)*/
+      d = d || window.event;
+      if(d&&d.stopPropagation){
         d.stopPropagation();
-        let _this=this;
-        $.ajax({
+      }else{
+        window.event.cancelBubble=true;
+      };
+        console.log('对比组织')
+        let params = {
+          "method": 'POST',
+          "orgIdList[]":[b.id]
+        };
+        console.log(this.duibiData)
+        this.loading_start = true;
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org',"POST",params).then((data) =>{//ajax
+          this.loading_start = false;
+          if(successBack(data,this)){
+            for(let i of this.duibiData){
+              if(i.id == b.proId){
+                i.children = i.children.filter(item => { return [b.id].indexOf(item.id) === -1; });//前台删除
+                console.log(this.duibiData)
+              };
+            };
+            this.search_flag = true;
+          };
+        });  
+        /*$.ajax({
           url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+b.proId+"/org ",
           type:"POST",
           traditional:true,
           data:{
             "method":"DELETE", //http方法
             "proId":b.proId, //项目id
-            "orgIdArr":[b.iid] //组织id数组，一般只有一个
+            "orgIdArr":[b.id] //组织id数组，一般只有一个
             },
           success:function(data){
             //console.log(data.message) console.log(_this.duibiData)
             for(let i=0;i<_this.duibiData.length;i++){
-              if(_this.duibiData[i].iid==b.proId){
-                _this.duibiData[i].children=_this.duibiData[i].children.filter(item => { return [b.iid].indexOf(item.iid) === -1; });//前台删除
+              if(_this.duibiData[i].id==b.proId){
+                _this.duibiData[i].children=_this.duibiData[i].children.filter(item => { return [b.id].indexOf(item.id) === -1; });//前台删除
               }
             }
             _this.search_flag=true;
           }
-        });
+        });*/
     },
     append(a,b,c,d){
-        if(b.hand=='添加'){
+        if(b.hand=='加入对比'){
           b.hand='取消';
         }else if(b.hand=='取消'){
-          b.hand='添加';
+          b.hand='加入对比';
         };
     },
     remove(a,b,c,d){
-      let project_id = GetSessionStorage('project_id'),_this = this; 
+      let oid; 
       d.stopPropagation();
       if(c.parent.parent==null){
-        let oid;//获取组织id
-        for(let i=0;i<this.data.length;i++){
-          if(this.data[i].mention===b.label){
-            oid=this.data[i].id;
-          }
-        }
+        //获取组织id
+        /*console.log(this.data)
+        console.log(b.label)*/
+        for(let i of this.data){
+          if(i.name.slice(0,i.name.indexOf('/')) == b.label.slice(0,b.label.indexOf('('))){
+            oid = i.id;
+          };
+        };
         //组织id删除
-        $.ajax({
+        console.log('组织id删除');
+        let params = {
+          "method": 'POST',
+          "orgIdList[]":[oid]
+        };
+        this.loading_start = true;
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org',"POST",params).then((data) =>{//ajax
+          this.loading_start = false;
+          if(successBack(data,this)){
+            this.data_scond = this.data_scond.filter(item => { return [b.label].indexOf(item.label) === -1; });
+            this.data = this.data.filter(item => { return [oid].indexOf(item.id) === -1; });//前台删除
+            this.$store.state.org_Data = this.data;
+            this.search_flag = true;
+          };
+        });  
+        /*$.ajax({
             url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org ",
             type:"POST",
             traditional:true,
@@ -701,9 +710,9 @@ export default {
               _this.$store.state.org_Data=_this.data;
               _this.search_flag=true;
             }
-          });
-      }else{
-        for(let i=0;i<this.data_scond.length;i++){
+          });*/
+      };
+        /*for(let i=0;i<this.data_scond.length;i++){
           if(c.parent.data.label===this.data_scond[i].label){
             let oid;//获取组织id
             for(let i=0;i<this.data.length;i++){
@@ -714,6 +723,7 @@ export default {
               }
             }
             //组织下的企业删除
+            console.log('组织下的企业删除')
             $.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/enterprise ",
                   type:"POST",
@@ -730,56 +740,29 @@ export default {
                   }
               });
             }
-          }
-        }
+          }*/
+       
     },
     node_click(a,b,c){
-      let _this = this,project_id=GetSessionStorage('project_id');
-      _this.tabledata_perlist=[];
-      _this.first_data_index=_this.second_data_index='';
-      _this.dialo_title=a.label.slice(0,a.label.indexOf('/'))+'组织详情'
-      _this.duibiTable_flag=false;
-      _this.dialogCt=true;
-        if(b.data.label.slice(b.data.label.length-5,b.data.label.length)!='     '){
-          _this.second_flag=true;
-          for(let i=0;i<_this.data.length;i++){
-            if(_this.data[i].mention===b.data.label){
-              _this.first_data_index=i;
-              console.log(_this.data[i].commonResult);
-              _this.tabledata_perlist=_this.data[i].commonResult.perList;
-              _this.tabledata_keywordlist=_this.data[i].commonResult.keywordList;
-              _this.tabledata_articlelist=_this.data[i].commonResult.eventArticleList;
-              if(_this.tabledata_articlelist){
-                for(let t=0;t<_this.tabledata_articlelist.length;t++){
-                       _this.tabledata_articlelist[t].publishTime=new Date(_this.tabledata_articlelist[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-              }     
-            }
-          }
-        }else{
-          _this.second_flag=false;
-          for(let i=0;i<_this.data.length;i++){
-            if(b.parent.data.label===_this.data[i].mention){
-               _this.first_data_index=i;
-              for(let j=0;j<_this.data[i].enterpriseDtoList.length;j++){
-                if(a.label.slice(0,a.label.indexOf('     '))===_this.data[i].enterpriseDtoList[j].mention){
-                  _this.second_data_index=j;
-                      _this.tabledata_perlist=_this.data[i].enterpriseDtoList[j].commonResult.perList;
-                      _this.tabledata_keywordlist=_this.data[i].enterpriseDtoList[j].commonResult.keywordList;
-                      _this.tabledata_articlelist=_this.data[i].enterpriseDtoList[j].commonResult.eventArticleList;
-                      if(_this.tabledata_articlelist){
-                        for(let t=0;t<_this.tabledata_articlelist.length;t++){
-                               _this.tabledata_articlelist[t].publishTime=new Date(_this.tabledata_articlelist[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-                            }
-                      }
-                }
-              }
-            }
-          }   
-        }
-        _this.format_table('tabledata_perlist','tabledata_perlist_list');
-        _this.format_table('tabledata_keywordlist','tabledata_keywordlist_list');
-        _this.format_table('tabledata_articlelist','tabledata_articlelist_list');
+      console.log('node-click')
+      console.log(a)
+      console.log(b)
+      console.log(this.data)
+      console.log(this.data_scond)
+      this.second_data_index = '';
+      this.first_data_index = this.data.findIndex(d => d.name.slice(0,d.name.indexOf('/')) === b.data.label.slice(0,b.data.label.indexOf('(')));//第一层下标
+      this.dialo_title = a.label.slice(0,a.label.indexOf('('))+'组织详情';
+      this.duibiTable_flag = false;
+      this.dialogCt = true;
+      this.tabledata_perlist = a.data.perList;
+      this.tabledata_keywordlist = a.data.keywordList;
+      this.format_table('tabledata_perlist','tabledata_perlist_list');
+      this.format_table('tabledata_keywordlist','tabledata_keywordlist_list');
+      this.pageShow = false;
+      this.orgId = a.data.orgId;
+      this.tabledata_articlelist_total = a.data.articleCount;
+      this.currentPage_art = 1;
+      this.handleCurrentChange_article(this.currentPage_art);
     },
     del_(a,b,c,d,e){  //('perlist_selection','perList','mention','tabledata_perlist','tabledata_perlist_list')
       //console.log(this.perlist_selection); console.log(this.first_data_index) console.log(this.second_data_index);
@@ -790,7 +773,35 @@ export default {
       if(this.second_data_index===''){//点击父级即组织下的操作
         if(a==='articlelist_selection'){//判断删除组织父级下的文章
           if(this.duibiTable_flag){//竞品的
-              $.ajax({
+            let params = {
+                "method": 'POST',
+                "orgId":this.compet_orgId,//组织id
+                "entityType":"art",
+                "entityNameList[]":arr
+            };
+            this.loading_start = true;
+            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/article',"POST",params).then((data) =>{//ajax
+              this.loading_start = false;
+              if(successBack(data,this)){
+                for(let i of this.duibiData){
+                  if(i.id == this.compet_proId){
+                    for(let j of i.children){
+                      if(j.id == this.compet_orgId){
+                        this[e] = this[e].filter(item => { return arr.indexOf(item[c]) === -1; });
+                        this.tabledata_articlelist_total = j.data.articleCount = j.data.articleCount - arr.length;
+                        //初始
+                        if(this.tabledata_articlelist_total > 0){
+                          this.currentPage_art * this.page_size_art > this.tabledata_articlelist_total ? this.currentPage_art = this.currentPage_art - 1 : '';
+                          this.pageShow = false;    
+                          this.handleCurrentChange_article(this.currentPage_art);
+                        };
+                      };
+                    };
+                  };
+                };
+              };  
+            });    
+              /*$.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+_this.compet_proId+"/org/article",
                   type:"POST",
                   traditional:true,
@@ -804,9 +815,9 @@ export default {
                   success:function(data){
                     console.log(data.message)
                     for(let i=0;i<_this.duibiData.length;i++){
-                      if(_this.duibiData[i].iid==_this.compet_proId){
+                      if(_this.duibiData[i].id==_this.compet_proId){
                         for(let j=0;j<_this.duibiData[i].children.length;j++){
-                          if(_this.duibiData[i].children[j].iid==_this.compet_orgId){
+                          if(_this.duibiData[i].children[j].id==_this.compet_orgId){
                            _this.duibiData[i].children[j].data[b]=_this.duibiData[i].children[j].data[b].filter(item => { return arr.indexOf(item[c]) === -1; });//前台删除
                            _this[d]= _this.duibiData[i].children[j].data[b];
                            _this.format_table(d,e);
@@ -816,9 +827,30 @@ export default {
                     }
                     _this.search_flag=true;
                   }
-              });
+              });*/
           }else{//自身
-             $.ajax({
+            console.log('自身文章')
+            let params = {
+                "method": 'POST',
+                "orgId":this.data[this.first_data_index].id,//组织id
+                "entityType":"art",
+                "entityNameList[]":arr
+            };
+            this.loading_start = true;
+            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/article',"POST",params).then((data) =>{//ajax
+              this.loading_start = false;
+              if(successBack(data,this)){
+                this.tabledata_articlelist_total = this.data[this.first_data_index].articleCount = this.data_scond[this.first_data_index].data.articleCount = this.data[this.first_data_index].articleCount - arr.length;
+                this[e] = this[e].filter(item => { return arr.indexOf(item[c]) === -1; });
+                //初始
+                if(this.tabledata_articlelist_total > 0){
+                  this.currentPage_art * this.page_size_art > this.tabledata_articlelist_total ? this.currentPage_art = this.currentPage_art - 1 : '';
+                  this.pageShow = false;    
+                  this.handleCurrentChange_article(this.currentPage_art);
+                };
+              };
+            });  
+             /*$.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/article",
                   type:"POST",
                   traditional:true,
@@ -836,11 +868,36 @@ export default {
                     _this.format_table(d,e);
                     _this.search_flag=true;
                   }
-              });
+              });*/
           }
         }else{//删除组织父级下的实体
              if(this.duibiTable_flag){//竞品的
-                 $.ajax({
+              console.log('竞品实体');
+              let params = {
+                "method": 'POST',
+                "orgId":this.compet_orgId,//组织id
+                "entityType":a.slice(0,3),
+                "entityNameList[]":arr
+              };
+              this.loading_start = true;
+              publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/entity',"POST",params).then((data) =>{//ajax
+                this.loading_start = false;
+                if(successBack(data,this)){
+                  for(let i of this.duibiData){
+                    if(i.id == this.compet_proId){
+                      for(let j of i.children){
+                        if(j.id == this.compet_orgId){
+                          j.data[b] = j.data[b].filter(item => { return arr.indexOf(item[c]) === -1; });//前台删除
+                          this[d] = j.data[b];
+                          this.format_table(d,e);
+                          this.search_flag=true;
+                        };
+                      };
+                    };
+                  };
+                };
+              });  
+                 /*$.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+_this.compet_proId+"/org/entity ",
                   type:"POST",
                   traditional:true,
@@ -854,9 +911,9 @@ export default {
                   success:function(data){
                     console.log(data.message)
                     for(let i=0;i<_this.duibiData.length;i++){
-                      if(_this.duibiData[i].iid==_this.compet_proId){
+                      if(_this.duibiData[i].id==_this.compet_proId){
                         for(let j=0;j<_this.duibiData[i].children.length;j++){
-                          if(_this.duibiData[i].children[j].iid==_this.compet_orgId){
+                          if(_this.duibiData[i].children[j].id==_this.compet_orgId){
                            _this.duibiData[i].children[j].data[b]=_this.duibiData[i].children[j].data[b].filter(item => { return arr.indexOf(item[c]) === -1; });//前台删除
                            _this[d]= _this.duibiData[i].children[j].data[b];
                            _this.format_table(d,e);
@@ -866,9 +923,29 @@ export default {
                     }
                     _this.search_flag=true;
                   }
-                });                 
+                });*/                 
              }else{//自身
-                $.ajax({
+               console.log('自身实体')
+               console.log(this.data)
+               console.log(this.first_data_index)
+               let params = {
+                "method": 'POST',
+                "orgId":this.data[this.first_data_index].id,//组织id
+                "entityType":a.slice(0,3),
+                "entityNameList[]":arr
+              };
+              this.loading_start = true;
+              publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/entity',"POST",params).then((data) =>{//ajax
+                this.loading_start = false;
+                if(successBack(data,this)){
+                  this.data[this.first_data_index][b] = this.data[this.first_data_index][b].filter(item => { return arr.indexOf(item[c]) === -1; });
+                  this.data_scond[this.first_data_index].data[b] = this.data_scond[this.first_data_index].data[b].filter(item => { return arr.indexOf(item[c]) === -1; });
+                  this[d] = this.data[this.first_data_index][b];
+                  this.format_table(d,e);
+                  this.search_flag = true;
+                };
+              });  
+                /*$.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/entity ",
                   type:"POST",
                   traditional:true,
@@ -886,7 +963,7 @@ export default {
                     _this.format_table(d,e);
                     _this.search_flag=true;
                   }
-                });
+                });*/
              }    
         }
       }else{//点击企业即组织下的操作
@@ -944,7 +1021,72 @@ export default {
       }
       if(this.second_data_index===''){//点击父级即组织
         if(this.duibiTable_flag){//竞品的
-            $.ajax({
+          let params = {
+              "method": 'POST',
+              "orgId":this.compet_orgId,//组织id
+              "entityType":this.data_label.slice(0,3),
+              "mention":this.compet_mention,
+              "entityNameList[]":arr
+          };
+          this.loading_start = true;
+          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/entity/article',"POST",params).then((data) =>{//ajax
+            this.loading_start = false;
+            if(successBack(data,this)){
+              for(let i of this.duibiData){
+                if(i.id == this.compet_proId){
+                  for(let j of i.children){
+                    if(j.id == this.compet_orgId){
+                      for(let k of j.data[this.data_label]){
+                        if(k.mention == this.compet_mention){
+                          console.log(k)
+                          this.second_tabledata_list = this.second_tabledata_list.filter(item => { return arr.indexOf(item.id) === -1; });
+                          this.second_tabledata_total = k.articleCount = k.articleCount - arr.length;
+                          //初始
+                          if(this.second_tabledata_total > 0){
+                            this.currentPage_org*this.page_size_org > this.second_tabledata_total ? this.currentPage_org = Math.ceil(this.second_tabledata_total/this.page_size_org) : '';
+                            this.pageShow = false;    
+                            this.handleCurrentChange_org(this.currentPage_org);
+                          }else{//全选 删除实体
+                            let params = {
+                              "method": 'POST',
+                              "orgId":this.compet_orgId,//组织id
+                              "entityType":this.data_label.slice(0,3),
+                              "entityNameList[]":[this.compet_mention]
+                            };
+                            this.loading_start = true;
+                            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/entity',"POST",params).then((data) =>{//ajax
+                              this.loading_start = false;
+                              if(successBack(data,this)){
+                                let d = 'tabledata_'+this.data_label.toLowerCase();
+                                let e =  'tabledata_'+this.data_label.toLowerCase()+'_list';
+                                let c = 'mention';
+                                j.data[this.data_label] = j.data[this.data_label].filter(item => { return [this.compet_mention].indexOf(item[c]) === -1; });//前台删除
+                                this[d] = j.data[this.data_label];
+                                this.format_table(d,e);
+                                this.dialo_org = false;
+                                this.search_flag = true;
+                                /*for(let i of this.duibiData){
+                                  if(i.id == this.compet_proId){
+                                    for(let j of i.children){
+                                      if(j.id == this.compet_orgId){
+                                        
+                                      };
+                                    };
+                                  };
+                                };*/
+                              };
+                            });
+                            //
+                          }
+                        };
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          });  
+            /*$.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+_this.compet_proId+"/org/entity/article",
                   type:"POST",
                   traditional:true,
@@ -960,9 +1102,10 @@ export default {
                   success:function(data){
                     console.log(data.message);
                     for(let i=0;i<_this.duibiData.length;i++){
-                      if(_this.duibiData[i].iid==_this.compet_proId){
+                      if(_this.duibiData[i].id==_this.compet_proId){
                         for(let j=0;j<_this.duibiData[i].children.length;j++){
-                          if(_this.duibiData[i].children[j].iid==_this.compet_orgId){
+                          if(_this.duibiData[i].children[j].id==_this.compet_orgId){
+
                             for(let t=0;t<_this.duibiData[i].children[j].data[_this.data_label].length;t++){
                               if(_this.duibiData[i].children[j].data[_this.data_label][t].mention==_this.compet_mention){
                                 //console.log(_this.duibiData[i].children[j].data[_this.data_label][t].mention)
@@ -977,9 +1120,54 @@ export default {
                       }
                     }
                   }
-            });
+            });*/
         }else{
-          $.ajax({
+            let params = {
+                "method": 'POST',
+                "orgId":this.data[this.first_data_index].id,//组织id
+                "entityType":this.data_label.slice(0,3),
+                "mention":this.compet_mention,
+                "entityNameList[]":arr
+            };
+            this.loading_start = true;
+            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/entity/article',"POST",params).then((data) =>{//ajax
+              this.loading_start = false;
+              if(successBack(data,this)){
+
+                this.second_tabledata_total = this.data[this.first_data_index][this.data_label][this.three_data_index].articleCount =this.data[this.first_data_index][this.data_label][this.three_data_index].articleCount - arr.length;
+                console.log(this.second_tabledata_total)
+                this.second_tabledata_list = this.second_tabledata_list.filter(item => { return arr.indexOf(item.id) === -1; }); 
+                //初始
+                if(this.second_tabledata_total > 0){
+                  this.currentPage_org*this.page_size_org > this.second_tabledata_total ? this.currentPage_org = Math.ceil(this.second_tabledata_total/this.page_size_org) : '';
+                  this.pageShow = false;    
+                  this.handleCurrentChange_org(this.currentPage_org);
+                }else{//全选 就要删除实体 d e  'tabledata_perlist','tabledata_perlist_list'
+                  let params = {
+                    "method": 'POST',
+                    "orgId":this.data[this.first_data_index].id,//组织id
+                    "entityType":this.data_label.slice(0,3),
+                    "entityNameList[]":[this.compet_mention]
+                  };
+                  let d = 'tabledata_'+this.data_label.toLowerCase();
+                  let e =  'tabledata_'+this.data_label.toLowerCase()+'_list';
+                  let c = 'mention';
+                  this.loading_start = true;
+                  publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/entity',"POST",params).then((data) =>{//ajax
+                    this.loading_start = false;
+                    if(successBack(data,this)){
+                      this.data[this.first_data_index][this.data_label] = this.data[this.first_data_index][this.data_label].filter(item => { return [this.compet_mention].indexOf(item[c]) === -1; });
+                      this.data_scond[this.first_data_index].data[this.data_label] = this.data_scond[this.first_data_index].data[this.data_label].filter(item => { return [this.compet_mention].indexOf(item[c]) === -1; });
+                      this[d] = this.data[this.first_data_index][this.data_label] ;
+                      this.format_table(d,e);
+                      this.dialo_org = false;
+                      this.search_flag = true;
+                    };
+                  });  
+                };
+              };
+            });  
+          /*$.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/entity/article",
                   type:"POST",
                   traditional:true,
@@ -999,9 +1187,9 @@ export default {
                   _this.search_flag=true;
                    _this.format_table('second_tabledata','second_tabledata_list');
                   }
-            });
+            });*/
         }  
-      }else{//点击企业
+      }/*else{//点击企业
           $.ajax({
                   url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/enterprise/entity/article",
                   type:"POST",
@@ -1024,19 +1212,26 @@ export default {
                     _this.search_flag=true;
                   }
             });
-      }; 
+      };*/ 
     },
     table_click(a,b,c){
-      //console.log(a);
+      console.log(a);
       if(b.type=='default'){
         if(a.url){
-          window.open(a.url)
-        }else{
-         if(a.mention.slice(a.mention.indexOf('/'),a.mention.length)==='/PER'){
-          this.data_label='perList';
-          }else{
-            this.data_label='keywordList';
-          }
+          window.open(a.url);
+          return;
+        };
+        a.mention.slice(a.mention.indexOf('/'),a.mention.length) === '/PER' ? this.data_label = 'perList' : this.data_label = 'keywordList';
+        if(!this.duibiTable_flag){
+          this.three_data_index = this.data[this.first_data_index][this.data_label].findIndex(d => d.mention === a.mention);//第三层下标 自身
+        };
+        console.log(this.three_data_index)
+        this.pageShow = false;
+        this.second_tabledata_total = a.articleCount;
+        this.currentPage_org = 1;
+        this.compet_mention = a.mention;
+        this.handleCurrentChange_org(this.currentPage_org);
+         /*
           this.currentPage_org=1;
           if(this.duibiTable_flag){
             this.dialo_org=true;
@@ -1063,39 +1258,68 @@ export default {
                   }
                 }
             }
-          }   
-        }
+          } */  
       }
     },
     save(){
-      let _this = this,project_id=GetSessionStorage('project_id'),idarr = [];
-      this.org_loading=true;
-      this.loading_start=true;
-      for(let i=0;i<this.duibiData.length;i++){
-          if(this.duibiData[i].hand=='取消'){
-            idarr.push(this.duibiData[i].iid)
-          }
+      console.log(this.data_scond)
+      console.log(this.duibiData)
+      if(this.data_scond.length == 0 && this.duibiData.length == 0){
+        tipsMessage('没有可导出的结果','warning',this);
+        return;
       };
-      $.ajax({
-          url:"http://192.168.0.3:8080/rs/api/v1.1/project/"+project_id+"/org/sysborg",
-          type:"POST",
-          traditional:true,
-          data:{
-            "method":"POST", //http方法
-            "proId":project_id, //项目id
-            "cpIdArr":idarr
-        },
-          success:function(data){
-            _this.$message({
-              message: data.message,
-              type: 'success'
-            });
-            _this.org_loading=false;
-            _this.$store.state.btn_org=true;
-            _this.search_flag=false;
-            _this.loading_start=false;
-          }
-        });
+      let proAnaDto = {},proIdArr = [],cpAnaDtoList = [];//cpAnaDtoList竞品，proAnaDto自身
+      for(let i of this.data_scond){
+        proIdArr.push(i.data.orgId);//proIdArr z自身组织id数组
+      };
+      proAnaDto.proId = GetSessionStorage('project_id');
+      proAnaDto.anaIdList = proIdArr;
+      if(this.duibiData.length != 0){//有竞品
+        for(let i = 0;i < this.duibiData.length;i++){
+            if(this.duibiData[i].hand == '取消'){
+               let obj = {},cpaIdArr = [];
+               obj.proId = this.duibiData[i].id;
+               for(let j of this.duibiData[i].children){
+                  cpaIdArr.push(j.id);
+               };
+               obj.anaIdList = cpaIdArr;
+               cpAnaDtoList.push(obj);
+            }
+         };
+      };
+      console.log(proAnaDto)
+      console.log(cpAnaDtoList)
+      this.$prompt('请输入导出组织名称', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          closeOnClickModal:false,
+        }).then(({ value }) => {
+          let data = {
+            proAnaDto,
+            cpAnaDtoList,
+            "proId": GetSessionStorage('project_id'),//自身项目id
+            "startTime": this.time[0].getTime(),
+            "endTime": this.time[1].getTime(),
+            "reportName": value,//报告名称
+            "articleType": this.articleType
+          };
+          let params = {
+            "method": 'post',
+            'orgExptDtoStr' : JSON.stringify(data)
+          };
+          this.loading_start = true;
+          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/org/expt',"POST",params).then((data) =>{//ajax
+            this.loading_start = false;
+            if(successBack(data,this)){
+              //清空所有数据
+              this.$store.state.btn_org = true;
+              this.data_scond = [];
+              this.duibiData = [];
+              this.tree_width = '100%';
+              tipsMessage(data.message,'success',this);
+            };
+          });
+        }).catch(() => {})   
     },
     handleCurrentChange(val){
       this.currentPage = val;
@@ -1105,13 +1329,52 @@ export default {
       this.currentPage_ky = val;
       this.format_tabledata_('currentPage_ky','page_size','tabledata_keywordlist','tabledata_keywordlist_list');
     },
-    handleCurrentChange_art(val){
+    handleCurrentChange_article(val){//ajax 获取文章列表
       this.currentPage_art = val;
-      this.format_tabledata_('currentPage_art','page_size_art','tabledata_articlelist','tabledata_articlelist_list');
+      this.org_articleTableLoading = true;
+      let proId = this.duibiTable_flag ? this.compet_proId : GetSessionStorage('project_id');//项目id
+      let orgId = this.duibiTable_flag ? this.compet_orgId : this.orgId;//组织id
+      let params = {
+            "method": 'GET',
+             orgId, //组织id
+            "articleType": this.articleType, //文章类型
+            "pageSize": this.page_size_art,//每页数量
+            "pageNum": val //页码
+          };
+      publicSearch('rsa/project/'+proId+'/org/'+orgId+'/article',"GET",params).then((data) =>{
+        this.org_articleTableLoading = false;
+        if(successBack(data,this)){
+          this.tabledata_articlelist_list = data.data == null ? [] : data.data.articleList;
+          this.$nextTick(function () {
+            this.pageShow = true
+          });
+        }
+      })    
     },
     handleCurrentChange_org (val) {
       this.currentPage_org = val;
-      this.format_tabledata_('currentPage_org','page_size_org','second_tabledata','second_tabledata_list');
+      this.loading_start = true;
+      this.dialo_org = true;
+      let proId = this.duibiTable_flag ? this.compet_proId : GetSessionStorage('project_id');//项目id
+      let orgId = this.duibiTable_flag ? this.compet_orgId : this.orgId;//组织id
+      let params = {
+            "method": 'GET',
+             orgId, //组织id
+            "articleType": this.articleType, //文章类型
+            "entityType": this.compet_mention.slice(this.compet_mention.indexOf('/')+1,this.compet_mention.length) == 'PER' ? 'PER' : 'KEY', //实体类型
+            "entityName": this.compet_mention, //实体名称
+            "pageSize": this.page_size_org,//每页数量
+            "pageNum": val //页码
+          };
+      publicSearch('rsa/project/'+proId+'/org/'+orgId+'/entity/article',"GET",params).then((data) =>{
+        this.loading_start = false;
+        if(successBack(data,this)){
+          this.second_tabledata_list = data.data == null ? [] : data.data.articleList;
+          this.$nextTick(function () {
+            this.pageShow = true
+          });
+        }
+      });     
     },
     dropdown_org(command){ this.current_org = command ;},
     dropdown_jushu(command){ this.current_jushuNum = command ;},
@@ -1120,7 +1383,7 @@ export default {
     articlelist_select(a){ this.articlelist_selection = a ;},
     second_select(a){ this.second_selection = a ;},
     date_change (){date_change(this);},
-    renderContent(h, { node, data, store }) {
+    renderContent(h, { node, data, store ,event}) {
         return (
           <span>
             <span>
@@ -1128,11 +1391,11 @@ export default {
             </span>
             <span style="position:absolute;right:20px">
               <el-button size="mini" style="display:none;" on-click={ () => this.append(store,data,node) }>详情</el-button>
-              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white;padding:2px 10px;" on-click={ () => this.remove(store,data,node,event) }>删除</el-button>
+              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white;padding:2px 10px;" on-click={ (event) => this.remove(store,data,node,event) }>删除</el-button>
             </span>
           </span>);
     },
-    renderContent_duibi(h, { node, data, store }) {
+    renderContent_duibi(h, { node, data, store}) {
         if(data.hand=='删除'){
           return (
           <span>
@@ -1141,17 +1404,28 @@ export default {
             </span>
             <span style="position:absolute;right:20px">
               <el-button size="mini"  style="display:none;" on-click={ () => this.append(store,data,node) }>{data.hand}</el-button>
-              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white;padding:2px 10px;padding:2px 10px;" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
+              <el-button size="mini" style="background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white;padding:2px 10px;padding:2px 10px;" on-click={ (event) => this.del_org(store,data,node,event) }>删除</el-button>
             </span>
           </span>);
-        }else if(data.hand=='添加'){
+        }else if(data.hand=='加入对比'){
           return (
           <span>
             <span>
               <span>{node.label}</span>
             </span>
             <span style="position:absolute;right:20px">
-              <el-button size="mini"  style="background-color:rgba(19,206,102,.8);border-color:#13ce66;color:white;padding:2px 10px;" on-click={ () => this.append(store,data,node,event) }>{data.hand}</el-button>
+              <el-button size="mini"  style="background-color:rgba(19,206,102,.8);border-color:#13ce66;color:white;padding:2px 10px;" on-click={ () => this.append(store,data,node) }>{data.hand}</el-button>
+              <el-button size="mini" style="display:none;background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
+            </span>
+          </span>);
+        }else if(data.hand=='暂无数据'){
+          return (
+          <span>
+            <span>
+              <span>{node.label}</span>
+            </span>
+            <span style="position:absolute;right:20px">
+              <el-button size="mini" disabled style="background-color:#ccc;border-color:#ccc;color:white;padding:2px 10px;" on-click={ () => this.append(store,data,node,event) }>{data.hand}</el-button>
               <el-button size="mini" style="display:none;background-color:rgba(255,73,73,.8);border-color:#ff4949;color:white" on-click={ () => this.del_org(store,data,node,event) }>删除</el-button>
             </span>
           </span>);
@@ -1206,7 +1480,7 @@ export default {
       .panel{
         .panel-title{
           .warning{
-            color:#00a17c
+            color:#00a17c !important;
           }
           .block{
             .el-date-editor{
@@ -1286,6 +1560,7 @@ export default {
             padding-left: 14px;
           }
           .el-dialog__headerbtn{
+            top:13px;
             width: 20px;
             height: 20px;
             margin-right: 10px;
@@ -1342,6 +1617,7 @@ export default {
             padding-left: 14px;
           }
           .el-dialog__headerbtn{
+            top:13px;
             width: 20px;
             height: 20px;
             margin-right: 10px;

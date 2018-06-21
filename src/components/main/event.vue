@@ -2,7 +2,7 @@
 <div class="event container" style="background-color: #fff;padding-bottom:220px;">
 <div class="block" style="padding-left:5px;margin-bottom: 10px;" >
   <div class="filter_event" style="width: 100%;;border: 1px solid #dcdcdc;background: #f7f7f7;position: relative;">
-    <div class="btn-group" role="group" aria-label="..." style="margin-top: 20px;" id="type">
+    <!-- <div class="btn-group" role="group" aria-label="..." style="margin-top: 20px;" id="type">
       <span style="position: absolute;left: 20px;line-height: 28px;"><b>事件类型:</b></span>
       <button type="button" class="btn warning" style="margin-left: 90px;" @click="btn_disabled=false;articleType=2;">微信</button>
       <button type="button" class="btn " @click="articleType=1;btn_disabled=true;">新闻</button>
@@ -29,7 +29,9 @@
     <div class="btn-group custom" role="group" aria-label="..." style="margin-left: 145px;margin-top: 20px;width: 1000px;" id="custom_m">
      <button type="button" class="btn" @click="domain_click($event,'custom')" :disabled="btn_disabled" v-for="i in custom_m" :class="custom_arr.indexOf(i.id)== -1? '' : 'warning'" style="margin-bottom: 20px;">{{i.name}}</button>
     </div>
-    <hr style="width: 97%;">
+    <hr style="width: 97%;"> -->
+    <p></p>
+
     <span style="position: absolute;left: 20px;line-height: 25px;"><b>监测时间:</b></span>
     <div class="block" style="display: inline-block" >
       <el-date-picker
@@ -61,7 +63,7 @@
                 <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
             </el-dropdown-menu>
     </el-dropdown>
-    <span style="position: absolute;left: 635px;line-height: 25px;"><b>上下文句数:</b></span>
+    <!-- <span style="position: absolute;left: 635px;line-height: 25px;"><b>上下文句数:</b></span>
     <el-dropdown  @command="dropdown_jushu" style="padding-left: 120px;">
                 <el-button style="padding: 3px 5px;">{{current_jushuNum}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
                 <el-dropdown-menu slot="dropdown">
@@ -74,11 +76,11 @@
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="i in dropdown_cixingNum" :command="i" >{{i}}</el-dropdown-item>
                 </el-dropdown-menu>
-    </el-dropdown>
+    </el-dropdown> -->
     <hr style="width: 97%;">
-    <el-button type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 400px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;" id="search" @click="_start(true,true)" v-loading.fullscreen.lock="loading_start"  element-loading-text="系统拼命加载中...">搜索</el-button>
-    <el-button :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 80px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  @click="save_=true">导出</el-button>
-    <el-button :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 80px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  @click="add_duibi">查看竞品</el-button>
+    <el-button type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 400px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;" id="search" @click="_start(true,true)" v-loading.fullscreen.lock="loading_start" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading">搜索</el-button>
+    <el-button :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 150px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading" @click="save">导出</el-button>
+    <el-button :disabled="this.$store.state.btn_daochu" v-show="this.$store.state.data.length != 0" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 150px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  @click="add_duibi">查看竞品</el-button>
   </div>
 </div>
 
@@ -87,7 +89,7 @@
       <div class="el-tabs__nav-wrap" style="border-bottom: 0px;">
         <div class="el-tabs__nav-scroll">
           <div class="el-tabs__nav">
-            <div @click="compet_card(i.project.id,$event)" :class="[$index == 0 ? 'el-tabs__item is-active' : 'el-tabs__item']" v-for="(i,$index) in duibiData">{{i.project.name}}</div>
+            <div @click="compet_card(i.id,$event)" :class="[$index == 0 ? 'el-tabs__item is-active' : 'el-tabs__item']" v-for="(i,$index) in duibiData">{{i.name}}</div>
             <el-button v-show="this.$store.state.duibiButton" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;position:absolute;left: 1120px;top: 8px;"  @click="dialogDuibiMethod=true;">添加对比</el-button>
           </div>
         </div>
@@ -154,7 +156,7 @@
         <p style="position: absolute;top: 10px;left:90px;font-size: 16px;"><img src="../../assets/icon/event-title.png" style="padding-right: 6px;color: #333333;"><span><input type="text" :value="i.name" @click.stop="input_write" @blur="blur_input($index)" ref="inpt" style="width: 260px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></p>
         <p style="position: absolute;top:35px;left:110px;color: rgb(242,196,70);cursor: pointer;" @click.stop="dialog_articleList(i,$index)"><img src="../../assets/icon/event-like.png" style="padding-right: 6px;">相关文章({{i.articleCount==null ? 0 : i.articleCount}})</p>
       </div>
-      <el-dropdown @command="sort_dropdown_keyword" @click="te()" style="position: absolute;z-index: 9;right: 0px;" >
+      <el-dropdown @command="sort_dropdown_keyword" style="position: absolute;z-index: 9;right: 0px;" >
               <el-button style="padding: 2px 6px;">{{i.sortArr}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="i in dropdown_sort_num" :command="i+$index" >{{i}}</el-dropdown-item >
@@ -169,13 +171,6 @@
     <el-dialog title="详情图" :visible.sync="dialogEchart" id="dialog_echart" width="1200px">
         <div style="width: 100%;height:400px;padding: 0 5px;border:1px solid #ebebeb" id="echart_max"></div>
    </el-dialog>
-   <el-dialog title="提示" :visible.sync="save_" size="tiny" id="dia_tishi" >
-    <span>确定导出吗?</span>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="save_ = false">取 消</el-button>
-      <el-button type="primary" @click="save">确 定</el-button>
-    </span>
-  </el-dialog>
   <el-dialog :title="dialo_title" :visible.sync="dialogCt" width="1000px" id="dialog_ct" >
     <div style="position:absolute;left: 15px;padding: 10px;border: 1px solid rgb(235, 235, 235);width:970px;height: 520px;">
       <el-table
@@ -202,8 +197,8 @@
             :current-page.sync="currentPage"
             :page-size="page_size"
             layout="total,  prev, pager, next, jumper"
-            :total="this.ct_data_list.length"
-            v-show="this.ct_data_list.length!==0">
+            :total="this.ct_data_total"
+            v-show="this.ct_data_total!==0">
             </el-pagination>
     </div>
   </el-dialog>
@@ -235,8 +230,9 @@
     </el-dialog>
     <!-- 选择对比项目 -->
     <el-dialog title="选择对比项目" :visible.sync="dialogDuibiList" id="dialog_DuibiList">
+      <p v-show="this.duibiList.length == 0" style="margin: 10% 42%;color: #f34c81">暂无数据，请添加竞品</p>
       <el-radio-group v-model="radio_duibi">
-        <el-radio v-for="i in duibiList" :label="i.project.id">{{i.project.name}}</el-radio>
+        <el-radio v-for="i in duibiList" :label="i.id">{{i.name}}</el-radio>
       </el-radio-group>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDuibiList = false">取 消</el-button>
@@ -261,7 +257,7 @@
       </span>
    </el-dialog> 
     <!-- 查看对比项目 -->
-    <el-dialog title="查看对比项目" :visible.sync="dialog_look_duibiProject" size="tiny" id="dialog_look_duibiProject">
+    <el-dialog title="查看对比项目" :visible.sync="dialog_look_duibiProject"  id="dialog_look_duibiProject">
       <h4><span style="color:#f7ba2a">说明:</span>计算方式为:<span v-show="radio_duibi_Method==1" style="color: #ff4949">jaccard</span><span v-show="radio_duibi_Method==2" style="color: #ff4949">cosine</span><span v-show="radio_duibi_Method==3" style="color: #ff4949">generative</span><span v-show="radio_duibi_Method==4" style="color: #ff4949">kl</span>，值越<span style="color: #ff4949">{{radio_duibi_Method == 4 ? '小' : '大'}}</span>说明越相似。</h4>
       <table width="100%" border="1" cellspacing="0" cellpadding="0" style="opacity:.8;border-color:#ccc;" id="table">
                   <tr>
@@ -272,7 +268,7 @@
                   <tr >
                     <th width="4%" :rowspan="rowspan" ><p style="word-wrap: break-word; letter-spacing: 3px;padding: 2px 0 10px 2px;width: 25px;color: black"><span >{{table_own_name}}</span></p></th>
                     <th width="" ></th>
-                    <th width="" v-for="(i,$index) in table_compet_data"><span data-toggle="tooltip" data-placement="top" :title="'事件标题:'+i.label"><input type="text" :value="i.label" @blur="blur_table(i,$index,true)" ref="cp_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
+                    <th width="" v-for="(i,$index) in table_compet_data"><span data-toggle="tooltip" data-placement="top" :title="'事件标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index,true)" ref="cp_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
                   </tr>
                   <tr v-for="(i,$index) in tableData">
                       <th width="" ><span data-toggle="tooltip" data-placement="top" :title="'事件标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index)" ref="_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
@@ -280,7 +276,7 @@
                   </tr>            
       </table>
       <span slot="footer" class="dialog-footer">
-        <el-button v-show="this.table_select.length!=0" :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 10px 18px;font-size: 14px;background-color: #00b38a;border-color:#00b38a;position:absolute;right: 110px"  @click="_save_">导 出</el-button>
+        <el-button v-show="this.table_select.length!=0" :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 10px 18px;font-size: 14px;background-color: #00b38a;border-color:#00b38a;position:absolute;right: 110px"  @click="save">导 出</el-button>
         <el-button @click="dialog_look_duibiProject = false" style="margin-right: 0px">取 消</el-button>
       </span>
    </el-dialog> 
@@ -423,7 +419,7 @@
      <!-- 分页 end -->
      </div>
      <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;top: 445px;left: 10px;">相关文章：</el-button>
-       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:98%;height: 320px;top: 475px">
+       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:49%;height: 320px;top: 475px">
             <el-table
              :data="similarData_arc_list"
              border
@@ -431,9 +427,9 @@
              <el-table-column
                label="自身文章标题"
                show-overflow-tooltip>
-               <template scope="scope"><a :href="scope.row.arc_url" target="_blank" :style="{color: similar_arc_arr.indexOf(scope.row.arc) != -1 ? '#f34c81' : 'black'}">{{ scope.row.arc}}</a></template>
+               <template scope="scope"><a :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
              </el-table-column>
-             <el-table-column
+             <!-- <el-table-column
                label="竞品文章标题"
                show-overflow-tooltip>
                <template scope="scope"><a :href="scope.row.cp_arc_url" target="_blank" :style="{color: similar_arc_arr.indexOf(scope.row.cp_arc) != -1 ? '#f34c81' : 'black'}">{{ scope.row.cp_arc}}</a></template>
@@ -442,17 +438,42 @@
                label="公共文章标题"
                show-overflow-tooltip>
                <template scope="scope"><a :href="scope.row.similar_arc_title_url" target="_blank" style="color: #f34c81;">{{ scope.row.similar_arc_title}}</a></template>
-             </el-table-column>
+             </el-table-column> -->
            </el-table>    
        <!-- 分页 strart -->
        <el-pagination
+           v-if="pageShow"
            class="page"
            @current-change="similarData_arc_handleCurrentChange"
            :current-page="similarData_arc_currentPage"
            :page-size="similarData_arc_pageSize"
            layout="total,  prev, pager, next, jumper"
-           :total="this.similarData_arc.length"
-           v-show="this.similarData_arc.length!==0">
+           :total="this.similarData_arc_total"
+           v-show="this.similarData_arc_total!==0">
+       </el-pagination>
+     <!-- 分页 end -->
+     </div> 
+     <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:49%;height: 320px;top: 475px;left: 50%;">
+            <el-table
+             :data="similarData_arc_list_cpa"
+             border
+             style="width: 100%">
+             <el-table-column
+               label="竞品文章标题"
+               show-overflow-tooltip>
+               <template scope="scope"><a :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
+             </el-table-column>
+           </el-table>    
+       <!-- 分页 strart -->
+       <el-pagination
+           v-if="pageShow"
+           class="page"
+           @current-change="similarData_arc_handleCurrentChange_cpa"
+           :current-page="similarData_arc_currentPage_cpa"
+           :page-size="similarData_arc_pageSize"
+           layout="total,  prev, pager, next, jumper"
+           :total="this.similarData_arc_total_cpa"
+           v-show="this.similarData_arc_total_cpa!==0">
        </el-pagination>
      <!-- 分页 end -->
      </div> 
@@ -463,7 +484,7 @@
 import echart from 'echarts'
 import ecStat from 'echarts-stat'
 import _echart from '../../assets/js/_echart.js'
-import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar }  from '../../assets/js/map.js'
+import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap }  from '../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -501,6 +522,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           ct_data:[],
           list_type:'',
           ct_data_list:[],
+          ct_data_total:'',
           articleList_list:[],
           articleList_reprint_list:[],
           currentPage:1,
@@ -510,7 +532,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           page_size_list:12,
           page_size_reprint_list:12,
           edit:false,
-          save_:false,
           domain_s:[],
           domain_m:[],
           domain:[],
@@ -533,6 +554,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           current_jushuNum:GetSessionStorage('current_jushuNum') || 3,
           current_cixing:GetSessionStorage('current_cixing') || '所有词性',
           loading_start:false,
+          publicLoading:false,
           visible_per:false,
           dialo_title:'',
           ct_articlelist_selection:[],
@@ -567,28 +589,28 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           similarData_key:[],
           similarData_key_list:[],
           similarData_key_currentPage:1,
-          similarData_arc:[],
+          similarData_arc_total:'',//相似度表格里面自身文章列表的总数
+          similarData_arc_total_cpa:'',//相似度表格里面競品文章列表的总数
+          //similarData_arc:[],
           similarData_arc_list:[],
+          similarData_arc_list_cpa:[],//相似度表格里面自身文章列表
           similarData_arc_currentPage:1,
+          similarData_arc_currentPage_cpa:1,//相似度表格里面競品文章列表的當前頁碼
           similarData_arc_pageSize:7,
           similar_per_arr:[],
           similar_loc_arr:[],
           similar_org_arr:[],
           similar_key_arr:[],
-          similar_arc_arr:[],
+          //similar_arc_arr:[],
           entityType:'',//获取文章需要的参数--实体类型
           entityName:'',//获取文章需要的参数--实体名称
-          pageShow:true
+          similarData_topicId:'',//相似度表格里面自身文章id 获取文章列表需要的参数
+          similarData_cpTopicId:'',//相似度表格里面竞品文章id 获取文章列表需要的参数
+          pageShow:true,
+          programs:0//进度条数字
         }
     },
-    created:function(){
-      this.$store.state.ev_duibiData != '' ? this.duibiData=this.$store.state.ev_duibiData : '' ;
-      $(function(){
-        $('.el-message-box .el-message-box__input .el-input__inner').attr('type','text');
-      });
-    },
     mounted : function () {
-        //format_time();
         let _this = this,project_id = GetSessionStorage('project_id');
        /*jq样式*/
        $(window).scroll(function(){
@@ -672,24 +694,10 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             };
           }
         });*/
-      if(this.$store.state.data === ''){
-        this._start(true,true);
-      }else{
-        GetSessionStorage('custom_arr') == null ? _this.custom_arr=[] : _this.custom_arr= GetSessionStorage('custom_arr');
-        GetSessionStorage('domain_arr') == null ? _this.domain_arr=[] : _this.domain_arr= GetSessionStorage('domain_arr');                       
-        this.data=this.$store.state.data.topicList;
-        this.personSet=this.$store.state.data.topicList[0].perList;
-        this.locationSet=this.$store.state.data.topicList[0].locList;
-        this.orgSet=this.$store.state.data.topicList[0].orgList;
-        this.event_scatter().all();//-人物组织地点散点图 
-        $(function(){ _echart.build_event_qipao(_this);});//各个气泡图
-      };    
+        this._start(true,true);    
     },
     methods:{
       //切换项目查看事件
-      te(){
-        console.log(999)
-      },
       compet_card(oid,ev){
         let _this=this;
         //console.log(ev)
@@ -701,28 +709,22 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         for(let i=0;i<this.$store.state.ev_duibiData.length;i++){
           if(oid==GetSessionStorage('project_id')){//如果是自身
               this.del_duibi_flag=false;
-              this.data=this.$store.state.data;
-              this.personSet=this.$store.state.data[0].commonResult.perList;
-              this.locationSet=this.$store.state.data[0].commonResult.locList;
-              this.orgSet=this.$store.state.data[0].commonResult.orgList;
               $(document).ready(function(){
-                      _this.event_scatter().all();
+                      _this.dom_write(_this.$store.state.data);
+                      _echart.build_event_qipao(_this);
                       //_echart.build_event_allEvent(_this);
                    })
           }else{//点击的是竞品
-            if(this.$store.state.ev_duibiData[i].project.id==oid){
+            if(this.$store.state.ev_duibiData[i].id==oid){
               this.del_duibi_flag=true;
               this.del_duibi_id=oid;
-              if(this.$store.state.ev_duibiData[i].project.data!=null){//vuex里面有这个事件id的数据
-                  this.data=this.$store.state.ev_duibiData[i].project.data;
-                  this.personSet=this.$store.state.ev_duibiData[i].project.data[0].commonResult.perList;
-                  this.locationSet=this.$store.state.ev_duibiData[i].project.data[0].commonResult.locList;
-                  this.orgSet=this.$store.state.ev_duibiData[i].project.data[0].commonResult.orgList;
-                  $(document).ready(function(){
-                      _this.event_scatter().all();
-                      _echart.build_event_qipao(_this);
-                      //_echart.build_event_allEvent(_this);
-                   });
+              console.log(this.$store.state.ev_duibiData[i])
+              if(this.$store.state.ev_duibiData[i].data != undefined){//vuex里面有这个事件id的数据
+                $(function(){
+                  _this.dom_write(_this.$store.state.ev_duibiData[i].data);
+                  _echart.build_event_qipao(_this);
+                  //_echart.build_event_allEvent(_this);
+                });
               }else{
                 this._start(false,true,oid);
               }
@@ -732,78 +734,90 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       },
       addDuibi(){//生成对比表格
         console.log(this.duibiData)
-        let _this=this;
         this.loading_start=true;
         this.dialogDuibiMethod=false;
         this.tableData=[];
         this.table_select=[];
         this.dialog_look_duibiProject=true;
-        let project_id=GetSessionStorage('project_id');
-        $.ajax({
-            url:"rsa/project/"+project_id+"/event/cpa/similartable",
-            type:"GET",
-            data:{
-              "method":"GET", //http方法
-              "proId":project_id, //项目id
-              "cpId": _this.duibiData[1].project.id,//竞品id
-              "similarType":_this.radio_duibi_Method, //相似性计算方式
-              "percent":_this.radio_duibi_Percent// “0.05” “0.1” “0.2” “0.5”//词表样本百分比
-            },
-            success:function(data){
-              for(let i=0;i<_this.$store.state.data.length;i++){
-                  let obj={};
-                  obj.name=_this.$store.state.data[i].label;
-                  obj.eventId=_this.$store.state.data[i].id;
-                  /*obj.eventArticleList=_this.$store.state.data[i].commonResult.eventArticleList;
-                  obj.keywordList=_this.$store.state.data[i].commonResult.keywordList;*/
-                  obj.Data=_this.$store.state.data[i];
-                  obj.project_id=project_id;
-                  obj.data=[];
-                  let fun=_this.radio_duibi_Method == 4 ? Math.min : Math.max;
-                  for(let j of data.data[i]){
-                    let _obj={};
-                    _obj.checked=false;
-                    _obj.disabled=false;
-                    _obj.num=j;
-                    if(j==fun.apply(null,data.data[i])){
-                      _obj.max=true;
-                    }
-                    obj.data.push(_obj)
+        let proTopicIdList = [], cpTopicIdList = [];
+        for(let i of this.duibiData[0].topicList){
+          proTopicIdList.push(i.id);
+        };
+        for(let i of this.duibiData[1].data.topicList){
+          cpTopicIdList.push(i.id);
+        };
+        let params = {
+          "method":"GET", //http方法
+           proTopicIdList, //项目id集合
+           cpTopicIdList,//竞品id集合
+          "similarType":this.radio_duibi_Method, //相似性计算方式
+          "percent":this.radio_duibi_Percent// “0.05” “0.1” “0.2” “0.5”//词表样本百分比
+        };
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/topic/cpa/similartable',"GET",params).then((data) =>{//ajax
+          if(successBack(data,this)){
+            for(let i=0;i<this.duibiData[0].topicList.length;i++){
+              let obj={};
+              obj.name=this.duibiData[0].topicList[i].name;
+              obj.eventId=this.duibiData[0].topicList[i].id;
+              //obj.eventArticleList=this.$store.state.data[i].commonResult.eventArticleList;
+              //obj.keywordList=this.$store.state.data[i].commonResult.keywordList;
+              obj.Data=this.duibiData[0].topicList[i];
+              obj.project_id=GetSessionStorage('project_id');
+              obj.data=[];
+              let fun=this.radio_duibi_Method == 4 ? Math.min : Math.max;
+              let maxData = [];//每一行的相似度数组
+              for(let k of cpTopicIdList){
+                  for(let j of data.data){
+                    if(j.topicAId == proTopicIdList[i] && k == j.topicBId){
+                      maxData.push(j.similarity);
+                      let _obj={};
+                      _obj.checked=false;
+                      _obj.disabled=false;
+                      _obj.num=j.similarity;
+                      obj.data.push(_obj)
+                    } 
                   }
-                  _this.tableData.push(obj)
+              };
+              for(let k of obj.data){//每一行找到最小值与最大值
+                if(k.num == fun.apply(null,maxData)){//数组里取最大值或者最小值方法
+                  k.max = true;
                 }
-                _this.loading_start=false;
-                _this.colspan=_this.tableData[0].data.length+2;
-                _this.rowspan=_this.tableData.length+1;
-                _this.table_own_name=_this.duibiData[0].project.name;
-                _this.table_compet_name=_this.duibiData[1].project.name;
-                _this.table_compet_data=_this.duibiData[1].project.data;
+              };
+              this.tableData.push(obj)
             }
-          })
+            this.loading_start=false;
+            this.table_own_name=this.duibiData[0].name;
+            this.table_compet_name=this.duibiData[1].name;
+            this.table_compet_data=this.duibiData[1].data.topicList;
+            this.colspan=this.tableData[0].data.length+2;
+            this.rowspan=this.tableData.length+1;
+          };
+        });
          console.log(this.tableData)
       },
      _start (compet_flag,loading_flag,oid) { //compet_flag竞品事件查询标识，如果true则是自身点击查询;loading_flag--true则显示
-      let _this=this;
+      let _this = this;
       let project_id;
-      this.$store.state.btn_daochu=false; 
+      this.$store.state.btn_daochu = false; 
       if(loading_flag){//点击查询
         console.log('点击查询')
-        this.loading_start=true;
+        this.publicLoading = true;
       };
       if(compet_flag){//点击自身查询
         this.$store.state.ev_duibiData = '';
+        this.table_select = [];
         this.current_project_dom_name = GetSessionStorage('start');
         project_id = GetSessionStorage('project_id');
-        this.duibi_show=false;
+        this.duibi_show = false;
       }else{//点击竞品查询
-        project_id=oid;
+        project_id = oid;
       };
       $('.event_card').css('display','none')
       //this.dom_search();//筛选以及保存session
-      this.personSet=[];
-      this.locationSet=[];
-      this.orgSet=[];
-      this.data=[];   
+      this.personSet = [];
+      this.locationSet = [];
+      this.orgSet = [];
+      this.data = [];   
       let Dta = {
         "proId": project_id, //项目id
         "articleType": _this.articleType, //文章类型
@@ -813,42 +827,71 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         "perNum":_this.current_sort_per,
         "locNum":_this.current_sort_loc,
         "orgNum":_this.current_sort_org,
-        "keywordNum": "10"
+        "keywordNum": "10",
+        "isTiming":1
       }; 
       let params = {"method":"GET","criteriaStr":JSON.stringify(Dta)}
       publicSearch('rsa/project/'+project_id+'/topic',"GET",params).then((data) =>{//ajax
-        _this.loading_start=false;
-        //if(successBack(data,this)){
-         
-          data = require('../../assets/event.json');
-           console.log(data)
-            if(loading_flag){//点击查询
-              console.log('点击查询')
-              _this.loading_start=false;
-            }
-            $('.event_card').css('display','block')
-            _this.dom_write(data);
-          //全局数据
-          if(compet_flag){//点击自身查询
-            console.log('点击查询')
-            _this.$store.state.data=data.data; 
-          }else{//点击竞品查询
-            _this.$store.state.duibiButton=true;
-            for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){ //竞品对比数据添加到vuex
-              if(_this.$store.state.ev_duibiData[i].project.id==project_id){
-                _this.$store.state.ev_duibiData[i].project.data=data.data;
-                console.log(_this.$store.state.ev_duibiData)
-              }
-            }
-          }
-          $(document).ready(function(){
-              _echart.build_event_qipao(_this);
-              //_echart.build_event_allEvent(_this);
-              /*$('.event_card>div').click(function(){
-                  $(this).addClass('live').siblings().removeClass('live live1')
-               })*/
-            })
-       //}
+        this.publicLoading = false;
+        if(successBack(data,this)){
+          let color;
+          if(data.data.time < 60){
+            color = '#67C23A';
+          }else if(data.data.time >= 60 && data.data.time < 120){
+            color = '#E6A23C';
+          }else{
+            color = '#F56C6C';
+          };
+          let time = data.data.time >= 60 ? parseInt(data.data.time/60) + '分钟' + (parseInt(data.data.time))%60 + '秒' : parseInt(data.data.time)+'秒';
+          console.log('事件预计耗时：'+time);
+          this.$confirm('共查询到<i style="color:#409EFF">'+data.data.total+'</i>篇文章，生成议题预计耗时<span style="color:'+color+'">' + time +'</span>'+'，是否继续？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              dangerouslyUseHTMLString: true,
+              type: 'warning'
+            }).then(() => {//搜索
+              _this.loading_start = true;
+              _this.programs = 0;
+              let timer = setInterval(function(){
+                _this.programs++;
+                if(_this.programs > 98){
+                  clearInterval(timer)
+                };
+              },(data.data.time*1000)/100);
+              Dta.isTiming = '';
+              let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
+              publicSearch('rsa/project/'+project_id+'/topic',"GET",params).then((data) =>{
+                clearInterval(timer);
+                if(successBack(data),this){
+                    console.log('事件实际耗时：'+data.data.realTime);
+                    console.log(data)
+                  if(loading_flag){//点击查询
+                    console.log('点击查询')
+                    _this.loading_start = false;
+                  };
+                  $('.event_card').css('display','block')
+                  _this.dom_write(data.data);
+                //全局数据
+                  if(compet_flag){//点击自身查询
+                    console.log('点击查询')
+                    _this.$store.state.data = data.data; 
+                  }else{//点击竞品查询
+                    _this.$store.state.duibiButton = true;
+                    for(let i = 0;i < _this.$store.state.ev_duibiData.length;i++){ //竞品对比数据添加到vuex
+                        if(_this.$store.state.ev_duibiData[i].id == project_id){
+                          _this.$store.state.ev_duibiData[i].data = data.data;
+                          console.log(_this.$store.state.ev_duibiData)
+                        }
+                      }
+                    }
+                  $(document).ready(function(){
+                      _echart.build_event_qipao(_this);
+                      //_echart.build_event_allEvent(_this);
+                  });
+                };
+              })  
+            }).catch(() => {});
+        }
       })                      
     },
     dialog_articleList_reprint(a,b,c){  
@@ -865,19 +908,12 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       };
     },
     dialog_articleList (i,a){
-        console.log(i.id)
+        console.log(i)
+        this.entityType = '';//区分点击实体还是议题里的相关文章的标识
         this.data_articleList_index = a;//点击相关文章列表的时候获取到他的总数据的index
         this.dialo_title = '相关文章';
         this.dialogCt = true;
-        this.currentPage*this.page_size > i.articleCount ? this.currentPage = Math.ceil(i.articleCount/this.page_size) : '';//判断如果页数大于文章总数
-         /* _this.currentPage=1;
-          _this.ct_data=_this.data[a].commonResult.eventArticleList;
-          if(_this.ct_data){
-            for(let t=0;t<_this.ct_data.length;t++){
-                _this.ct_data[t].publishTime=new Date(_this.ct_data[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-              }
-              _this.ct_data_list = _this.ct_data.length > 12 ? _this.ct_data.slice(0,12) : _this.ct_data;
-          };*/
+        this.ct_data_total = i.articleCount;
         this.pageShow = false;  
         this.currentPage = 1;  
         this.handleCurrentChange(this.currentPage);
@@ -900,7 +936,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           };
           echart_max.setOption(_echart.echart_option_event_qipao(dataBJ));
           echart_max.on('click', function (params) {
-            //console.log(params)
+            console.log(params)
             //console.log(_this.data[a].keywordList)
             params.event.event.stopPropagation() 
             _this.qipao_idarr.push(params.data[3]);
@@ -909,18 +945,25 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                 cancelButtonText: '取消',
                 type: 'warning'
               }).then(() => {
-                 //_this.del_keywordList(a,params.data[3],_this.qipao_idarr);
-                  _this.data[a].keywordList=_this.data[a].keywordList.filter(item => { return _this.qipao_idarr.indexOf(item.mention) === -1; });//前台删除
-                 if(_this.del_duibi_flag){//自身与竞品的数据分支
-                    for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                      if(_this.$store.state.ev_duibiData[h].project.id==_this.del_duibi_id){
-                          _this.$store.state.ev_duibiData[h].project.data[a].keywordList=_this.data[a].keywordList;
-                        }
-                      }
-                 };
-                _echart.build_event_qipao(_this);
+                 _this.del_keywordList(a,params.data[3],_this.qipao_idarr).then((data) =>{
+                    if(successBack(data,this)){
+                      _this.data[a].keywordList=_this.data[a].keywordList.filter(item => { return _this.qipao_idarr.indexOf(item.mention) === -1; });//前台删除
+                      if(_this.del_duibi_flag){//自身与竞品的数据分支
+                        for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
+                          if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
+                              _this.$store.state.ev_duibiData[h].data.topicList[a].keywordList=_this.data[a].keywordList;
+                            }
+                          }
+                      };
+                      _echart.build_event_qipao(_this);
+                      _this.echart_click(a)
+                    };
+                 });
 
-                //_this.card_click(a)
+                    
+
+                  
+                //
               }).catch(() => {
                 tipsMessage('已取消删除','info',_this);         
               });   
@@ -928,9 +971,15 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }) 
       }, 
       del_keywordList(c,d,e){
-         let _this=this;
          let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
-         $.ajax({
+         let params = {
+          "method": 'POST',
+          "topicId": this.data[c].id, //议题id
+          "entityType":'key',
+          "entityNameList[]":[d],
+        };
+        return publicSearch('rsa/project/'+project_id+'/topic/entity',"POST",params);
+         /*$.ajax({
           url:"rsa/project/"+project_id+"/event/entity ",
           type:"POST",
           traditional:true,
@@ -944,7 +993,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             success:function(data){
                 console.log(data)
             }
-         })   
+         }) */  
       },
       Mover_ct (i) {
           this.$refs.ct[i].style.boxShadow='2px 2px 2px rgba(72,87,106,.8)';
@@ -1010,10 +1059,87 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           _echart.build_event_scatter(false,'orgSet','组织','current_sort_org',this)
         }
       },
+      del_articleList(arr){
+          let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+          let params = {
+            "method": 'POST',
+            "topicId": this.data[this.data_articleList_index].id, //议题id
+            "entityType": "art", //该参数只能填写art
+            "entityNameList[]":arr
+          };
+          this.loading_start = true;
+          publicSearch('rsa/project/'+project_id+'/topic/article',"POST",params).then((data) =>{
+            this.loading_start = false;
+            if(successBack(data,this)){
+              this.ct_data_list = this.ct_data_list.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
+              this.ct_data_total = this.ct_data_total - arr.length;
+              this.data[this.data_articleList_index].articleCount = this.ct_data_total;
+              //初始
+              if(this.ct_data_total > 0){
+                this.currentPage * this.page_size > this.ct_data_total ? this.currentPage = this.currentPage - 1 : '';
+                this.pageShow = false;    
+                this.handleCurrentChange(this.currentPage);
+              };
+            };
+          });
+          /*$.ajax({
+            url:"rsa/project/"+project_id+"/event/article ",
+            type:"POST",
+            traditional:true,
+            data:{
+              "method":"DELETE", //http方法
+              "proId":project_id, //项目id
+              "eventId":_this.data[_this.data_articleList_index].id, //组织id
+              "articleType":_this.articleType,
+              "articleIdArr":arr,
+              },
+            success:function(data){
+              console.log(data)
+              _this.ct_data=_this.ct_data.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
+              if(_this.del_duibi_flag){//自身与竞品的数据分支
+                for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
+                  if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
+                      _this.$store.state.ev_duibiData[i].data[_this.data_articleList_index].commonResult.eventArticleList=_this.ct_data; 
+                    }
+                  }
+              }else{
+                _this.data[_this.data_articleList_index].commonResult.eventArticleList=_this.ct_data;             
+              };
+              let newdata=[],
+              pageNum=_this.currentPage_list-1;
+              for(let i=_this.page_size_list*pageNum;i<_this.page_size_list*pageNum+_this.page_size_list;i++ ){
+                _this.ct_data[i] !== undefined ? newdata.push(_this.ct_data[i]) : '' 
+              }
+              _this.ct_data_list=newdata;
+            }
+        });*/  
+      },
       del_threeList(arr){
-        let _this=this;
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
-        $.ajax({
+        let params = {
+            "method": 'POST',
+            "topicId": this.data[this.data_Per_index].id, //议题id
+            "entityType": this.entityType, //该参数只能填写art
+            "mention":this.entityName,
+            "entityNameList[]":arr
+          };
+          this.loading_start = true;
+          publicSearch('rsa/project/'+project_id+'/topic/entity/article',"POST",params).then((data) =>{
+            this.loading_start = false;
+            if(successBack(data,this)){
+              this.ct_data_list = this.ct_data_list.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
+              this.ct_data_total = this.ct_data_total - arr.length;
+              //初始
+              if(this.ct_data_total > 0){
+                this.currentPage * this.page_size > this.ct_data_total ? this.currentPage = this.currentPage - 1 : '';
+                this.pageShow = false;    
+                this.handleCurrentChange(this.currentPage,true);
+              }else{//全选所有
+                this.open_del_per()
+              };
+            };
+          });  
+        /*$.ajax({
           url:"rsa/project/"+project_id+"/event/entity/article ",
           type:"POST",
           traditional:true,
@@ -1031,8 +1157,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             _this.ct_data=_this.ct_data.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
             if(_this.del_duibi_flag){//自身与竞品的数据分支
                 for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                  if(_this.$store.state.ev_duibiData[i].project.id==_this.del_duibi_id){
-                      _this.$store.state.ev_duibiData[i].project.data[_this.data_Per_index].commonResult[_this.list_type][_this.data_second_index].eventArticleList=_this.ct_data;
+                  if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
+                      _this.$store.state.ev_duibiData[i].data[_this.data_Per_index].commonResult[_this.list_type][_this.data_second_index].eventArticleList=_this.ct_data;
                     }
                   }
               }else{
@@ -1040,15 +1166,39 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               }
             _this.format_tabledata_('currentPage','page_size','ct_data','ct_data_list');
           }
-        });
+        });*/
       },
       del_per(t,a,b,c,e){
         let _this=this;
+        console.log(this.data)
+        console.log(this[b])
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
         let f;                                 
-        this.mentionArr=[];
-        this.mentionArr.push(t.mention)
-        $.ajax({
+        this.mentionArr = [t.mention];
+        let params = {
+          "method": 'POST',
+          "topicId": this.data[this.data_Per_index].id, //议题id
+          "entityType":c.slice(0,3),
+          "entityNameList[]":this.mentionArr
+        };
+        publicSearch('rsa/project/'+project_id+'/topic/entity',"POST",params).then((data) =>{//ajax
+          if(successBack(data,this)){
+            this[b] = this[b].filter(item => { return this.mentionArr.indexOf(item.mention) === -1; });//前台删除
+
+            if(this.del_duibi_flag){//自身与竞品的数据分支
+                for(let i=0;i<this.$store.state.ev_duibiData.length;i++){
+                  if(this.$store.state.ev_duibiData[i].id == this.del_duibi_id){
+                      this.$store.state.ev_duibiData[i].data.topicList[this.data_Per_index][c]=this.$store.state.ev_duibiData[i].data.topicList[this.data_Per_index][c].filter(item => { return this.mentionArr.indexOf(item.mention) === -1; }); 
+                    }
+                  }
+              }else{
+                this.data[this.data_Per_index][c]=this.data[this.data_Per_index][c].filter(item => { return this.mentionArr.indexOf(item.mention) === -1;});
+              };
+              f = this.data[this.data_Per_index][c].length < this[e] ? true : false ;
+              _echart.build_event_scatter(f,b,this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2),e,this)
+          };
+        });  
+        /*$.ajax({
           url:"rsa/project/"+project_id+"/event/entity ",
           type:"POST",
           traditional:true,
@@ -1063,8 +1213,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               _this[b]=_this[b].filter(item => { return _this.mentionArr.indexOf(item.mention) === -1; });//前台删除
               if(_this.del_duibi_flag){//自身与竞品的数据分支
                 for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                  if(_this.$store.state.ev_duibiData[i].project.id==_this.del_duibi_id){
-                      _this.$store.state.ev_duibiData[i].project.data[_this.data_Per_index].commonResult[c]=_this.$store.state.ev_duibiData[i].project.data[_this.data_Per_index].commonResult[c].filter(item => { return _this.mentionArr.indexOf(item.mention) === -1; }); 
+                  if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
+                      _this.$store.state.ev_duibiData[i].data[_this.data_Per_index].commonResult[c]=_this.$store.state.ev_duibiData[i].data[_this.data_Per_index].commonResult[c].filter(item => { return _this.mentionArr.indexOf(item.mention) === -1; }); 
                     }
                   }
               }else{
@@ -1074,7 +1224,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               _echart.build_event_scatter(f,b,_this.dialo_title.slice(_this.dialo_title.length-4,_this.dialo_title.length-2),e,_this)
               //console.log( _this.data[_this.data_Per_index].commonResult[c])
             }
-        });
+        });*/
       },
       blur_input (i){
         let _this=this;
@@ -1093,8 +1243,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                 console.log(data)
                 if(_this.del_duibi_flag){//自身与竞品的数据分支
                   for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                    if(_this.$store.state.ev_duibiData[h].project.id==_this.del_duibi_id){
-                        _this.$store.state.ev_duibiData[h].project.data[i].label=_this.$refs.inpt[i].value;
+                    if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
+                        _this.$store.state.ev_duibiData[h].data[i].label=_this.$refs.inpt[i].value;
                       }
                     }
                 }else{
@@ -1121,8 +1271,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                 console.log(data)
                 if(flag){//自身与竞品的数据分支
                   for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                    if(_this.$store.state.ev_duibiData[h].project.id==dta.proId){
-                        _this.$store.state.ev_duibiData[h].project.data[i].label=_this.$refs[inp][i].value;
+                    if(_this.$store.state.ev_duibiData[h].id==dta.proId){
+                        _this.$store.state.ev_duibiData[h].data[i].label=_this.$refs[inp][i].value;
                       }
                     }
                 }else{
@@ -1132,43 +1282,9 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           });
         console.log(dta)
       },
-      del_articleList(arr){
-          let _this=this;
-          let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
-          $.ajax({
-            url:"rsa/project/"+project_id+"/event/article ",
-            type:"POST",
-            traditional:true,
-            data:{
-              "method":"DELETE", //http方法
-              "proId":project_id, //项目id
-              "eventId":_this.data[_this.data_articleList_index].id, //组织id
-              "articleType":_this.articleType,
-              "articleIdArr":arr,
-              },
-            success:function(data){
-              console.log(data)
-              _this.ct_data=_this.ct_data.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
-              if(_this.del_duibi_flag){//自身与竞品的数据分支
-                for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                  if(_this.$store.state.ev_duibiData[i].project.id==_this.del_duibi_id){
-                      _this.$store.state.ev_duibiData[i].project.data[_this.data_articleList_index].commonResult.eventArticleList=_this.ct_data; 
-                    }
-                  }
-              }else{
-                _this.data[_this.data_articleList_index].commonResult.eventArticleList=_this.ct_data;             
-              };
-              let newdata=[],
-              pageNum=_this.currentPage_list-1;
-              for(let i=_this.page_size_list*pageNum;i<_this.page_size_list*pageNum+_this.page_size_list;i++ ){
-                _this.ct_data[i] !== undefined ? newdata.push(_this.ct_data[i]) : '' 
-              }
-              _this.ct_data_list=newdata;
-            }
-        });
-          
-      },
+      
       handleCurrentChange (val,entityType,entityName) {
+        this.currentPage = val;
         let url = this.entityType ? 'rsa/project/'+GetSessionStorage('project_id')+'/topic/'+this.data[this.data_Per_index].id+'/entity/article' : 'rsa/project/'+GetSessionStorage('project_id')+'/topic/'+this.data[this.data_articleList_index].id+'/article';
         this.loading_start = true;
         let params = {
@@ -1182,15 +1298,50 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
          };
         publicSearch(url,"GET",params).then((data) =>{
             this.loading_start = false;
-          //if(successBack(data,this)){
-            //console.log(data);
-            data = require('../../assets/event_topArticle.json');
-            console.log(data);
-            this.ct_data_list = data.data.articleList;
+          if(successBack(data,this)){
+            this.ct_data_list = data.data == null ? [] : data.data.articleList;
             this.$nextTick(function () {
               this.pageShow = true
             });
-          //}
+          }
+        })
+      },
+      similarData_arc_handleCurrentChange(val){//相似度表格里面自身文章列表页码变化
+        this.loading_start = true;
+        let params = {
+            "method": 'GET',
+            "topicId": this.similarData_topicId, //议题id
+            "articleType": this.articleType, //文章类型
+            "pageSize": this.similarData_arc_pageSize,//每页数量
+            "pageNum": val //页码
+        };
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/topic/'+this.similarData_topicId+'/article',"GET",params).then((data) =>{
+            this.loading_start = false;
+          if(successBack(data,this)){
+            this.similarData_arc_list = data.data.articleList;
+            this.$nextTick(function () {
+              this.pageShow = true
+            });
+          }
+        })
+      },
+      similarData_arc_handleCurrentChange_cpa(val){//相似度表格里面竞品文章列表页码变化
+        this.loading_start = true;
+        let params = {
+            "method": 'GET',
+            "topicId": this.similarData_cpTopicId, //议题id
+            "articleType": this.articleType, //文章类型
+            "pageSize": this.similarData_arc_pageSize,//每页数量
+            "pageNum": val //页码
+        };
+        publicSearch('rsa/project/'+this.duibiData[1].id+'/topic/'+this.similarData_cpTopicId+'/article',"GET",params).then((data) =>{
+            this.loading_start = false;
+          if(successBack(data,this)){
+            this.similarData_arc_list_cpa = data.data.articleList;
+            this.$nextTick(function () {
+              this.pageShow = true
+            });
+          }
         })
       },
       handleCurrentChange_reprint_list(val){
@@ -1199,7 +1350,43 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       },
       date_change () { date_change(this); },//修改时间验证
       del_ev(i){
-        let _this=this;
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+        let params = {
+          "method": 'POST',
+          "topicIdList[]" : [i.id]
+        };
+        publicSearch('rsa/project/'+project_id+'/topic',"POST",params).then((data) =>{
+          if(successBack(data,this)){
+            this.data = this.data.filter(item => { return [i.id].indexOf(item.id) === -1; });//前台删除
+            _echart.build_event_qipao(this);
+            if(this.del_duibi_flag){
+              for(let i of this.$store.state.ev_duibiData){
+                if(i.id == this.del_duibi_id){
+                  i.data.topicList = this.data;
+                  //初始化
+                  this.personSet = this.data[0].perList;
+                  this.event_scatter().per();
+                  this.locationSet = this.data[0].locList;
+                  this.event_scatter().loc();
+                  this.orgSet = this.data[0].orgList;
+                  this.event_scatter().org();
+                };
+              };
+            }else{
+              this.$store.state.data.topicList = this.data;
+               //初始化
+              this.personSet = this.data[0].perList;
+              this.event_scatter().per();
+              this.locationSet = this.data[0].locList;
+              this.event_scatter().loc();
+              this.orgSet = this.data[0].orgList;
+              this.event_scatter().org();
+              console.log(this.$store.state.data)
+            };
+          };
+          
+        });  
+        /*let _this=this;
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
         $.ajax({
               url:"rsa/project/"+project_id+"/event2 ",
@@ -1216,43 +1403,15 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             _echart.build_event_qipao(_this);
             if(_this.del_duibi_flag){//自身与竞品的数据分支
               for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                if(_this.$store.state.ev_duibiData[i].project.id==_this.del_duibi_id){
-                  _this.$store.state.ev_duibiData[i].project.data=_this.data;
+                if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
+                  _this.$store.state.ev_duibiData[i].data=_this.data;
                 }
               }
             }else{
               _this.$store.state.data=_this.data;
             }
           }
-        });
-      },
-      save(){
-        let _this=this;
-        this.loading_start=true;
-        _this.save_=false;
-        let idArr=[],project_id=GetSessionStorage('project_id');
-        $.ajax({
-          url:"rsa/project/"+project_id+"/event/sysbevent3",
-          type:"POST",
-          data:{
-            "method":"POST", //http方法
-            "proId":project_id //项目id
-            },
-          success:function(data){
-              let type;
-              if(data.success==true){
-                _this.$store.state.btn_daochu=true;
-                type='success';
-              }else{
-                type='warning';
-              }
-              _this.loading_start=false;
-              _this.$message({
-                message: data.message,
-                type: type
-              });
-          }
-        });
+        });*/
       },
       show_domain(){
         $('#domain_m').css('display','block');
@@ -1298,15 +1457,16 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         };  
       },
       open_del_per(){
+        console.log('open_del_per')
         let a,b,c,d,listData,e;
         if(this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2)==='人物'){
-          listData=this.data[this.data_Per_index].commonResult.perList;
+          listData=this.data[this.data_Per_index].perList;
           c='personSet';d='perList';e='current_sort_per';
         }else if(this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2)==='组织'){
-          listData=this.data[this.data_Per_index].commonResult.orgList;
+          listData=this.data[this.data_Per_index].orgList;
           c='orgSet';d='orgList';e='current_sort_org';
         }else{
-          listData=this.data[this.data_Per_index].commonResult.locList;
+          listData=this.data[this.data_Per_index].locList;
           c='locationSet';d='locList';e='current_sort_loc';
         };
         for(let i=0;i<listData.length;i++){
@@ -1316,35 +1476,27 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             this.dialogCt=false;
            }
         };   
-        console.log(this.data[this.data_Per_index].commonResult[d])
+        //console.log(this.data[this.data_Per_index].commonResult[d])
       },
       ct_articlelist_select(a){ this.ct_articlelist_selection = a ;},
       add_duibi(){
         this.dialogDuibiList=true;
-        let _this=this;
-        let project_id=GetSessionStorage('project_id');
-        let data={
-            "method": 'get',
-            "project" : {
-              'id':project_id//当前项目id,
-            }
-          };
-        $.ajax({
-            type: "GET",
-            url: 'rsa/project/'+project_id+'/competitor',
-            traditional: true,
-            data: {'projectDto1':JSON.stringify(data)},
-            success: function(data){
-              console.log(data)
-              if(data.data!=null||data.data.length>0){
-                _this.duibiList=data.data;
-              } 
-            }
-          })
+        let data = {
+          "method": 'get',
+          "project" : {
+            'parentId':GetSessionStorage('project_id')//当前项目id,
+          }
+        };
+        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+          if(successBack(data,this)){
+            this.duibiList = data.data;
+          }
+        }); 
       },
       add_duibiName(){
         let _this=this;
         console.log(this.radio_duibi)
+        console.log(this.duibiList)
         this.dialogDuibiList=false;
         if(this.radio_duibi!=''){
           this.$store.state.duibiButton=false;
@@ -1352,18 +1504,19 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           SetSessionStorage('duibi_show',true);
           this.duibiData=[];
           let obj={};
-          obj.project={};
-          obj.project.name=GetSessionStorage('start');
-          obj.project.id=GetSessionStorage('project_id');
+          obj.name=GetSessionStorage('start');
+          obj.id=GetSessionStorage('project_id');
+          obj.topicList = this.$store.state.data.topicList;
           this.duibiData[0]=obj;
           let current_project_name;
           for(let i=0;i<this.duibiList.length;i++){
-            if(this.duibiList[i].project.id==this.radio_duibi){
-              current_project_name=this.duibiList[i].project.name;
+            if(this.duibiList[i].id==this.radio_duibi){
+              current_project_name=this.duibiList[i].name;
               this.duibiData.push(this.duibiList[i]);
               this.$store.state.ev_duibiData=this.duibiData;
             }
           };
+          console.log(this.duibiData)
           //点完确定的操作
           $(function(){
             if($('.event .el-tabs__item')[1].className==='el-tabs__item is-active'){
@@ -1374,11 +1527,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                 $('.event .el-tabs__item')[0].className='el-tabs__item is-active';
                 _this.dialogDuibiList = false;
                 _this.del_duibi_flag=false;
-                _this.data=_this.$store.state.data;
-                _this.personSet=_this.$store.state.data[0].commonResult.perList;
-                _this.locationSet=_this.$store.state.data[0].commonResult.locList;
-                _this.orgSet=_this.$store.state.data[0].commonResult.orgList;
-                _this.event_scatter().all();
+                _this.dom_write(_this.$store.state.data);
                  _echart.build_event_qipao(_this);
                  //_echart.build_event_allEvent(_this);   
               }
@@ -1387,19 +1536,24 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         };      
       },
       look_venn(index,dta){
+        console.log(dta)
+        console.log(index)
+        console.log(this.duibiData)
+        this.similarData_topicId = dta.Data.id;
+        this.similarData_cpTopicId = this.duibiData[1].data.topicList[index].id;
         this.dialogSimilar = true;
         this.similarData_per_currentPage = this.similarData_loc_currentPage = this.similarData_org_currentPage = this.similarData_key_currentPage = this.similarData_arc_currentPage = 1;              
-        let _this = this,data = dta.Data.commonResult,cp_data = this.duibiData[1].project.data[index].commonResult;
-        let perSize = data.perList.length > cp_data.perList.length ? data.perList.length : cp_data.perList.length,similar_per,perData = [],orgSize = data.orgList.length > cp_data.orgList.length ? data.orgList.length : cp_data.orgList.length,similar_org,orgData = [],locSize = data.locList.length > cp_data.locList.length ? data.locList.length : cp_data.locList.length,similar_loc,locData = [],keySize = data.keywordList.length > cp_data.keywordList.length ? data.keywordList.length : cp_data.keywordList.length,similar_key,keyData = [],arcSize = data.eventArticleList.length > cp_data.eventArticleList.length ? data.eventArticleList.length : cp_data.eventArticleList.length,similar_arc,similar_arc_title = [],similar_arc_url = [],arcData = [];
-        similar_per = this.similar(data.perList,cp_data.perList,'mention');
+        let _this = this,data = dta.Data,cp_data = this.duibiData[1].data.topicList[index];
+        let perSize = data.perList.length > cp_data.perList.length ? data.perList.length : cp_data.perList.length,similar_per,perData = [],orgSize = data.orgList.length > cp_data.orgList.length ? data.orgList.length : cp_data.orgList.length,similar_org,orgData = [],locSize = data.locList.length > cp_data.locList.length ? data.locList.length : cp_data.locList.length,similar_loc,locData = [],keySize = data.keywordList.length > cp_data.keywordList.length ? data.keywordList.length : cp_data.keywordList.length,similar_key,keyData = []/*,arcSize = data.eventArticleList.length > cp_data.eventArticleList.length ? data.eventArticleList.length : cp_data.eventArticleList.length,similar_arc,similar_arc_title = [],similar_arc_url = [],arcData = []*/;
+        similar_per = similar(data.perList,cp_data.perList,'mention');
         this.similar_per_arr = similar_per;
-        similar_org = this.similar(data.orgList,cp_data.orgList,'mention');
+        similar_org = similar(data.orgList,cp_data.orgList,'mention');
         this.similar_org_arr = similar_org;
-        similar_loc = this.similar(data.locList,cp_data.locList,'mention');
+        similar_loc = similar(data.locList,cp_data.locList,'mention');
         this.similar_loc_arr = similar_loc;
-        similar_key = this.similar(data.keywordList,cp_data.keywordList,'mention');
+        similar_key = similar(data.keywordList,cp_data.keywordList,'mention');
         this.similar_key_arr = similar_key;
-        similar_arc = this.similar(data.eventArticleList,cp_data.eventArticleList,'id');
+        //similar_arc = this.similar(data.eventArticleList,cp_data.eventArticleList,'id');
         for(let i = 0;i < perSize;i++){
           let obj = {};
           obj.per = data.perList[i] == undefined ? '无' : data.perList[i].mention;
@@ -1428,15 +1582,25 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           obj.similar_key = similar_key[i] == undefined ? '无' : similar_key[i];
           keyData.push(obj);
         };
-        for(let i of similar_arc){
+        //文章列表_自身
+        this.similarData_arc_total = data.articleCount;
+        this.pageShow = false;  
+        this.similarData_arc_currentPage = 1;  
+        this.similarData_arc_handleCurrentChange(this.similarData_arc_currentPage);
+        //文章列表_竞品
+        this.similarData_arc_total_cpa = cp_data.articleCount;
+        this.pageShow = false;  
+        this.similarData_arc_currentPage_cpa = 1;  
+        this.similarData_arc_handleCurrentChange_cpa(this.similarData_arc_currentPage_cpa);
+        /*for(let i of similar_arc){
           let index = data.eventArticleList.findIndex(function(value){
               return value.id == i;
           });
           similar_arc_title.push(data.eventArticleList[index].title);
           similar_arc_url.push(data.eventArticleList[index].url);
-        };
-        this.similar_arc_arr = similar_arc_title;
-        for(let i = 0;i < arcSize;i++){//匹配到相似的id然后转化成title
+        };*/
+        //this.similar_arc_arr = similar_arc_title;
+        /*for(let i = 0;i < arcSize;i++){//匹配到相似的id然后转化成title
           let obj = {};
           obj.arc = data.eventArticleList[i] == undefined ? '' : data.eventArticleList[i].title;
           obj.arc_url = data.eventArticleList[i] == undefined ? '' : data.eventArticleList[i].url;
@@ -1445,7 +1609,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           obj.similar_arc_title = similar_arc_title[i] == undefined ? '' : similar_arc_title[i];
           obj.similar_arc_title_url = similar_arc_url[i] == undefined ? '' : similar_arc_url[i];
           arcData.push(obj);
-        };
+        };*/
         /*console.log(perSize)
         console.log(perData)*/
         _this.similarData_per=perData;
@@ -1456,63 +1620,96 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         _this.format_firstTableData('similarData_org','similarData_org_list',_this.similarData_per_pageSize);
         _this.similarData_key=keyData;
         _this.format_firstTableData('similarData_key','similarData_key_list',_this.similarData_per_pageSize);
-        _this.similarData_arc=arcData;
-        _this.format_firstTableData('similarData_arc','similarData_arc_list',_this.similarData_arc_pageSize);
+        //_this.similarData_arc=arcData;
+        //_this.format_firstTableData('similarData_arc','similarData_arc_list',_this.similarData_arc_pageSize);
       },
-      _save_(){
-        let _this=this,project_id=GetSessionStorage('project_id');
+      save(){
+        /*console.log(this.$store.state.data.topicList)
+        console.log(this.$store.state.ev_duibiData)
+        console.log(this.table_select);*/
+        let proTopicDto = {},cpTopicDtoList = [],cpaResult = [],obj = {};
+        if(this.$store.state.data.topicList){//自身
+          let idArr = [];
+          for(let i of this.$store.state.data.topicList){
+              idArr.push(i.id);
+            };
+            proTopicDto.topicIdList = idArr;
+            proTopicDto.proId = this.$store.state.data.topicList[0].proId;
+        }else{
+          tipsMessage('请先生成自身项目议题','warning',this);
+          return
+        };
+        if(this.$store.state.ev_duibiData.length > 1 && this.$store.state.ev_duibiData[1].data != null){//有竞品时
+          let idArr = [];
+          for(let i of this.$store.state.ev_duibiData[1].data.topicList){
+            idArr.push(i.id);
+          };
+          obj.topicIdList = idArr;
+          obj.proId = this.$store.state.ev_duibiData[1].id;
+          cpTopicDtoList.push(obj);
+        };
+        if(this.table_select.length > 0){//有对比事件时
+          for(let i of this.table_select){
+            let obj = {};
+            obj.topicAId = i.proEventId;
+            obj.topicBId = i.cpEventId;
+            obj.similarity = i.similarity;
+            cpaResult.push(obj);
+          };
+        };
         this.$prompt('请输入导出事件名称', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           closeOnClickModal:false,
+          beforeClose: (action, instance, done) => {
+             if (action === 'confirm') {
+              done();
+             };
+          }
         }).then(({ value }) => {
-          _this.loading_start=true;
-          $.ajax({
-              url:"rsa/project/"+project_id+"/event/sysbevent3",
-              type:"POST",
-              traditional:true,
-              data:{
-                "method":"POST",
-                "proId":project_id,
-                "cpIdArr":[_this.table_select[0].cpId],
-                "reportName":value,
-                "eventCpaListStr":JSON.stringify(_this.table_select)
-              },
-             success:function(data){
-                _this.dialog_look_duibiProject=false;
-                  let type;
-                  if(data.success==true){
-                    _this.$store.state.btn_daochu=true;
-                    type='success';
-                  }else{
-                    type='warning';
-                  };
-                  _this.loading_start=false;
-                  _this.$message({
-                    message: data.message,
-                    type: type
-                  });
-             }
-            })
+          let data = {
+            "proId":GetSessionStorage('project_id'),
+            "startTime": this.time[0].getTime(),//时间框中的起始时间
+            "endTime": this.time[1].getTime(),//结束时间
+            "reportName":value,
+            "articleType":this.articleType,
+             proTopicDto,
+             cpTopicDtoList,
+             cpaResult
+          };
+          this.loading_start = true;
+          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/topic/expt',"POST",{'topicExptDtoStr':JSON.stringify(data)}).then((data) =>{//ajax
+            this.dialog_look_duibiProject = false;
+            this.loading_start = false;
+            if(successBack(data,this)){
+              //清空所有数据
+              this.$store.state.ev_duibiData = '';
+              this.table_select = [];
+              this.$store.state.btn_daochu = true;
+              echart.dispose(document.getElementById('personSet'));
+              echart.dispose(document.getElementById('orgSet'));
+              echart.dispose(document.getElementById('locationSet'));
+              this.data = []; 
+              tipsMessage(data.message,'success',this);
+            };
+          });
         }).catch(() => {})
         console.log(this.table_select)
       },
       handleCheckedCitiesChange(index,dta,table,data){
           console.log(table.checked)
-          if(table.checked==true){//加入到table_select
-            if(this.table_select.length>1){//判断是否选中两个
-              this.$message({
-                message: '最多选择两个对比事件',
-                type: 'warning'
-              });
-              table.checked=false;
+          if(table.checked == true){//加入到table_select
+            if(this.table_select.length > 1){//判断是否选中两个
+              tipsMessage('最多选择两个对比事件','warning',this);
+              table.checked = false;
+              return;
             }else{
               let obj={};
               obj.proId=dta.project_id;
               obj.proEventId=dta.eventId;
               obj.similarity=table.num;
-              obj.cpId=this.duibiData[1].project.data[index].proId;
-              obj.cpEventId=this.duibiData[1].project.data[index].id;
+              obj.cpId=this.duibiData[1].data.topicList[index].proId;
+              obj.cpEventId=this.duibiData[1].data.topicList[index].id;
               this.table_select.push(obj);
               for(let i of this.tableData){
                 i.data[index].disabled=true;
@@ -1523,7 +1720,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               dta.data[index].disabled=false;
             }
           }else{//从table_select里删除
-            this.table_select.splice(this.table_select.findIndex(item => item.own_eventId===dta.eventId&&item.compet_eventId===this.duibiData[1].project.data[index].id), 1)
+            this.table_select.splice(this.table_select.findIndex(item => item.own_eventId===dta.eventId&&item.compet_eventId===this.duibiData[1].data.topicList[index].id), 1)
               for(let i of this.tableData){
                 i.data[index].disabled=false;
               };
@@ -1535,7 +1732,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         console.log(dta)//自身
         console.log(table)//自身
         console.log(data)//自身
-        console.log(this.duibiData[1].project.data[index])//竞品
+        //console.log(this.duibiData[1].data[index])//竞品
         console.log(this.table_select)
       },
       //改变页数的表格数据变化
@@ -1599,29 +1796,28 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       },
       //查询到文章遍历到dom操作
       dom_write(data){
-        let _this = this;
-        if(data.data.topicList==null||data.data.topicList.length==0){
+        if(data.topicList==null||data.topicList.length==0){
           tipsMessage('查询到的文章数量太少,无法生成议题。请调整时间区间或增加关键词后再试。','warning',this); 
           return;
         };
-        for(let z=0;z<data.data.topicList.length;z++){
-          data.data.topicList[z].locList ? data.data.topicList[z].locList.sort(Sort('score')) : '' ;
-          data.data.topicList[z].orgList ? data.data.topicList[z].orgList.sort(Sort('score')) : '' ;
-          data.data.topicList[z].perList ? data.data.topicList[z].perList.sort(Sort('score')) : '' ;
-          data.data.topicList[z].sortArr='10';
+        for(let z=0;z<data.topicList.length;z++){
+          data.topicList[z].locList ? data.topicList[z].locList.sort(Sort('score')) : '' ;
+          data.topicList[z].orgList ? data.topicList[z].orgList.sort(Sort('score')) : '' ;
+          data.topicList[z].perList ? data.topicList[z].perList.sort(Sort('score')) : '' ;
+          data.topicList[z].sortArr='10';
         }
-        _this.data=data.data.topicList;
-        if(data.data.topicList[0].perList != null && data.data.topicList[0].perList.length > 0){
-          _this.personSet = data.data.topicList[0].perList;
-          _this.event_scatter().per();
+        this.data=data.topicList;
+        if(data.topicList[0].perList != null && data.topicList[0].perList.length > 0){
+          this.personSet = data.topicList[0].perList;
+          this.event_scatter().per();
         };
-        if(data.data.topicList[0].locList!=null&&data.data.topicList[0].locList.length>0){
-          _this.locationSet=data.data.topicList[0].locList;
-          _this.event_scatter().loc();
+        if(data.topicList[0].locList!=null&&data.topicList[0].locList.length>0){
+          this.locationSet=data.topicList[0].locList;
+          this.event_scatter().loc();
         };
-        if(data.data.topicList[0].orgList!=null&&data.data.topicList[0].orgList.length>0){
-          _this.orgSet=data.data.topicList[0].orgList;
-          _this.event_scatter().org();
+        if(data.topicList[0].orgList!=null&&data.topicList[0].orgList.length>0){
+          this.orgSet=data.topicList[0].orgList;
+          this.event_scatter().org();
         };
       },
       //人物组织地点散点图
@@ -1659,10 +1855,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       similarData_key_handleCurrentChange(val){
         this.similarData_key_currentPage = val;
         this.format_tabledata_('similarData_key_currentPage','similarData_per_pageSize','similarData_key','similarData_key_list');
-      },
-      similarData_arc_handleCurrentChange(val){
-        this.similarData_arc_currentPage = val;
-        this.format_tabledata_('similarData_arc_currentPage','similarData_arc_pageSize','similarData_arc','similarData_arc_list');
       },
       input_write(){}
     },
@@ -1913,8 +2105,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         height: 430px;
       }
   }
-  #dialog_look_duibiProject .el-dialog--tiny{
-    width: 800px !important;
+  #dialog_look_duibiProject .el-dialog{
+    width:58%;
     .el-dialog__body{
       padding: 15px 20px;
     }
@@ -1975,11 +2167,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
     .progress-bar{
       background-color: #00b38a;
       line-height: 14px;
-    }
-  }
-  #dia_tishi{
-    .el-dialog--tiny{
-      width: 20%;
     }
   }
   .el-tabs{

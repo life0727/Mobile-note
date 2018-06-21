@@ -59,7 +59,7 @@
             </el-form>
         </div>
         <el-button type="success" style="position: absolute;bottom: 0px;left: 38.5%;background-color: #00b38a;border-color:#00b38a; " @click="search" v-loading.fullscreen.lock="loading" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading" >搜索</el-button>  
-         <el-button type="success" style="position: absolute;bottom: 0px;left: 50.5%; " v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading" @click="refer_export" >导出</el-button> 
+         <el-button type="success" style="position: absolute;bottom: 0px;left: 50.5%;" v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading" @click="refer_export" >导出</el-button> 
          <!-- <a href="http://192.168.0.3/test/index.html">下载</a> -->
        </div>
     </div>
@@ -251,7 +251,7 @@ export default {
             color = '#F56C6C';
           };
           let time = data.data.time >= 60 ? parseInt(data.data.time/60) + '分钟' + (parseInt(data.data.time))%60 + '秒' : parseInt(data.data.time)+'秒';
-          console.log('预计耗时：'+time);
+          console.log('提及率预计耗时：'+time);
           this.$confirm('共查询到<i style="color:#409EFF">'+data.data.total+'</i>篇文章，生成议题预计耗时<span style="color:'+color+'">' + time +'</span>'+'，是否继续？', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',

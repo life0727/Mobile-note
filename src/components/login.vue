@@ -60,7 +60,8 @@ import topnav from './top_nav.vue'
 	            url: 'rsa/authentication',
 	            success: function(data){
 		            if(data.code == 1001){	
-		             window.location.href="#main/refer";
+		            	_this.$router.push('/main/refer')
+		             //window.location.href="main/refer";
 		            };
 	            }
 	          })

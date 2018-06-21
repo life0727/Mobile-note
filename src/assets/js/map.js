@@ -17,6 +17,10 @@ export function Map () { //通用map方法
               };
           }
 
+export function jsonToStrMap (jsonStr) { 
+      return new Map(JSON.parse(jsonStr));
+    }
+
 export function filter_polar(data,mapData){  //地图省份数据且过滤（'正，中，负'）后的数据
         for( let l in mapData){
             let obj = new Object();
@@ -132,6 +136,7 @@ export function changePage(_this,dta,pageSize,pageNum){//页码变化方法
 }
 
 export function publicSearch(url,method,params){//通用search方法
+    url = '/'+url;
     return new Promise( (resolve,reject) => {
         $.ajax({
             type:method,
@@ -151,14 +156,16 @@ export function successBack(data,_this){//判断成功回调
     if(data.code == 200){
         return true;
     }else if(data.code == 1000){//未登录
-        window.location.href='#/login'
+        _this.$router.push('/login')
+        //window.location.href='/login'
         notify('提示',data.message,'warning',_this)
         return false;
     }else if(data.code == 1001){//已登录
       console.log(_this.$route)
         if(_this.$route.path == '/login'){//已登录在登录页面
           SetLocalStorage('account_A',data.data.account);//
-          window.location.href = '#/main/refer';
+          _this.$router.push('main/refer')
+          //window.location.href = 'main/refer';
           tipsMessage(data.message,'success',_this); 
           return false;
         }else{//已登录不在登录页面 就继续执行原页面的方法
@@ -166,12 +173,14 @@ export function successBack(data,_this){//判断成功回调
         }
     }else if(data.code == 1008){//注销用户
         notify('提示',data.message,'success',_this);
-        window.location.href = '#/login';
+        _this.$router.push('/login')
+        //window.location.href = '/login';
         window.sessionStorage.clear();
         localStorage.clear();
         return false;
     }else if(data.code == 1308){//项目列表小于一自动跳转添加项目模块
-        window.location.href='#/index/clever';
+        _this.$router.push('/index/clever')
+        window.location.href='/index/clever';
         return false;
     }else{
         tipsMessage(data.message,'warning',_this)

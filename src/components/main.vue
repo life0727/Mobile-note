@@ -34,10 +34,10 @@
               <div class="el-tabs__nav">
                <!-- <router-link to="/main/list"><div :class="this.$route.path=='/main/list' ? 'el-tabs__item is-active' : 'el-tabs__item'">文章管理</div></router-link> -->
                 <router-link to="/main/keyword"><div :class="this.$route.path=='/main/keyword' ? 'el-tabs__item is-active' : 'el-tabs__item'">关键词管理</div></router-link>
-                <router-link to="/main/event"><div :class="this.$route.path=='/main/event' ? 'el-tabs__item is-active' : 'el-tabs__item'">事件管理</div></router-link> 
-                 <!-- <router-link to="/main/org"><div :class="this.$route.path=='/main/org' ? 'el-tabs__item is-active' : 'el-tabs__item'">组织关系管理</div></router-link>
-                <router-link to="/main/media"><div :class="this.$route.path=='/main/media' ? 'el-tabs__item is-active' : 'el-tabs__item'">媒体关系管理</div></router-link>-->
-                <router-link to="/main/compet"><div :class="this.$route.path=='/main/compet' ? 'el-tabs__item is-active' : 'el-tabs__item'">竞品管理</div></router-link> 
+                <router-link to="/main/event"><div :class="this.$route.path=='/main/event' ? 'el-tabs__item is-active' : 'el-tabs__item'">议题管理</div></router-link> 
+                <router-link to="/main/org"><div :class="this.$route.path=='/main/org' ? 'el-tabs__item is-active' : 'el-tabs__item'">组织关系管理</div></router-link>
+                <router-link to="/main/media"><div :class="this.$route.path=='/main/media' ? 'el-tabs__item is-active' : 'el-tabs__item'">媒体关系管理</div></router-link> 
+                <router-link to="/main/compet"><div :class="this.$route.path=='/main/compet' ? 'el-tabs__item is-active' : 'el-tabs__item'">竞品管理</div></router-link>
                 <router-link to="/main/refer"><div :class="this.$route.path=='/main/refer' ? 'el-tabs__item is-active' : 'el-tabs__item'">提及率</div></router-link>
                 <!-- <router-link to="/main/position"><div :class="this.$route.path=='/main/position' ? 'el-tabs__item is-active' : 'el-tabs__item'" >位置提示</div></router-link>
                 <router-link to="/main/indexnumber"><div :class="this.$route.path=='/main/indexnumber' ? 'el-tabs__item is-active' : 'el-tabs__item'">指数提示</div></router-link> -->
@@ -79,7 +79,7 @@ import topnav from './top_nav.vue'
     watch:{
       $route (to,from){
         if(from.path==='/main/event'){
-          this.$store.state.start_data= this.$store.state.data;
+          //this.$store.state.start_data= this.$store.state.data;
         }else{}
       }
     },
