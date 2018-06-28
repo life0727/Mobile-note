@@ -116,7 +116,7 @@
       </div> -->	
 </template>
 <script >
-import { publicSearch,successBack,GetSessionStorage,SetSessionStorage,notify,GetLocalStorage,SetLocalStorage,tipsMessage }  from '../assets/js/map.js'
+import { publicSearch,successBack,SetSessionStorage,notify,GetLocalStorage,SetLocalStorage,tipsMessage }  from '../assets/js/map.js'
 export default{
   data: function () {
   	return {
@@ -128,6 +128,8 @@ export default{
   	}
   },
   mounted  :function () {
+    
+    console.log('top_nav')
     $('#admin li').not('.divider').hover(function(){
         $(this).css('background-color','rgba(0, 179, 138,.1)')
       },function(){
@@ -139,18 +141,32 @@ export default{
         $(this).css('background-color','rgba(0, 179, 138,0)')
       });
     $('#sum .el-badge__content').css({'padding':'1px 5px','border':'0px solid #fff'});
-    this.search();     
+    publicSearch('rsa/authentication',"GET",'').then((data) =>{//判断登录状态 
+      if(successBack(data,this)){
+        this.search();
+      }
+    });
+         
   },
   methods:{
     search(){
-      let params = {"projectDto": JSON.stringify({"method": 'get'})};
+     // console.log(GetLocalStorage('current_projectData_A').project_id)
+        if(GetLocalStorage('current_projectData_A') == null || GetLocalStorage('current_projectData_A').project_list == null || GetLocalStorage('current_projectData_A').project_list.length == 0){
+            notify('提示','当前无项目，请先添加','warning',this);
+            this.$router.push('/index/clever');
+          }else{
+            this.item = GetLocalStorage('current_projectData_A').project_list;
+            this.current_item = GetLocalStorage('current_projectData_A').project_name;
+          };
+
+      /*let params = {"projectDto": JSON.stringify({"method": 'get'})};
       publicSearch('rsa/project',"GET",params).then((data) =>{
         if(successBack(data,this)){
           console.log(data)
           if(data.data != null || data.data.length > 0){
             if(data.data.length<1){//项目列表少于一跳转
               notify('提示',data.message,'warning',this);
-              this.$router.push('index/clever')
+              this.$router.push('index/clever');
               //window.location.href='#/index/clever';
             }else{
                  this.item=data.data;
@@ -164,7 +180,7 @@ export default{
             }
           } 
         }
-      });
+      });*/
     },
     handleCommand_xiaoxi (command) {
       this.data=this.data.filter(item => { return command.indexOf(item.name) === -1; });//点击消息后删除
@@ -177,9 +193,11 @@ export default{
     handleCommand(command){
         for(let i=0;i<this.item.length;i++){
           if(this.item[i].name === command){
-            SetSessionStorage('start',command);
-            SetSessionStorage('project_id',this.item[i].id);
-            SetLocalStorage('project_id',this.item[i].id);
+            let projectData = {};
+                projectData.project_id = this.item[i].id;
+                projectData.project_list = GetLocalStorage('current_projectData_A').project_list;
+                projectData.project_name = command;
+                SetLocalStorage('current_projectData_A',projectData);
           }
         };
         sessionStorage.removeItem('data');
@@ -201,14 +219,34 @@ export default{
           if(a.name === this.current_item){
             publicSearch('rsa/project',"POST",params).then((data) =>{
               if(successBack(data,this)){
-                sessionStorage.removeItem('start');
-                window.location.reload();
+                this.item = this.item.filter(item => { return [a.id].indexOf(item.id) === -1; });
+                if(this.item.length > 0){
+                  let projectData = {};
+                    projectData.project_list = this.item;
+                    projectData.project_id = this.item[0].id;
+                    projectData.project_name = this.item[0].name;
+                    SetLocalStorage('current_projectData_A',projectData);
+                    window.location.reload();
+                }else{
+                  let projectData = {};
+                    projectData.project_list = [];
+                    projectData.project_id = '';
+                    projectData.project_name = '';
+                    SetLocalStorage('current_projectData_A',projectData);
+                    notify('提示','当前无项目，请先添加','warning',this);
+                    this.$router.push('/index/clever');
+                };
               }
             })
           }else{
             publicSearch('rsa/project',"POST",params).then((data) =>{
               if(successBack(data,this)){
                 this.item = this.item.filter(item => { return [a.id].indexOf(item.id) === -1; });
+                let projectData = {};
+                    projectData.project_id = GetLocalStorage('current_projectData_A').project_id;
+                    projectData.project_list = this.item;
+                    projectData.project_name = GetLocalStorage('current_projectData_A').project_name;
+                    SetLocalStorage('current_projectData_A',projectData);
               }
             })      
           }

@@ -97,11 +97,11 @@
   </div>
 </template>
 <script>
-import { publicSearch,tipsMessage,successBack,GetSessionStorage }  from '../../assets/js/map.js'
+import { publicSearch,tipsMessage,successBack,GetLocalStorage }  from '../../assets/js/map.js'
 export default {
   mounted :function () {
     $('.keyword').css('height',window.screen.height);
-    publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/keyword',"GET",{"keywordDto":JSON.stringify({"method": 'get'})}).then((data) =>{//ajax
+    publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/keyword',"GET",{"keywordDto":JSON.stringify({"method": 'get'})}).then((data) =>{//ajax
       if(successBack(data,this)){
         this.notags = data.data.contentExcludeKeywordList;
         this.tags = data.data.includeKeywordList;
@@ -174,7 +174,7 @@ export default {
           'titleExcludeKeywordList':this.t_notags,
           'contentExcludeKeywordList': this.notags
         };
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/keyword',"POST",{'keywordDto':JSON.stringify(data)}).then((data) =>{//ajax
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/keyword',"POST",{'keywordDto':JSON.stringify(data)}).then((data) =>{//ajax
           if(successBack(data,this)){
             this.$store.state.list_Data = '';//文章管理模块数据
             this.$store.state.data = '';//事件模块数据

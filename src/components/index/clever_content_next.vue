@@ -112,7 +112,7 @@
 </div>  
 </template>
 <script >
-import { publicSearch,tipsMessage,successBack,GetSessionStorage,SetSessionStorage }  from '../../assets/js/map.js'
+import { publicSearch,tipsMessage,successBack,GetSessionStorage,SetSessionStorage,SetLocalStorage,GetLocalStorage }  from '../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -278,9 +278,21 @@ import { publicSearch,tipsMessage,successBack,GetSessionStorage,SetSessionStorag
           }
           publicSearch('rsa/project',"POST",{"projectDto":JSON.stringify(data)}).then((data) =>{
           if(successBack(data,this)){
-            SetSessionStorage('start',data.data.name);
+            console.log(data)
+            let projectData = {};
+                if(GetLocalStorage('current_projectData_A') == null || GetLocalStorage('current_projectData_A').project_list == null){
+                  projectData.project_list = [data.data]
+                }else{
+                  projectData.project_list = [...[data.data],...GetLocalStorage('current_projectData_A').project_list];
+                };
+                //[...GetLocalStorage('current_projectData_A').project_list,...data.data];
+                projectData.project_id = data.data.id;
+                projectData.project_name = data.data.name;
+                SetLocalStorage('current_projectData_A',projectData);
+                this.$router.push('/main/refer')
+            /*SetSessionStorage('start',data.data.name);
             SetSessionStorage('project_id',data.data.id);
-            window.location.href="#/main/refer";
+            window.location.href="#/main/refer";*/
           }
          });
         }

@@ -164,7 +164,7 @@ export function successBack(data,_this){//判断成功回调
       console.log(_this.$route)
         if(_this.$route.path == '/login'){//已登录在登录页面
           SetLocalStorage('account_A',data.data.account);//
-          _this.$router.push('main/refer')
+          //_this.$router.push('main/refer')
           //window.location.href = 'main/refer';
           tipsMessage(data.message,'success',_this); 
           return false;

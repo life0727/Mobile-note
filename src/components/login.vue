@@ -15,7 +15,7 @@
 					<el-input style="width: 260px;position:absolute;left: 20px;" type="password" v-model="password" @keyup.enter.native="login" placeholder="请输入密码"></el-input>
 				</div>
 				<div style="margin-top: 50px;margin-left: 85px;width: 300px;height: 80px;position: relative;">
-					<el-button type="success" style="width: 100%;padding: 8px 15px;font-size: 16px;background-color:#00b38a;border-color:#00b38a;border-radius: 15px;" @click="login" >登录</el-button>
+					<el-button type="success" style="width: 100%;padding: 8px 15px;font-size: 16px;background-color:#00b38a;border-color:#00b38a;border-radius: 15px;" @click="login">登录</el-button>
 					<a href="javascript:;" style="position: absolute;right:10px;top:50px;color: gray;" @click="username = '';password = '';">重置</a>
 				</div>
 			</div>
@@ -29,7 +29,7 @@
 </div>	
 </template>
 <script >
-import { tipsMessage,publicSearch,successBack,SetSessionStorage}  from '../assets/js/map.js'
+import { tipsMessage,publicSearch,successBack,SetLocalStorage}  from '../assets/js/map.js'
 import topnav from './top_nav.vue'
   export default{
     data : function(){ 
@@ -49,7 +49,24 @@ import topnav from './top_nav.vue'
 		            "password":this.password
 		        };
     		publicSearch('rsa/session',"POST",params).then((data) =>{
-    			successBack(data,this)
+    			if(!successBack(data,this)){
+				    publicSearch('rsa/project',"GET",{"projectDto": JSON.stringify({"method": 'get'})}).then((data) =>{//查询project
+				    	if(successBack(data,this)){
+				    		if(data.data == null || data.data.length == 0){
+				    			notify('提示',data.message,'warning',this);
+              					this.$router.push('/index/clever');
+				    		}else{
+				    			let projectData = {};
+						    	projectData.project_list = data.data;
+						    	projectData.project_id = data.data[0].id;
+						    	projectData.project_name = data.data[0].name;
+						    	SetLocalStorage('current_projectData_A',projectData);
+						    	//console.log(data)
+						    	this.$router.push('/main/refer')
+				    		};
+				    	};
+				    })
+    			};
     		});    		 
     	}
     },

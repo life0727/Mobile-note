@@ -85,7 +85,7 @@
 </div>  
 </template>
 <script>
-import { publicSearch,tipsMessage,successBack,GetSessionStorage }  from '../../assets/js/map.js'
+import { publicSearch,tipsMessage,successBack,GetLocalStorage }  from '../../assets/js/map.js'
 export default {
   mounted :function () {
     this.search();
@@ -113,10 +113,10 @@ export default {
       let data = {
         "method": 'get',
         "project" : {
-          'parentId':GetSessionStorage('project_id')//当前项目id,
+          'parentId':GetLocalStorage('current_projectData_A').project_id//当前项目id,
         }
       };
-      publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+      publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
         if(successBack(data,this)){
           this.data = data.data;
         }
@@ -136,7 +136,7 @@ export default {
         let data = {
             "method":'post',
             'project':{
-                      "parentId": GetSessionStorage('project_id'),//当前项目id,
+                      "parentId": GetLocalStorage('current_projectData_A').project_id,//当前项目id,
                       "name": this.name,
                       "remark": this.remark
                       },
@@ -145,7 +145,7 @@ export default {
             titleExcludeKeywords,
             contentExcludeKeywords
         };
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
           this.dialog_add = false;
           if(successBack(data,this)){
             this.search();
@@ -165,7 +165,7 @@ export default {
                                 'contentExcludeKeywordList':contentExcludeKeywords 
                                 }
                   };
-                  publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+                  publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
                     this.dialog_add = false;
                     if(successBack(data,this)){
                       this.search();
@@ -210,7 +210,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
             }).then(() => {
-              publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+              publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
                 if(successBack(data,this)){
                       this.search();
                       tipsMessage(data.message,'success',this);

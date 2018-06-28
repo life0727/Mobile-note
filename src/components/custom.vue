@@ -133,7 +133,7 @@
 
 <script>
 import topnav from './top_nav.vue'
-import { Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap }  from '../assets/js/map.js'
+import { Sort,Map,date_change,SetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage }  from '../assets/js/map.js'
 export default {
   mounted :function () {
     this.search();

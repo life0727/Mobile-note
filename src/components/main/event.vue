@@ -1,5 +1,6 @@
 <template>  
-<div class="event container" style="background-color: #fff;padding-bottom:220px;">
+<div class="event container" style="background-color: #fff;padding-bottom:220px;position: relative">
+  <!-- <img style="position: absolute;right: 30px;top:-50px;z-index: 5" src="../../assets/icon/shiyao.png"> -->
 <div class="block" style="padding-left:5px;margin-bottom: 10px;" >
   <div class="filter_event" style="width: 100%;;border: 1px solid #dcdcdc;background: #f7f7f7;position: relative;">
     <!-- <div class="btn-group" role="group" aria-label="..." style="margin-top: 20px;" id="type">
@@ -29,7 +30,7 @@
     <div class="btn-group custom" role="group" aria-label="..." style="margin-left: 145px;margin-top: 20px;width: 1000px;" id="custom_m">
      <button type="button" class="btn" @click="domain_click($event,'custom')" :disabled="btn_disabled" v-for="i in custom_m" :class="custom_arr.indexOf(i.id)== -1? '' : 'warning'" style="margin-bottom: 20px;">{{i.name}}</button>
     </div>
-    <hr style="width: 97%;"> -->
+    <hr style="width: 97%;">  -->
     <p></p>
 
     <span style="position: absolute;left: 20px;line-height: 25px;"><b>监测时间:</b></span>
@@ -76,7 +77,7 @@
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="i in dropdown_cixingNum" :command="i" >{{i}}</el-dropdown-item>
                 </el-dropdown-menu>
-    </el-dropdown> -->
+    </el-dropdown>-->
     <hr style="width: 97%;">
     <el-button type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 400px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;" id="search" @click="_start(true,true)" v-loading.fullscreen.lock="loading_start" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading">搜索</el-button>
     <el-button :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 150px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading" @click="save">导出</el-button>
@@ -165,7 +166,7 @@
       <div @click.stop="echart_click($index)" style="width: 100%;height:140px;padding: 0 5px;" :id="'echart_card'+$index">
       </div>
     </div>
-      <div id="all_event_echart" style="width: 1225px;height: 400px;position: relative;float: left;"></div>
+      <!-- <div id="all_event_echart" style="width: 1225px;height: 400px;position: relative;float: left;"></div> 
   </div>
   
     <el-dialog title="详情图" :visible.sync="dialogEchart" id="dialog_echart" width="1200px">
@@ -479,12 +480,13 @@
      </div> 
    </el-dialog>
 </div>  
+</div>
 </template>
 <script >
 import echart from 'echarts'
 import ecStat from 'echarts-stat'
 import _echart from '../../assets/js/_echart.js'
-import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap }  from '../../assets/js/map.js'
+import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage }  from '../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -611,7 +613,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
     },
     mounted : function () {
-        let _this = this,project_id = GetSessionStorage('project_id');
+        let _this = this,project_id = GetLocalStorage('current_projectData_A').project_id;
        /*jq样式*/
        $(window).scroll(function(){
         if($(this).scrollTop()>500){
@@ -694,7 +696,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             };
           }
         });*/
-        this._start(true,true);    
+        //this._start(true,true);    
     },
     methods:{
       //切换项目查看事件
@@ -707,7 +709,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             ev.target.className="el-tabs__item is-active"
             this.current_project_dom_name= ev.target.innerHTML;
         for(let i=0;i<this.$store.state.ev_duibiData.length;i++){
-          if(oid==GetSessionStorage('project_id')){//如果是自身
+          if(oid==GetLocalStorage('current_projectData_A').project_id){//如果是自身
               this.del_duibi_flag=false;
               $(document).ready(function(){
                       _this.dom_write(_this.$store.state.data);
@@ -733,6 +735,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
       },
       addDuibi(){//生成对比表格
+        this.duibiData[0].topicList = this.$store.state.data.topicList;//自身
         console.log(this.duibiData)
         this.loading_start=true;
         this.dialogDuibiMethod=false;
@@ -753,7 +756,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           "similarType":this.radio_duibi_Method, //相似性计算方式
           "percent":this.radio_duibi_Percent// “0.05” “0.1” “0.2” “0.5”//词表样本百分比
         };
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/topic/cpa/similartable',"GET",params).then((data) =>{//ajax
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/cpa/similartable',"GET",params).then((data) =>{//ajax
           if(successBack(data,this)){
             for(let i=0;i<this.duibiData[0].topicList.length;i++){
               let obj={};
@@ -762,7 +765,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               //obj.eventArticleList=this.$store.state.data[i].commonResult.eventArticleList;
               //obj.keywordList=this.$store.state.data[i].commonResult.keywordList;
               obj.Data=this.duibiData[0].topicList[i];
-              obj.project_id=GetSessionStorage('project_id');
+              obj.project_id=GetLocalStorage('current_projectData_A').project_id;
               obj.data=[];
               let fun=this.radio_duibi_Method == 4 ? Math.min : Math.max;
               let maxData = [];//每一行的相似度数组
@@ -806,8 +809,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       if(compet_flag){//点击自身查询
         this.$store.state.ev_duibiData = '';
         this.table_select = [];
-        this.current_project_dom_name = GetSessionStorage('start');
-        project_id = GetSessionStorage('project_id');
+        this.current_project_dom_name = GetLocalStorage('current_projectData_A').project_name;
+        project_id = GetLocalStorage('current_projectData_A').project_id;
         this.duibi_show = false;
       }else{//点击竞品查询
         project_id = oid;
@@ -971,7 +974,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }) 
       }, 
       del_keywordList(c,d,e){
-         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
          let params = {
           "method": 'POST',
           "topicId": this.data[c].id, //议题id
@@ -1060,7 +1063,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
       },
       del_articleList(arr){
-          let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+          let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
           let params = {
             "method": 'POST',
             "topicId": this.data[this.data_articleList_index].id, //议题id
@@ -1115,7 +1118,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         });*/  
       },
       del_threeList(arr){
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         let params = {
             "method": 'POST',
             "topicId": this.data[this.data_Per_index].id, //议题id
@@ -1172,7 +1175,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         let _this=this;
         console.log(this.data)
         console.log(this[b])
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         let f;                                 
         this.mentionArr = [t.mention];
         let params = {
@@ -1227,10 +1230,38 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         });*/
       },
       blur_input (i){
-        let _this=this;
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
-        if(this.data[i].label!=this.$refs.inpt[i].value){
-          $.ajax({
+        console.log(this.data[i]);
+        console.log(this.$store.state.ev_duibiData);
+        console.log(this.$store.state.data);
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
+        if(this.data[i].name!=this.$refs.inpt[i].value){
+        this.loading_start = true;
+        let params = {
+            "method": 'POST',
+            "topicId": this.data[i].id, //议题id
+            "newTitle":this.$refs.inpt[i].value
+         };
+        publicSearch('rsa/project/'+project_id+'/topic/update/title','POST',params).then((data) =>{
+            this.loading_start = false;
+            if(successBack(data,this)){
+              if(this.del_duibi_flag){//自身与竞品的数据分支
+                for(let j of this.$store.state.ev_duibiData){
+                  if(j.id == this.del_duibi_id){
+                    j.data.topicList[i].name = params.newTitle;
+                  };
+                  /*for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
+                    if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
+                        _this.$store.state.ev_duibiData[h].data[i].label=_this.$refs.inpt[i].value;
+                      }
+                    }*/
+                };
+              }else{
+                this.data[i].name = params.newTitle;
+                this.$store.state.data.topicList[i].name = params.newTitle;
+              };
+            };
+         });   
+         /* $.ajax({
               url:"rsa/project/"+project_id+"/event/label",
               type:"POST",
               data:{
@@ -1251,14 +1282,37 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                   _this.data[i].label=_this.$refs.inpt[i].value;
                 };
               }
-          });
+          });*/
         }
       },
       blur_table(dta,i,flag){
-        let _this=this;
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
-        let inp=flag ? 'cp_inpt' : '_inpt';
-        $.ajax({
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
+        let inp = flag ? 'cp_inpt' : '_inpt';
+        this.loading_start = true;
+        let params = {
+            "method": 'POST',
+            "topicId": flag ? dta.id : dta.eventId, //议题id
+            "newTitle":this.$refs[inp][i].value
+         };
+        publicSearch('rsa/project/'+project_id+'/topic/update/title',"POST",params).then((data) =>{
+            this.loading_start = false;
+            if(successBack(data,this)){
+              if(flag){//自身与竞品的数据分支
+                for(let j of this.$store.state.ev_duibiData){
+                  if(j.id == dta.proId){
+                     j.data.topicList[i].name = params.newTitle;
+                  };
+                };
+              }else{
+                console.log(params.newTitle)
+                this.$store.state.data.topicList[i].name = params.newTitle;
+                this.tableData[i].name = params.newTitle;
+                console.log(this.tableData)
+              };
+              
+            };
+        });    
+        /*$.ajax({
               url:"rsa/project/"+project_id+"/event/label",
               type:"POST",
               data:{
@@ -1279,13 +1333,13 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                    _this.$store.state.data[i].label=_this.$refs[inp][i].value;
                 };
               }
-          });
+          });*/
         console.log(dta)
       },
       
       handleCurrentChange (val,entityType,entityName) {
         this.currentPage = val;
-        let url = this.entityType ? 'rsa/project/'+GetSessionStorage('project_id')+'/topic/'+this.data[this.data_Per_index].id+'/entity/article' : 'rsa/project/'+GetSessionStorage('project_id')+'/topic/'+this.data[this.data_articleList_index].id+'/article';
+        let url = this.entityType ? 'rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/'+this.data[this.data_Per_index].id+'/entity/article' : 'rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/'+this.data[this.data_articleList_index].id+'/article';
         this.loading_start = true;
         let params = {
             "method": 'GET',
@@ -1315,7 +1369,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             "pageSize": this.similarData_arc_pageSize,//每页数量
             "pageNum": val //页码
         };
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/topic/'+this.similarData_topicId+'/article',"GET",params).then((data) =>{
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/'+this.similarData_topicId+'/article',"GET",params).then((data) =>{
             this.loading_start = false;
           if(successBack(data,this)){
             this.similarData_arc_list = data.data.articleList;
@@ -1350,7 +1404,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       },
       date_change () { date_change(this); },//修改时间验证
       del_ev(i){
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         let params = {
           "method": 'POST',
           "topicIdList[]" : [i.id]
@@ -1387,7 +1441,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           
         });  
         /*let _this=this;
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetSessionStorage('project_id');
+        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         $.ajax({
               url:"rsa/project/"+project_id+"/event2 ",
               type:"POST",
@@ -1484,10 +1538,10 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         let data = {
           "method": 'get',
           "project" : {
-            'parentId':GetSessionStorage('project_id')//当前项目id,
+            'parentId':GetLocalStorage('current_projectData_A').project_id//当前项目id,
           }
         };
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
           if(successBack(data,this)){
             this.duibiList = data.data;
           }
@@ -1504,8 +1558,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           SetSessionStorage('duibi_show',true);
           this.duibiData=[];
           let obj={};
-          obj.name=GetSessionStorage('start');
-          obj.id=GetSessionStorage('project_id');
+          obj.name=GetLocalStorage('current_projectData_A').project_name;
+          obj.id=GetLocalStorage('current_projectData_A').project_id;
           obj.topicList = this.$store.state.data.topicList;
           this.duibiData[0]=obj;
           let current_project_name;
@@ -1668,7 +1722,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           }
         }).then(({ value }) => {
           let data = {
-            "proId":GetSessionStorage('project_id'),
+            "proId":GetLocalStorage('current_projectData_A').project_id,
             "startTime": this.time[0].getTime(),//时间框中的起始时间
             "endTime": this.time[1].getTime(),//结束时间
             "reportName":value,
@@ -1678,7 +1732,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
              cpaResult
           };
           this.loading_start = true;
-          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/topic/expt',"POST",{'topicExptDtoStr':JSON.stringify(data)}).then((data) =>{//ajax
+          publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/expt',"POST",{'topicExptDtoStr':JSON.stringify(data)}).then((data) =>{//ajax
             this.dialog_look_duibiProject = false;
             this.loading_start = false;
             if(successBack(data,this)){

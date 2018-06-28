@@ -251,7 +251,7 @@
 <script>
 import echarts from 'echarts'
 import _echart from '../../assets/js/_echart.js'
-import {format_time,_Sort,date_change,SetSessionStorage,GetSessionStorage,tipsMessage,publicSearch,successBack} from '../../assets/js/map.js'
+import {format_time,_Sort,date_change,SetSessionStorage,tipsMessage,publicSearch,successBack,GetLocalStorage} from '../../assets/js/map.js'
 export default {
   mounted :function () {
     let _this=this;
@@ -401,11 +401,11 @@ export default {
       }; 
       let params = {
         "method":"GET", //http方法
-        "proId":GetSessionStorage('project_id'), //项目id
+        "proId":GetLocalStorage('current_projectData_A').project_id, //项目id
         "cpIdList[]":idarr //竞品id数组
       };
       this.loading_start_media = true;
-      publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/cpa',"GET",params).then((data) =>{//ajax
+      publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/cpa',"GET",params).then((data) =>{//ajax
         this.loading_start_media = false;
         if(successBack(data,this)){
            let cate = data.data.cateList.slice(0,idarr.length+1),cate_ = data.data.cateList.slice(idarr.length+1,data.data.cateList.length),_categories = data.data.cateList,_data = data.data.dataList,_links =  data.data.linkList;
@@ -423,7 +423,7 @@ export default {
       this.duibiData = [];
       this.tree_width = '100%';
       let Dta = {
-        "proId": GetSessionStorage('project_id'), //项目id
+        "proId": GetLocalStorage('current_projectData_A').project_id, //项目id
         "articleType": this.articleType, //文章类型
         "startTime": this.time[0].getTime(),
         "endTime": this.time[1].getTime(),
@@ -434,7 +434,7 @@ export default {
         "keywordNum": "10"//关键词数量
       };
       let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
-      publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media',"GET",params).then((data) =>{//ajax
+      publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media',"GET",params).then((data) =>{//ajax
         this.loading_start_media = false;
         if(successBack(data,this)){
           if(data.data.mediaList == null || data.data.mediaList.length == 0){
@@ -578,7 +578,7 @@ export default {
               "keywordNum": "10"//关键词数量
             };
             let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
-            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media',"GET",params).then((data) =>{//ajax
+            publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media',"GET",params).then((data) =>{//ajax
               this.loading_start_media = false;
               if(successBack(data,this)){
                 console.log(data)
@@ -673,7 +673,7 @@ export default {
           };
           console.log(this.duibiData)
           this.loading_start_media = true;
-          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media',"POST",params).then((data) =>{//ajax
+          publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media',"POST",params).then((data) =>{//ajax
             this.loading_start_media = false;
             if(successBack(data,this)){
               for(let i of this.duibiData){
@@ -718,10 +718,10 @@ export default {
       let data = {
           "method": 'get',
           "project" : {
-            'parentId':GetSessionStorage('project_id')//当前项目id,
+            'parentId':GetLocalStorage('current_projectData_A').project_id//当前项目id,
           }
         };
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
           if(successBack(data,this)){
             this.duibiList = data.data;
             console.log(this.duibiList)
@@ -753,7 +753,7 @@ export default {
       console.log(this.$store.state.media_duibiData)
       /*this.tree_width='50%';
       this.duibiData=[];
-      let _this = this,project_id = GetSessionStorage('project_id');
+      let _this = this,project_id = GetLocalStorage('current_projectData_A').project_id;
       SetSessionStorage('tree_width','50%');
       let data={
               "method": 'get',
@@ -793,7 +793,7 @@ export default {
    handleCurrentChange_article(val){//ajax 获取文章列表
       this.currentPage_art = val;
       this.media_articleTableLoading = true;
-      let proId = this.duibiTable_flag ? this.compet_proId : GetSessionStorage('project_id');//项目id
+      let proId = this.duibiTable_flag ? this.compet_proId : GetLocalStorage('current_projectData_A').project_id;//项目id
       let mediaId = this.duibiTable_flag ? this.compet_orgId : this.mediaId;//组织id
       let params = {
             "method": 'GET',
@@ -816,7 +816,7 @@ export default {
       this.currentPage_org = val;
       this.loading_start_media = true;
       this.dialo_org = true;
-      let proId = this.duibiTable_flag ? this.compet_proId : GetSessionStorage('project_id');//项目id
+      let proId = this.duibiTable_flag ? this.compet_proId : GetLocalStorage('current_projectData_A').project_id;//项目id
       let mediaId = this.duibiTable_flag ? this.compet_orgId : this.mediaId;//组织id
       let params = {
             "method": 'GET',
@@ -838,7 +838,7 @@ export default {
       });     
     },
     remove(a,b,c,d){
-      let project_id = GetSessionStorage('project_id'),_this = this; 
+      let project_id = GetLocalStorage('current_projectData_A').project_id,_this = this; 
       d.stopPropagation();
      // console.log(a)console.log(c.parent)console.log(this.data_scond);
       if(c.parent.parent==null){
@@ -854,7 +854,7 @@ export default {
           "mediaIdList[]":[oid]
         };
         this.loading_start_media = true;
-        publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media',"POST",params).then((data) =>{//ajax
+        publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media',"POST",params).then((data) =>{//ajax
           this.loading_start_media = false;
           if(successBack(data,this)){
             this.data_scond = this.data_scond.filter(item => { return [b.label].indexOf(item.label) === -1; });
@@ -931,7 +931,7 @@ export default {
     },
     del_(a,b,c,d,e){  
      // console.log(this.perlist_selection); console.log(this.first_data_index) console.log(this.second_data_index);
-      let _this = this,project_id=GetSessionStorage('project_id'),arr = [];
+      let _this = this,project_id=GetLocalStorage('current_projectData_A').project_id,arr = [];
       for(let i=0;i<this[a].length;i++){
         arr.push(this[a][i][c]);
       };
@@ -945,7 +945,7 @@ export default {
                 "entityNameList[]":arr
             };
             this.loading_start_media = true;
-            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/article',"POST",params).then((data) =>{//ajax
+            publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/article',"POST",params).then((data) =>{//ajax
               this.loading_start_media = false;
               if(successBack(data,this)){
                 for(let i of this.duibiData){
@@ -1002,7 +1002,7 @@ export default {
                 "entityNameList[]":arr
             };
             this.loading_start_media = true;
-            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/article',"POST",params).then((data) =>{//ajax
+            publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/article',"POST",params).then((data) =>{//ajax
               this.loading_start_media = false;
               if(successBack(data,this)){
                 this.tabledata_articlelist_total = this.data[this.first_data_index].articleCount = this.data_scond[this.first_data_index].data.articleCount = this.data[this.first_data_index].articleCount - arr.length;
@@ -1045,7 +1045,7 @@ export default {
                 "entityNameList[]":arr
               };
               this.loading_start_media = true;
-              publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/entity',"POST",params).then((data) =>{//ajax
+              publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/entity',"POST",params).then((data) =>{//ajax
                 this.loading_start_media = false;
                 if(successBack(data,this)){
                   for(let i of this.duibiData){
@@ -1100,7 +1100,7 @@ export default {
                 "entityNameList[]":arr
               };
               this.loading_start_media = true;
-              publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/entity',"POST",params).then((data) =>{//ajax
+              publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/entity',"POST",params).then((data) =>{//ajax
                 this.loading_start_media = false;
                 if(successBack(data,this)){
                   this.data[this.first_data_index][b] = this.data[this.first_data_index][b].filter(item => { return arr.indexOf(item[c]) === -1; });
@@ -1179,7 +1179,7 @@ export default {
     },
     del_2(a,b){
       //console.log(this.second_data_index); console.log(this[a]);
-      let _this = this,project_id=GetSessionStorage('project_id'),arr = [];
+      let _this = this,project_id=GetLocalStorage('current_projectData_A').project_id,arr = [];
       for(let i=0;i<this[a].length;i++){
         arr.push(this[a][i][b]);
       };
@@ -1193,7 +1193,7 @@ export default {
               "entityNameList[]":arr
           };
           this.loading_start_media = true;
-          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/entity/article',"POST",params).then((data) =>{//ajax
+          publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/entity/article',"POST",params).then((data) =>{//ajax
             this.loading_start_media = false;
             if(successBack(data,this)){
               for(let i of this.duibiData){
@@ -1218,7 +1218,7 @@ export default {
                               "entityNameList[]":[this.compet_mention]
                             };
                             this.loading_start_media = true;
-                            publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/entity',"POST",params).then((data) =>{//ajax
+                            publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/entity',"POST",params).then((data) =>{//ajax
                               this.loading_start_media = false;
                               if(successBack(data,this)){
                                 let d = 'tabledata_'+this.data_label.toLowerCase();
@@ -1293,7 +1293,7 @@ export default {
               "entityNameList[]":arr
           };
           this.loading_start_media = true;
-          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/entity/article',"POST",params).then((data) =>{//ajax
+          publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/entity/article',"POST",params).then((data) =>{//ajax
             this.loading_start_media = false;
             if(successBack(data,this)){
 
@@ -1316,7 +1316,7 @@ export default {
                 let e =  'tabledata_'+this.data_label.toLowerCase()+'_list';
                 let c = 'mention';
                 this.loading_start_media = true;
-                publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/entity',"POST",params).then((data) =>{//ajax
+                publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/entity',"POST",params).then((data) =>{//ajax
                   this.loading_start_media = false;
                   if(successBack(data,this)){
                     this.data[this.first_data_index][this.data_label] = this.data[this.first_data_index][this.data_label].filter(item => { return [this.compet_mention].indexOf(item[c]) === -1; });
@@ -1443,7 +1443,7 @@ export default {
       for(let i of this.data_scond){
         proIdArr.push(i.data.orgId);//proIdArr z自身组织id数组
       };
-      proAnaDto.proId = GetSessionStorage('project_id');
+      proAnaDto.proId = GetLocalStorage('current_projectData_A').project_id;
       proAnaDto.anaIdList = proIdArr;
       if(this.duibiData.length != 0){//有竞品
         for(let i = 0;i < this.duibiData.length;i++){
@@ -1468,7 +1468,7 @@ export default {
           let data = {
             proAnaDto,
             cpAnaDtoList,
-            "proId": GetSessionStorage('project_id'),//自身项目id
+            "proId": GetLocalStorage('current_projectData_A').project_id,//自身项目id
             "startTime": this.time[0].getTime(),
             "endTime": this.time[1].getTime(),
             "reportName": value,//报告名称
@@ -1479,7 +1479,7 @@ export default {
             'mediaExptDtoStr' : JSON.stringify(data)
           };
           this.loading_start_media = true;
-          publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/media/expt',"POST",params).then((data) =>{//ajax
+          publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/media/expt',"POST",params).then((data) =>{//ajax
             this.loading_start_media = false;
             if(successBack(data,this)){
               //清空所有数据

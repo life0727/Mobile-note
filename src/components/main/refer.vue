@@ -176,7 +176,7 @@
 <script>
 import dialogRelateArticle from './dialog_relateArticle.vue'
 import _echart from '../../assets/js/_echart.js'
-import { date_change,changePage,publicSearch,tipsMessage,successBack,GetSessionStorage,similar }  from '../../assets/js/map.js'
+import { date_change,changePage,publicSearch,tipsMessage,successBack,similar,GetLocalStorage }  from '../../assets/js/map.js'
 export default {
   mounted:function () {   
     console.log('初始化提及率')
@@ -228,7 +228,7 @@ export default {
         return;
       };   
       let Dta = {
-         "proId": GetSessionStorage('project_id'), //项目id
+         "proId": GetLocalStorage('current_projectData_A').project_id, //项目id
           "articleType": this.articleType, //文章类型
           "queryType":this.queryType,//检索方式
           "startTime": this.time[0].getTime(),
@@ -239,7 +239,7 @@ export default {
       };  
       let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
       this.publicLoading = true;
-      publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/reputationindex',"GET",params).then((data) =>{//ajax
+      publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/reputationindex',"GET",params).then((data) =>{//ajax
         this.publicLoading = false;
         if(successBack(data,this)){
           let color;
@@ -269,7 +269,7 @@ export default {
               },(data.data.time*1000)/100);
               Dta.isTiming = '';
               let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
-              publicSearch('rsa/project/'+GetSessionStorage('project_id')+'/reputationindex',"GET",params).then((data) =>{
+              publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/reputationindex',"GET",params).then((data) =>{
                 this.loading = false;
                 clearInterval(timer);
                 if(successBack(data,this)){
