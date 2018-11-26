@@ -162,10 +162,6 @@ import clevernext from './clever_content_next.vue'
       
     },
     mounted:function () {
-      //index_clever()
-      /*$('.choose-type div').hover(function(){
-        console.log($(this).index())
-      })*/
       let _this=this;
       $('.choose-type .translate').hover(function(){
         $(this).find('img').css('top','37px')
@@ -181,7 +177,6 @@ import clevernext from './clever_content_next.vue'
         let index=$(this).index();
         let simpleModelId=_this.type[index].data;
         window.sessionStorage.setItem('simpleModelId',simpleModelId)
-        //window.location.href="#/index/clever/clever_content_next"
         _this.dialogVisible=true;   
        })
       $('.el-dialog__headerbtn').click(function(){

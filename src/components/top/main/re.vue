@@ -71,7 +71,7 @@
       <div id="refer_echart" style="width: 100%;height: 300px;margin: 5px auto;border: 1px dashed gray"></div>
     <p style="margin:20px 0 0 0;position: relative;color: rgb(211,62,54)">议题列表></p>
     <div class="event_card_refer">
-        <div v-for="(i,$index) in data"  :style="{width:'220px',border: '1px solid #ebebeb',position:'relative',overflow: 'hidden',float: 'left',padding:'0',margin: '10px 20px 10px 5px',borderRadius: '8px',minHeight:'200px'}" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)">
+        <div v-for="(i,$index) in data"  :style="{width:'234px',border: '1px solid #ebebeb',position:'relative',overflow: 'hidden',float: 'left',padding:'0',margin: '10px 5px 10px 5px',borderRadius: '8px',minHeight:'200px'}" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)">
      <!--    <img src="../../assets/icon/del.png" style="position: absolute;top: 2px;right: 0px;cursor: pointer;z-index:10;display: none;" @click.stop=""> -->
           <div style="width: 100%;height:70px;padding: 0 5px;position: relative;">
             <div style="width: 30px;height: 66px;margin-left: 10px; " ><el-checkbox style="margin-top: 20px;" v-model="i.checked" @change="select(i)"></el-checkbox><span style="width:64px;height: 30px;position:absolute;left: 16px;;top:46px;color: white;font-size: 16px;text-align:center"></span></div>
@@ -82,30 +82,21 @@
             </p>
             <p style="position: absolute;top:35px;left:72px;color: rgb(242,196,70);cursor: pointer;" @click.stop="refer_dialog_articleList(i)"><img src="../../assets/icon/event-like.png" style="padding-right: 6px;">相关文章({{i.articleCount}})</p>
           </div>
-          <div style="width: 95%;margin: 0 auto;border-top-style:dashed;border-top-width: 1px;border-top-color: #ddd;padding-top: 10px;cursor: pointer" @click="refer_card_click(i)">
-              <el-table
-                :data="i.tableData"
-                border
-                style="width: 100%">
-                <el-table-column
-                  prop="name"
-                  label=""
-                  width="65"
-                  show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
-                  prop="articleNum"
-                  label="文章数"
-                  width="65"
-                  show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
-                  prop="frequency"
-                  label="词频数"
-                  width="65"
-                  show-overflow-tooltip>
-                </el-table-column>
-              </el-table>  
+          <div style="margin: 0 auto;border-top-style:dashed;border-top-width: 1px;border-top-color: #ddd;padding-top: 10px;cursor: pointer" @click="refer_card_click(i)">
+              <table width="100%" border="1"  style="border-width:0px"> 
+                <tr>
+                  <td width=""></td>
+                  <td v-for="(j,$index) in i.tableData" :style="{backgroundColor:$index%2 == 0 ? 'rgba(180, 222, 246, 1)' : ''}">{{j.name.length > 2 ? j.name.slice(0,2)+'..' : j.name}}</td>
+                </tr>
+                <tr>
+                  <td style="width: 48px">文章数</td>
+                  <td v-for="a in i.tableData">{{a.articleNum}}</td>
+                </tr>
+                <tr>
+                  <td style="width: 48px">词频数</td>
+                  <td v-for="f in i.tableData">{{f.frequency}}</td>
+                </tr>
+              </table> 
             </div>
         </div>
     </div>
@@ -174,7 +165,7 @@
 </template>
 
 <script>
-import dialogRelateArticle from './dialog_relateArticle.vue'
+import dialogRelateArticle from './main/dialog_relateArticle.vue'
 import _echart from '../../assets/js/_echart.js'
 import { date_change,changePage,publicSearch,tipsMessage,successBack,similar,GetLocalStorage }  from '../../assets/js/map.js'
 export default {
@@ -228,7 +219,7 @@ export default {
         return;
       };   
       let Dta = {
-         "proId": GetLocalStorage('current_projectData_A').project_id, //项目id
+         "proId": GetLocalStorage('current_projectData_A') == null ? this.$router.push('/login') : GetLocalStorage('current_projectData_A').project_id, //项目id
           "articleType": this.articleType, //文章类型
           "queryType":this.queryType,//检索方式
           "startTime": this.time[0].getTime(),
@@ -487,6 +478,7 @@ export default {
     }
       .el-date-editor--datetime{
         input{
+          line-height: 23px !important;
           height: 23px !important;
           padding-right: 0 ;
           line-height: 24px;
@@ -553,13 +545,12 @@ export default {
       } 
       table{
         table-layout: none;
-        width: 95% !important;
-        th{
-          text-align: center;
-          width: 99px;
-        }
+        background-color: rgba(220, 238, 250, 1);
+        border-color: white;
         td{
-          padding: 2px 0;
+          text-align: center;
+          padding: 7px 0;
+          font-size: 12px;
         }
       }
    }

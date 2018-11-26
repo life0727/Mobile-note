@@ -1,3 +1,11 @@
+import { Loading } from 'element-ui'
+export function startLoading(){//Loading
+  Loading.service({'text':'系统拼命加载中','spinner':'el-icon-loading'});
+}
+
+export function endLoading(){//Loading
+  Loading.service({'text':'系统拼命加载中','spinner':'el-icon-loading'}).close();
+}
 export function Map () { //通用map方法
               this.data = new Object();
               this.put = function (key, value) {
@@ -117,7 +125,7 @@ export function changePage(_this,dta,pageSize,pageNum){//页码变化方法
     return new Promise( (resolve,reject) => {
         $.ajax({
             type: "GET",
-            url: 'rsa/project/'+GetSessionStorage('project_id')+'/reputationindex/topic/'+dta.id+'/article',
+            url: 'rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/reputationindex/topic/'+dta.id+'/article',
             data: {
               "method": 'GET',
               "topicId": dta.id, //议题id
@@ -158,10 +166,10 @@ export function successBack(data,_this){//判断成功回调
     }else if(data.code == 1000){//未登录
         _this.$router.push('/login')
         //window.location.href='/login'
-        notify('提示',data.message,'warning',_this)
+        tipsMessage(data.message,'warning',_this)
         return false;
     }else if(data.code == 1001){//已登录
-      console.log(_this.$route)
+      //console.log(_this.$route)
         if(_this.$route.path == '/login'){//已登录在登录页面
           SetLocalStorage('account_A',data.data.account);//
           //_this.$router.push('main/refer')
@@ -172,15 +180,18 @@ export function successBack(data,_this){//判断成功回调
           return true;
         }
     }else if(data.code == 1008){//注销用户
-        notify('提示',data.message,'success',_this);
+        tipsMessage(data.message,'success',_this);
         _this.$router.push('/login')
         //window.location.href = '/login';
         window.sessionStorage.clear();
         localStorage.clear();
         return false;
     }else if(data.code == 1308){//项目列表小于一自动跳转添加项目模块
-        _this.$router.push('/index/clever')
-        window.location.href='/index/clever';
+        _this.$router.push('/index/clever/clever_content')
+        window.location.href='/index/clever/clever_content';
+        return false;
+    }else if(data.code == 1406){//[客户管理][查询操作]该用户下对应的 客户信息查询结果为null/空!
+        _this.tabledata_user = [];
         return false;
     }else{
         tipsMessage(data.message,'warning',_this)
@@ -188,19 +199,100 @@ export function successBack(data,_this){//判断成功回调
     }
 };
 
-export function notify(title,message,type,_this){//通知
+/*export function notify(title,message,type,_this){//通知
   return _this.$notify({
           title,
           message,
           type
         });
-}  
+} */ 
 
 export function tipsMessage(message,type,_this){//提示
+  //console.log(_this)
   return _this.$message({
           message,
-          type
+          type,
+          showClose: true,
+          //duration:'2000'
         });
 }
 
+export function s2ab (s) { // 字符串转字符流
 
+        var buf = new ArrayBuffer(s.length)
+        var view = new Uint8Array(buf)
+        for (var i = 0; i !== s.length; ++i) {
+          view[i] = s.charCodeAt(i) & 0xFF
+        }
+        return buf
+      }
+
+export function downloadExl(json, downName,_this, type ,colWidth) {  // 导出到excel colWidth 列宽格式
+        let XLSX = require('xlsx')
+        let keyMap = [] // 获取键
+        for (let k in json[0]) {
+          keyMap.push(k)
+        }
+        console.info('keyMap', keyMap, json)
+        let tmpdata = [] // 用来保存转换好的json
+        json.map((v, i) => keyMap.map((k, j) => Object.assign({}, {
+          v: v[k],
+          position: (j > 25 ? _this.getCharCol(j) : String.fromCharCode(65 + j)) + (i + 1)
+        }))).reduce((prev, next) => prev.concat(next)).forEach(function (v) {
+          tmpdata[v.position] = {
+            v: v.v
+          }
+        })
+        let outputPos = Object.keys(tmpdata)  // 设置区域,比如表格从A1到D10
+        //tmpdata.Cells(x, y).NumberFormatLocal = "yyyy-mm-dd"//时间格式
+        let tmpWB = {
+          SheetNames: ['mySheet'], // 保存的表标题
+          //SSF:'0',
+          Sheets: {
+            'mySheet': Object.assign({},
+              tmpdata, // 内容
+              {
+                '!ref': outputPos[0] + ':' + outputPos[outputPos.length - 1],// 设置填充区域
+                /*'!merges': [{
+                  s: {c: 0, r: 0},
+                  e: {c: 3, r: 0}
+                }],*/
+                 /*B2: {
+                  v: '55555',
+                  t: 'n',
+                  s: {
+                    font: {
+                      sz: 18,
+                      bold: true
+                    },
+                    alignment: {
+                      horizontal: 'center'
+                    }
+                  }
+                }*/
+              })
+          }
+        }
+        for(let i in tmpWB.Sheets.mySheet){//转化为数字格式
+          if(typeof(tmpWB.Sheets.mySheet[i].v) == 'number'){
+            tmpWB.Sheets.mySheet[i].t = 'n';
+          };
+        };
+        colWidth ? tmpWB.Sheets.mySheet['!cols'] = [{wpx: 400}, {wpx: 120}, {wpx: 90}, {wpx: 660}] : '';//列宽格式格式
+        console.log(tmpWB)
+        let tmpDown = new Blob([s2ab(XLSX.write(tmpWB,
+          {bookType: (type === undefined ? 'xlsx' : type), bookSST: false, type: 'binary'} // 这里的数据是用来定义导出的格式类型
+        ))], {
+          type: ''
+        })  // 创建二进制对象写入转换好的字节流
+        var href = URL.createObjectURL(tmpDown)  // 创建对象超链接
+        _this.outFile.download = downName + '.xlsx'  // 下载名称
+        _this.outFile.href = href;  // 绑定a标签
+         document.body.appendChild(_this.outFile);//兼容火狐
+        _this.outFile.click()  // 模拟点击实现下载
+
+        setTimeout(function () {  // 延时释放
+          URL.revokeObjectURL(tmpDown); // 用URL.revokeObjectURL()来释放这个object URL
+          document.body.removeChild(_this.outFile);//兼容火狐
+        }, 100)
+      }

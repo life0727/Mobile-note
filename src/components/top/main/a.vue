@@ -250,8 +250,8 @@
 
 <script>
 import echarts from 'echarts'
-import _echart from '../../assets/js/_echart.js'
-import {format_time,_Sort,date_change,SetSessionStorage,tipsMessage,publicSearch,successBack,GetLocalStorage} from '../../assets/js/map.js'
+import _echart from '../../../assets/js/_echart.js'
+import {format_time,_Sort,date_change,SetSessionStorage,tipsMessage,publicSearch,successBack,GetLocalStorage} from '../../../assets/js/map.js'
 export default {
   mounted :function () {
     let _this=this;
@@ -423,7 +423,7 @@ export default {
       this.duibiData = [];
       this.tree_width = '100%';
       let Dta = {
-        "proId": GetLocalStorage('current_projectData_A').project_id, //项目id
+        "proId": GetLocalStorage('current_projectData_A') == null ? this.$router.push('/login') : GetLocalStorage('current_projectData_A').project_id, //项目id
         "articleType": this.articleType, //文章类型
         "startTime": this.time[0].getTime(),
         "endTime": this.time[1].getTime(),
@@ -1678,7 +1678,7 @@ export default {
             width: 20px;
             height: 20px;
             margin-right: 10px;
-            background-image: url('../../assets/icon/ev_del2.png');
+            background-image: url('../../../assets/icon/ev_del2.png');
             cursor: pointer;
           }
           .el-dialog__close{
@@ -1735,7 +1735,7 @@ export default {
             width: 20px;
             height: 20px;
             margin-right: 10px;
-            background-image: url('../../assets/icon/ev_del2.png');
+            background-image: url('../../../assets/icon/ev_del2.png');
             cursor: pointer;
           }
           .el-dialog__close{

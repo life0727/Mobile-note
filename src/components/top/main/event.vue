@@ -1,109 +1,142 @@
 <template>  
-<div class="event container" style="background-color: #fff;padding-bottom:220px;position: relative">
-  <!-- <img style="position: absolute;right: 30px;top:-50px;z-index: 5" src="../../assets/icon/shiyao.png"> -->
-<div class="block" style="padding-left:5px;margin-bottom: 10px;" >
-  <div class="filter_event" style="width: 100%;;border: 1px solid #dcdcdc;background: #f7f7f7;position: relative;">
-    <!-- <div class="btn-group" role="group" aria-label="..." style="margin-top: 20px;" id="type">
-      <span style="position: absolute;left: 20px;line-height: 28px;"><b>事件类型:</b></span>
-      <button type="button" class="btn warning" style="margin-left: 90px;" @click="btn_disabled=false;articleType=2;">微信</button>
-      <button type="button" class="btn " @click="articleType=1;btn_disabled=true;">新闻</button>
-    </div>
-    <hr style="width: 97%;">
-    <button  class="btn" style="position: absolute;right: 10px;background: #f7f7f7;padding: 0px;outline: none;" id="hide_btn"  @click="hide_domain">隐藏<i class="fa fa-angle-up" style="font-size: 20px;margin-left: 5px;"></i></button>
-    <button  class="btn" style="position: absolute;right: 10px;background: #f7f7f7;padding: 0px;outline: none;" id="show_btn" v-show="domain.length>15" @click="show_domain">展开<i class="fa fa-angle-down" style="font-size: 20px;margin-left: 5px;"></i></button>
-    <div class="btn-group domain" role="group" aria-label="..." style="">
-      <span style="position: absolute;left: 20px;line-height: 28px;"><b>行业属性:</b></span>
-      <button type="button" class="btn warning domain_all" :disabled="btn_disabled" style="margin-left: 90px;">全部</button>
-      <button type="button" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i,$index) in domain_s" :class="domain_arr.indexOf(i.id)== -1? '' : 'warning'">{{i.id}}</button>
-    </div>
-    <div class="btn-group domain" role="group" aria-label="..." style="margin-left: 145px;margin-top: 20px;width: 1000px;" id="domain_m">
-     <button type="button" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i,$index) in domain_m" :class="domain_arr.indexOf(i.id)== -1? '' : 'warning'" style="margin-bottom: 20px;">{{i.id}}</button>
-    </div>
-    <hr style="width: 97%;">
-     <button  class="btn" style="position: absolute;right: 10px;background: #f7f7f7;padding: 0px;outline: none;" id="hide_btn_custom"  @click="hide_custom">隐藏<i class="fa fa-angle-up" style="font-size: 20px;margin-left: 5px;"></i></button>
-    <button  class="btn" style="position: absolute;right: 10px;background: #f7f7f7;padding: 0px;outline: none;" id="show_btn_custom" v-show="custom.length>9" @click="show_custom">展开<i class="fa fa-angle-down" style="font-size: 20px;margin-left: 5px;"></i></button>
-    <div class="btn-group custom" role="group" aria-label="..." style="">
-      <span style="position: absolute;left: 7px;line-height: 28px;"><b>公众号类型:</b></span>
-      <button type="button" class="btn warning custom_all" style="margin-left: 90px;" :disabled="btn_disabled">全部</button>
-      <button type="button" class="btn" @click="domain_click($event,'custom')" :disabled="btn_disabled" v-for="i in custom_s" :class="custom_arr.indexOf(i.id)== -1? '' : 'warning'">{{i.name}}</button>
-    </div>
-    <div class="btn-group custom" role="group" aria-label="..." style="margin-left: 145px;margin-top: 20px;width: 1000px;" id="custom_m">
-     <button type="button" class="btn" @click="domain_click($event,'custom')" :disabled="btn_disabled" v-for="i in custom_m" :class="custom_arr.indexOf(i.id)== -1? '' : 'warning'" style="margin-bottom: 20px;">{{i.name}}</button>
-    </div>
-    <hr style="width: 97%;">  -->
-    <p></p>
+<div class="event container" style="background-color: #fff;padding-bottom:220px;position: relative;padding: 0;margin-top:30px;">
+  <a id="downlink"></a><!-- 导出excel表格 -->
+  <el-popover
+  placement="bottom-end"
+  width="320"
+  @show="add_duibiName"
+  v-model="popover1_show"
+  popper-class="popoverCss"
+  trigger="click">
+    <div style="height: 250px;width:100%;">
+      <div style="width:90%;height: 60px;border-bottom: 1px solid #e4e4e4;margin: 0 auto;line-height: 60px;text-align: center;font-size: 16px;">添加对比竞品</div>
+      <p style="width:90%;position: absolute;top: 80px;left: 15px;font-size: 16px;">自身项目：<a href="javascript:;" @click="compet_card(duibiData[0].id,$event)" style="color: #00b38a">{{duibiData[0].name}}</a></p>
 
-    <span style="position: absolute;left: 20px;line-height: 25px;"><b>监测时间:</b></span>
-    <div class="block" style="display: inline-block" >
-      <el-date-picker
-       @change="date_change"
-       :editable="edit"
-       :clearable="edit"
-       style="position: relative;width:170px;font-size: 12px;margin-left:90px;"
-        v-model="time[0]"
-        type="datetime"
-        placeholder="选择日期时间">
-      </el-date-picker>
+      <el-popover
+      placement="bottom-end"
+      width="180"
+      @show="add_duibi"
+      popper-class="popoverCss"
+      trigger="click">
+        <div class="list-group" id="ev_popover" style="position: absolute;width:100%;margin-bottom: 0;background: white;
+    border: 1px solid #e4e4e4;border-radius: 4px;">
+          <a v-for="i in duibiList" href="javascript:;" class="list-group-item" style="border-width: 0px;cursor:auto;">
+            <span style="cursor:pointer;" @click.stop="add_duibiName(i)">{{i.name}}</span>
+            <i class="fa fa-plus-circle" @click.stop="add_duibiName(i)" style="position:absolute;right: 10px;cursor:pointer;"></i>
+          </a>
+          <router-link to="/keyword">
+            <el-button icon="el-icon-plus" type="text" style="margin-left: 55px;color: rgb(0, 179, 138)" @click="$store.state.keyword_tab = '_competTab'">新增竞品</el-button>
+          </router-link>  
+        </div>
+      <el-button style="padding: 4px 5px;font-size: 14px;background-color:  #00b38a;border-color:  #00b38a;color: white;position: absolute;top: 80px;right: 15px;z-index: 999999!important" icon="el-icon-plus" slot="reference">快捷添加</el-button>
+      </el-popover>
+      
+      <p style="color:#00b38a;margin: 85px" v-show="this.duibiData.length == 1">请至少添加一个竞品</p>
+      <div class="list-group" id="event" style="position: absolute;top:115px;width:100%;" v-show="this.duibiData.length > 1">
+        <a href="javascript:;" class="list-group-item active" style="border-width: 0px;font-size: 16px;cursor: auto;position: relative" >
+           竞品项目：<a href="javascript:;" style="color: #00b38a" @click="compet_card(duibiData[1].id,$event)">{{duibiData[1] == undefined ? '' : duibiData[1].name}}</a>
+           <el-checkbox style="right: 40px;position:absolute;" v-model="checkedDuibi"></el-checkbox>
+        </a>
+      </div>
+      <el-button @click="save" style="padding: 4px 20px;font-size: 14px;background-color: #00b38a;border-color:#00b38a;color:white;position: absolute;bottom:10px;right: 105px;">导出</el-button>
+      <el-button :style="{padding:'4px 5px',fontSize: '14px',backgroundColor: checkedDuibi ? '#00b38a' : '#e4e4e4',borderColor: checkedDuibi ? '#00b38a' :'#e4e4e4',color:checkedDuibi ? 'white' : '#555',position:'absolute',bottom:'10px',right:'15px'}"  :disabled="!checkedDuibi" @click="addDuibi">对比({{checkedDuibi ? '1' : '0'}}/1)</el-button>
     </div>
-    <div class="block" style="display: inline-block" >
-        <span class="demonstration">至</span>
+  <img v-show="this.$store.state.data.length != 0" style="position: absolute;right: 30px;top:-56px;z-index:999;cursor: pointer" slot="reference" src="../../../assets/icon/addDuibi.png">
+  </el-popover>
+
+  <div class="block"  >
+    <div class="filter_event" style="width: 100%;border: 1px solid rgb(228,228,228);background-color:rgb(247,247,247);position:relative;height: 48px;">
+      <span :style="{position:'absolute',left:'30px',lineHeight:'45px',cursor:'pointer',color: articleType == 2 ? '#00b38a' : '#333'}" @click="btn_disabled=false;articleType=2;">微信</span>
+      <span :style="{position:'absolute',left:'80px',lineHeight:'45px',cursor:'pointer',color: articleType == 1 ? '#00b38a' : '#333'}" @click="btn_disabled=true;articleType=1;">新闻</span>
+      <span style="position: absolute;left: 140px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
+      <el-popover
+        placement="bottom"
+        @hide="dom_search"
+        width="450"
+        :disabled="btn_disabled"
+        v-model="domin_popover"
+        popper-class="popperClassMedia"
+        trigger="click">
+        <div class="btn-group domain" role="group" aria-label="..." style="">
+          <button type="button" class="btn warning domain_all" :disabled="btn_disabled" style="margin:5px 3px;border-radius: 3px;padding: 2px 10px;">全部</button>
+          <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i,$index) in domain" >{{i}}</button>
+        </div>
+        <hr style="margin: 10px 0;">
+        <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="dom_search" >确定</el-button>
+        <span style="position: absolute;left: 170px;line-height: 45px;cursor: pointer" slot="reference">媒体分类 <i :class="domin_popover ? 'fa fa-angle-up' : 'fa fa-angle-down'" style="margin-left: 2px;"></i></span>
+      </el-popover>
+
+      <span style="position: absolute;left: 265px;line-height: 45px;">议题个数:</span>
+      <el-dropdown  @command="sort_dropdown" style="margin-left: 325px;"  @visible-change="visibleChangeEventNum">
+              <el-button  style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">{{current_sort}}<i :class="sort_dropdown_visible_eventNum ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i></el-button>    
+              <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
+              </el-dropdown-menu>
+      </el-dropdown>
+
+      <el-popover
+        placement="bottom"
+        @hide="qiye_search"
+        width="450"
+        :disabled="false"
+        v-model="qiye_popover"
+        popper-class="popperClassMedia"
+        trigger="click">
+        <el-form :inline="true" :model="companyData" class="demo-form-inline elfrom_class">
+          <el-form-item label="企业A">
+            <el-input v-model="companyData.companyA" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="企业B">
+            <el-input v-model="companyData.companyB" placeholder=""></el-input>
+          </el-form-item>
+        </el-form>  
+        <hr style="margin: 10px 0;">
+        <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="qiye_search" >确定</el-button>
+        <span style="position: absolute;left: 378px;line-height: 45px;cursor: pointer" slot="reference">企业名称 <i :class="qiye_popover ? 'fa fa-angle-up' : 'fa fa-angle-down'" style="margin-left: 2px;"></i></span>
+      </el-popover>
+      
+      <span style="position: absolute;left: 464px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span><!-- left: 383px; -->
+       <div class="block" style="display: inline-block" >
         <el-date-picker
-        @change="date_change"
-        :editable="edit"
-        :clearable="edit"
-        style="position: relative;width:170px;font-size: 12px;"
-          v-model="time[1]"
+         @change="date_change"
+         :editable="edit"
+         :clearable="edit"
+         style="position: relative;width:170px;font-size: 12px;margin-left:120px;"
+          v-model="time[0]"
           type="datetime"
           placeholder="选择日期时间">
-        </el-date-picker>
-    </div>
-    <span style="position: absolute;left: 482px;line-height: 25px;"><b>事件个数:</b></span>
-    <el-dropdown  @command="sort_dropdown" style="padding-left: 100px;">
-            <el-button style="padding: 3px 5px;">{{current_sort}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700"></i></el-button>    
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
-            </el-dropdown-menu>
-    </el-dropdown>
-    <!-- <span style="position: absolute;left: 635px;line-height: 25px;"><b>上下文句数:</b></span>
-    <el-dropdown  @command="dropdown_jushu" style="padding-left: 120px;">
-                <el-button style="padding: 3px 5px;">{{current_jushuNum}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="i in dropdown_jushuNum" :command="i" >{{i}}</el-dropdown-item>
-                </el-dropdown-menu>
-    </el-dropdown>
-    <span style="position: absolute;margin-left: 50px;line-height: 25px;"><b>词性:</b></span>
-    <el-dropdown  @command="dropdown_cixing" style="padding-left: 100px;">
-                <el-button style="padding: 3px 5px;">{{current_cixing}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="i in dropdown_cixingNum" :command="i" >{{i}}</el-dropdown-item>
-                </el-dropdown-menu>
-    </el-dropdown>-->
-    <hr style="width: 97%;">
-    <el-button type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 400px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;" id="search" @click="_start(true,true)" v-loading.fullscreen.lock="loading_start" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading">搜索</el-button>
-    <el-button :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 150px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading" @click="save">导出</el-button>
-    <el-button :disabled="this.$store.state.btn_daochu" v-show="this.$store.state.data.length != 0" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;margin-left: 150px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;margin-bottom: 20px;"  @click="add_duibi">查看竞品</el-button>
-  </div>
-</div>
-
-  <div class="el-tabs el-tabs--border-card" v-show="duibi_show">
-    <div class="el-tabs__header">
-      <div class="el-tabs__nav-wrap" style="border-bottom: 0px;">
-        <div class="el-tabs__nav-scroll">
-          <div class="el-tabs__nav">
-            <div @click="compet_card(i.id,$event)" :class="[$index == 0 ? 'el-tabs__item is-active' : 'el-tabs__item']" v-for="(i,$index) in duibiData">{{i.name}}</div>
-            <el-button v-show="this.$store.state.duibiButton" type="success" size="large" class="search_start" style="padding: 5px 12px;font-size: 14px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;position:absolute;left: 1120px;top: 8px;"  @click="dialogDuibiMethod=true;">添加对比</el-button>
-          </div>
-        </div>
+        </el-date-picker><!-- margin-left:55px; -->
       </div>
+      <div class="block" style="display: inline-block;margin-top: 12px;" >
+          <span class="demonstration" style="margin: 0 5px;">至</span>
+          <el-date-picker
+          @change="date_change"
+          :editable="edit"
+          :clearable="edit"
+          style="position: relative;width:170px;font-size: 12px;"
+            v-model="time[1]"
+            type="datetime"
+            placeholder="选择日期时间">
+          </el-date-picker>
+      </div>
+      <span class="SearchBegin" style="line-height: 45px;margin-left: 30px;" id="search" @click="_start(true,true)" v-loading.fullscreen.lock="loading_start" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading">搜索</span>
+      <span class="SearchBegin"   @click="downloadFile()" v-show="data.length != 0">导出excel</span>
+
     </div>
   </div>
-  <div id="panel">
+
+  <div class="event container" style="background-color: #fff;position: relative;border: 1px solid rgba(228, 228, 228, 1);border-top-width: 0;">
+  <p style="padding: 10px 0 10px 5px;color:#ccc;margin: 0">当前项目：<b style="color: #00b38a;margin-right:20px;">{{current_project_dom_name}}</b>已选媒体分类：<span style="color: #00b38a;">{{domain_arr.length == 0 ? '全部' : domain_arr.toString()}}</span></p>
+  <div class="clientContent" v-show="this.data.length == 0" >
+    <img src="../../../assets/icon/noData.png"  style="position:absolute;left:0;right: 0;top: 0;bottom: 0;margin: auto;">
+  </div>
+  <div id="panel"  v-show="this.data.length != 0">
     <div class="panel panel-default" id="panel_person">
-      <div class="panel-heading" style="padding: 6px 15px;">
+      <div class="panel-heading" style="padding: 10px 15px;background-color: white;width: 90%;margin: 0 auto;">
         <h3 class="panel-title" style="color: #333333;"  >人物
-          <span style="padding-left: 225px;font-size: 14px;">数量：</span>
+          <span style="padding-left: 200px;font-size: 14px;">数量：</span>
           <el-dropdown  @command="sort_dropdown_per" style="">
-              <el-button style="padding: 2px 6px;">{{current_sort_per}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+              <el-button style="padding: 2px 0px;border-width: 0px;background-color:white;color: rgb(0, 179, 138);">{{current_sort_per}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -114,11 +147,11 @@
       </div>
     </div>
     <div class="panel panel-default" >
-      <div class="panel-heading" style="padding: 6px 15px;">
+      <div class="panel-heading" style="padding: 10px 15px;background-color: white;width: 90%;margin: 0 auto;">
         <h3 class="panel-title" style="color: #333333;" >地点
-          <span style="padding-left: 225px;font-size: 14px;">数量：</span>
+          <span style="padding-left: 200px;font-size: 14px;">数量：</span>
           <el-dropdown  @command="sort_dropdown_loc" style="">
-              <el-button style="padding: 2px 6px;">{{current_sort_loc}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+              <el-button style="padding: 2px 0px;border-width: 0px;background-color:white;color: rgb(0, 179, 138);">{{current_sort_loc}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -129,11 +162,11 @@
       </div>
     </div>
     <div class="panel panel-default" >
-      <div class="panel-heading" style="padding: 6px 15px;">
+      <div class="panel-heading" style="padding: 10px 15px;background-color: white;width: 90%;margin: 0 auto;">
         <h3 class="panel-title" style="color: #333333;">组织
-          <span style="padding-left: 225px;font-size: 14px;">数量：</span>
+          <span style="padding-left: 200px;font-size: 14px;">数量：</span>
           <el-dropdown  @command="sort_dropdown_org" style="">
-              <el-button style="padding: 2px 6px;">{{current_sort_org}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+              <el-button style="padding: 2px 0px;border-width: 0px;background-color:white;color: rgb(0, 179, 138);">{{current_sort_org}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -144,67 +177,74 @@
       </div>
     </div>
   </div>
-  <div class="panel panel-default" id="mid">
-    <div class="panel-heading">
-          <h3 class="panel-title" style="color: #333333;">事件</h3>
+  <div class="panel panel-default" id="mid" style="margin-left: 6px;"  v-show="this.data.length != 0">
+    <div class="panel-heading" style="background-color: white;">
+          <h3 class="panel-title" style="color: #333333;">议题</h3>
     </div>
   </div>
-  <div class="event_card">
+  <div class="event_card"  v-show="this.data.length != 0">
     <div v-for="(i,$index) in data" :class="{ live:$index == data_Per_index}" style="width:387px;height: 230px;border: 1px solid #ebebeb;position: relative;overflow: hidden;cursor: pointer;float: left;padding:0 ;margin: 10px 20px 10px 5px;border-radius: 8px;" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)" @click="card_click($index)">
-    <img src="../../assets/icon/del.png" style="position: absolute;top: 2px;right: 0px;cursor: pointer;z-index:10;display: none;" @click.stop="del_ev(i)">
-      <div style="width: 100%;height:88px;padding: 0 5px;position: relative;">
-        <div style="width: 65px;height: 76px;margin-left: 10px; " ><img src="../../assets/icon/eventnumber.png" ><span style="width:64px;height: 30px;position:absolute;left: 16px;;top:46px;color: white;font-size: 16px;text-align:center"></span></div>
-        <p style="position: absolute;top: 10px;left:90px;font-size: 16px;"><img src="../../assets/icon/event-title.png" style="padding-right: 6px;color: #333333;"><span><input type="text" :value="i.name" @click.stop="input_write" @blur="blur_input($index)" ref="inpt" style="width: 260px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></p>
-        <p style="position: absolute;top:35px;left:110px;color: rgb(242,196,70);cursor: pointer;" @click.stop="dialog_articleList(i,$index)"><img src="../../assets/icon/event-like.png" style="padding-right: 6px;">相关文章({{i.articleCount==null ? 0 : i.articleCount}})</p>
+    <img src="../../../assets/icon/del.png" style="position: absolute;top: 2px;right: 0px;cursor: pointer;z-index:10;display: none;" @click.stop="del_ev(i)">
+      <div style="width: 100%;height:75px;padding: 0 5px;position: relative;">
+        <!-- <div style="width: 65px;height: 76px;margin-left: 10px; " >
+          <img src="../../../assets/icon/eventnumber.png" >
+          <span style="width:64px;height: 30px;position:absolute;left: 16px;;top:46px;color: white;font-size: 16px;text-align:center"></span>
+        </div> -->
+        <p style="position: absolute;top: 10px;left:10px;font-size: 16px;"><img src="../../../assets/icon/event-title.png" style="padding-right: 6px;color: #333333;"><span> <el-tooltip :disabled="i.titleTooltip" class="item" effect="light" content="双击可编辑议题标题" placement="top" ><input type="button" :value="i.name" @dblclick.stop="input_write($index)" @blur="blur_input($index)" ref="inpt" style="text-align: left;width: 350px;border-width: 0;background-color: white;cursor: auto;outline: none;text-decoration: none;box-shadow: none;font-size: 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></el-tooltip></span></p>
+        <p style="position: absolute;top:35px;left:45px;cursor: pointer;color:#BCBCBC" @click="dialog_articleList(i,$index)"><img src="../../../assets/icon/event-like.png" style="padding-right: 6px;">相关文章 <span style="color:#00b38a">({{i.articleCount==null ? 0 : i.articleCount}})</span></p>
       </div>
       <el-dropdown @command="sort_dropdown_keyword" style="position: absolute;z-index: 9;right: 0px;" >
-              <el-button style="padding: 2px 6px;">{{i.sortArr}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;"></i></el-button> 
+              <el-button style="padding: 2px 6px;border-width: 0px;background-color:#ebebeb;color: rgb(0, 179, 138);">{{i.sortArr}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-for="i in dropdown_sort_num" :command="i+$index" >{{i}}</el-dropdown-item >
               </el-dropdown-menu>
       </el-dropdown>
-      <div @click.stop="echart_click($index)" style="width: 100%;height:140px;padding: 0 5px;" :id="'echart_card'+$index">
+      <div @click.stop="echart_click($index)" style="width: 100%;height:155px;padding: 0 5px;" :id="'echart_card'+$index">
       </div>
     </div>
-      <!-- <div id="all_event_echart" style="width: 1225px;height: 400px;position: relative;float: left;"></div> 
+      <!-- <div id="all_event_echart" style="width: 1225px;height: 400px;position: relative;float: left;"></div>  -->
   </div>
   
-    <el-dialog title="详情图" :visible.sync="dialogEchart" id="dialog_echart" width="1200px">
+    <el-dialog title="详情图" :visible.sync="dialogEchart" id="dialog_echart" width="1200px !important" custom-class="ev_dialogClass">
         <div style="width: 100%;height:400px;padding: 0 5px;border:1px solid #ebebeb" id="echart_max"></div>
    </el-dialog>
-  <el-dialog :title="dialo_title" :visible.sync="dialogCt" width="1000px" id="dialog_ct" >
-    <div style="position:absolute;left: 15px;padding: 10px;border: 1px solid rgb(235, 235, 235);width:970px;height: 520px;">
+  <el-dialog :title="dialo_title" :visible.sync="dialogCt" width="700px" id="dialog_ct" >
+    <div style="position:absolute;left: 35px;padding: 10px;width:620px;height: 520px;">
       <el-table
               :data="ct_data_list"
-              border
+              stripe
               style="width: 100%"
               @selection-change="ct_articlelist_select">
               <el-table-column
+                label="全选"
                 type="selection"
                 width="40">
               </el-table-column>
               <el-table-column
                 label="文章标题"
                 show-overflow-tooltip>
-               <template scope="scope"><a :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
+               <template scope="scope"><a style="color:#333" :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
               </el-table-column>
-        </el-table> 
-        <el-button type="danger" style="position: absolute;left: 10px; bottom: 6px;padding: 5px 10px;" @click="open_del_threeList">删除文章</el-button>
-        <el-button v-show="this.dialo_title!=='相关文章'" type="warning" style="position: absolute;left: 120px; bottom: 6px;padding: 5px 10px;" @click="open_del_per">删除此{{dialo_title.slice(dialo_title.length-4,dialo_title.length-2)}}</el-button>
+        </el-table>
+        <span v-show="this.ct_articlelist_selection.length != 0" style="position: absolute;left: 0px; bottom: 6px;padding: 5px 10px;color:#999999">已选（{{ct_articlelist_selection.length}}）</span> 
+        <el-button v-show="this.ct_articlelist_selection.length != 0"  type="text" style="position: absolute;left: 83px; bottom: 6px;padding: 7px 3px;color:#999999;" @click="open_del_threeList">删除</el-button>
+        <el-button v-show="this.dialo_title!=='相关文章'" type="danger" :style="{position:'absolute',left: ct_articlelist_selection.length ? '115px' : '0px',bottom:'7px',padding:'5px 5px'}" @click="open_del_per">删除此{{this.entityType == 'key' ? '关键词' : dialo_title.slice(dialo_title.length-4,dialo_title.length-2)}}</el-button>
+        <span class="SearchBegin" :style="{position:'absolute',left: ct_articlelist_selection.length ? '185px' : '0px',bottom:'7px',padding:'5px 5px',lineHeight:'14px'}"  @click="downloadArticleFile()" v-show="this.ct_articlelist_selection.length != 0">导出excel</span>
             <el-pagination
             v-if="pageShow"
             class="page"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
             :page-size="page_size"
-            layout="total,  prev, pager, next, jumper"
+            :pager-count="5"
+            layout="total,  prev, pager, next"
             :total="this.ct_data_total"
             v-show="this.ct_data_total!==0">
             </el-pagination>
     </div>
   </el-dialog>
   <!-- 转发文章 -->
-  <el-dialog title="相关文章转发" :visible.sync="dialog_reprint" size="tiny" id="dialog_reprint">
+  <el-dialog title="相关文章转发" :visible.sync="dialog_reprint"  id="dialog_reprint">
       <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;" v-for="(i,$index) in articleList_reprint_list" @mouseover="Mover_articleList_reprint($index)" @mouseout="Mout_articleList_reprint($index)">
        <div class="el-step__head  is-text" style="color: white;">
          <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
@@ -241,13 +281,13 @@
       </span>
    </el-dialog> 
    <!-- 选择对方式 -->
-    <el-dialog title="选择对比方式" :visible.sync="dialogDuibiMethod"  id="dialog_DuibiMethod">
-      <span>相似性计算方式:</span> 
+    <!-- <el-dialog title="选择对比方式" :visible.sync="dialogDuibiMethod" width="400px !important" id="dialog_DuibiMethod" custom-class="ev_dialogClass">
+      <b style="color: #333">相似性计算方式:</b> 
       <el-radio-group v-model="radio_duibi_Method">
         <el-radio v-for="i in duibiMethodList" :label="i.type">{{i.name}}</el-radio>
       </el-radio-group>
-      <div style="margin-top: 20px;">
-        <span>词表样本百分比:</span>
+      <div style="margin-top: 15px;">
+        <b style="color: #333">词表样本百分比:</b>
         <el-radio-group v-model="radio_duibi_Percent">
           <el-radio v-for="i in duibiPercentList" :label="i">{{i}}</el-radio>
         </el-radio-group>
@@ -256,11 +296,11 @@
         <el-button @click="dialogDuibiMethod = false">取 消</el-button>
         <el-button type="primary" @click="addDuibi">确 定</el-button>
       </span>
-   </el-dialog> 
+   </el-dialog>  -->
     <!-- 查看对比项目 -->
-    <el-dialog title="查看对比项目" :visible.sync="dialog_look_duibiProject"  id="dialog_look_duibiProject">
-      <h4><span style="color:#f7ba2a">说明:</span>计算方式为:<span v-show="radio_duibi_Method==1" style="color: #ff4949">jaccard</span><span v-show="radio_duibi_Method==2" style="color: #ff4949">cosine</span><span v-show="radio_duibi_Method==3" style="color: #ff4949">generative</span><span v-show="radio_duibi_Method==4" style="color: #ff4949">kl</span>，值越<span style="color: #ff4949">{{radio_duibi_Method == 4 ? '小' : '大'}}</span>说明越相似。</h4>
-      <table width="100%" border="1" cellspacing="0" cellpadding="0" style="opacity:.8;border-color:#ccc;" id="table">
+    <el-dialog title="查看对比项目" :visible.sync="dialog_look_duibiProject" custom-class="ev_dialogClass" width="1200px !important"  id="dialog_look_duibiProject">
+      <!-- <h4 style="margin-top: 0;margin-bottom: 20px;color:#333">计算方式为:<span v-show="radio_duibi_Method==1" style="color: #ff4949">jaccard</span><span v-show="radio_duibi_Method==2" style="color: #ff4949">cosine</span><span v-show="radio_duibi_Method==3" style="color: #ff4949">generative</span><span v-show="radio_duibi_Method==4" style="color: #ff4949">kl</span>，值越<span style="color: #ff4949">{{radio_duibi_Method == 4 ? '小' : '大'}}</span>说明越相似。</h4> -->
+      <table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-color:#ccc;" id="table">
                   <tr>
                     <th width="100%" :colspan="colspan" style="color:black">
                       {{table_compet_name}}
@@ -269,22 +309,23 @@
                   <tr >
                     <th width="4%" :rowspan="rowspan" ><p style="word-wrap: break-word; letter-spacing: 3px;padding: 2px 0 10px 2px;width: 25px;color: black"><span >{{table_own_name}}</span></p></th>
                     <th width="" ></th>
-                    <th width="" v-for="(i,$index) in table_compet_data"><span data-toggle="tooltip" data-placement="top" :title="'事件标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index,true)" ref="cp_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
+                    <th width="" v-for="(i,$index) in table_compet_data"><span data-toggle="tooltip" data-placement="top" :title="'议题标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index,true)" ref="cp_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
                   </tr>
                   <tr v-for="(i,$index) in tableData">
-                      <th width="" ><span data-toggle="tooltip" data-placement="top" :title="'事件标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index)" ref="_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
-                      <td v-for="(j,$index) in i.data"><el-checkbox v-model="j.checked" :disabled="j.disabled" @change="handleCheckedCitiesChange($index,i,j,tableData)"></el-checkbox>&nbsp;  <span class="duibi_num" :style="{color: j.max ? '#f34c81' : ''}" @click="look_venn($index,i)">{{j.num}}</span></td>
+                      <th width="" ><span data-toggle="tooltip" data-placement="top" :title="'议题标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index)" ref="_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
+                      <td v-for="(j,$index) in i.data"><el-checkbox v-model="j.checked" :disabled="j.disabled1 || j.disabled2" @change="handleCheckedCitiesChange($index,i,j,tableData)"></el-checkbox>&nbsp;  <span class="duibi_num" :style="{color: j.max ? '#f34c81' : ''}" @click="look_venn($index,i)">{{j.num}}</span></td>
                   </tr>            
       </table>
+      <div style="width: 100%;height: 350px;margin-top: 15px;" v-show="this.table_select.length != 0" id="DuiBi"></div>
       <span slot="footer" class="dialog-footer">
-        <el-button v-show="this.table_select.length!=0" :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 10px 18px;font-size: 14px;background-color: #00b38a;border-color:#00b38a;position:absolute;right: 110px"  @click="save">导 出</el-button>
-        <el-button @click="dialog_look_duibiProject = false" style="margin-right: 0px">取 消</el-button>
+        <el-button v-show="this.table_select.length!=0" :disabled="this.$store.state.btn_daochu" type="success" size="large" class="search_start" style="padding: 6px 18px;font-size: 14px;background-color: #00b38a;border-color:#00b38a;color: white;"  @click="save">导 出</el-button>
+        <!-- <el-button @click="dialog_look_duibiProject = false" style="margin-right: 0px;padding: 6px 18px;">取 消</el-button> -->
       </span>
    </el-dialog> 
    <!-- venn图 -->
-   <el-dialog title="相关信息" :visible.sync="dialogSimilar" width="1200px" id="dialog_similar">
-    <el-button type="info" style="padding: 6px 6px;font-size: 14px;">人物：</el-button>
-       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 400px;left: 10px;">
+   <el-dialog title="相关信息" :visible.sync="dialogSimilar" width="1200px !important" id="dialog_similar" custom-class="ev_dialogClass">
+       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 420px;left: 10px;">
+            <p style="text-align: center;color:#00b38a">相关人物</p>
             <el-table
              :data="similarData_per_list"
              border
@@ -311,14 +352,14 @@
            @current-change="similarData_per_handleCurrentChange"
            :current-page="similarData_per_currentPage"
            :page-size="similarData_per_pageSize"
-           layout="total,  prev, pager, next, jumper"
+           layout="total,  prev, pager, next"
            :total="this.similarData_per.length"
            v-show="this.similarData_per.length!==0">
        </el-pagination>
      <!-- 分页 end -->
      </div>
-     <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;left: 306px;">地点：</el-button>
-       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 400px;left: 306px;">
+       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 420px;left: 306px;">
+          <p style="text-align: center;color:#00b38a">相关地点</p>
             <el-table
              :data="similarData_loc_list"
              border
@@ -345,14 +386,14 @@
            @current-change="similarData_loc_handleCurrentChange"
            :current-page="similarData_loc_currentPage"
            :page-size="similarData_per_pageSize"
-           layout="total,  prev, pager, next, jumper"
+           layout="total,  prev, pager, next"
            :total="this.similarData_loc.length"
            v-show="this.similarData_loc.length!==0">
        </el-pagination>
      <!-- 分页 end -->
      </div>
-     <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;left: 602px;">组织：</el-button>
-       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 400px;left: 602px;">
+       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 420px;left: 602px;">
+          <p style="text-align: center;color:#00b38a">相关组织</p>
             <el-table
              :data="similarData_org_list"
              border
@@ -379,14 +420,14 @@
            @current-change="similarData_org_handleCurrentChange"
            :current-page="similarData_org_currentPage"
            :page-size="similarData_per_pageSize"
-           layout="total,  prev, pager, next, jumper"
+           layout="total,  prev, pager, next"
            :total="this.similarData_org.length"
            v-show="this.similarData_org.length!==0">
        </el-pagination>
      <!-- 分页 end -->
      </div>
-     <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;left: 897px;">关键词：</el-button>
-       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 400px;left: 897px;">
+       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:290px;height: 420px;left: 897px;">
+          <p style="text-align: center;color:#00b38a">相关关键词</p>
             <el-table
              :data="similarData_key_list"
              border
@@ -413,14 +454,14 @@
            @current-change="similarData_key_handleCurrentChange"
            :current-page="similarData_key_currentPage"
            :page-size="similarData_per_pageSize"
-           layout="total,  prev, pager, next, jumper"
+           layout="total,  prev, pager, next"
            :total="this.similarData_key.length"
            v-show="this.similarData_key.length!==0">
        </el-pagination>
      <!-- 分页 end -->
      </div>
-     <el-button type="info" style="padding: 6px 6px;font-size: 14px;position:absolute;top: 445px;left: 10px;">相关文章：</el-button>
-       <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:49%;height: 320px;top: 475px">
+       <div class="similarArt" style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:49%;height: 320px;top: 475px">
+        <p style="text-align: center;color:#00b38a">自身相关文章</p>
             <el-table
              :data="similarData_arc_list"
              border
@@ -428,7 +469,7 @@
              <el-table-column
                label="自身文章标题"
                show-overflow-tooltip>
-               <template scope="scope"><a :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
+               <template scope="scope"><a style="color:#333" :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
              </el-table-column>
              <!-- <el-table-column
                label="竞品文章标题"
@@ -448,13 +489,14 @@
            @current-change="similarData_arc_handleCurrentChange"
            :current-page="similarData_arc_currentPage"
            :page-size="similarData_arc_pageSize"
-           layout="total,  prev, pager, next, jumper"
+           layout="total,  prev, pager, next"
            :total="this.similarData_arc_total"
            v-show="this.similarData_arc_total!==0">
        </el-pagination>
      <!-- 分页 end -->
      </div> 
-     <div style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:49%;height: 320px;top: 475px;left: 50%;">
+     <div class="similarArt" style="position:absolute;padding: 10px;border: 1px solid rgb(235, 235, 235);width:49%;height: 320px;top: 475px;left: 50%;">
+      <p style="text-align: center;color:#00b38a">竞品相关文章</p>
             <el-table
              :data="similarData_arc_list_cpa"
              border
@@ -462,7 +504,7 @@
              <el-table-column
                label="竞品文章标题"
                show-overflow-tooltip>
-               <template scope="scope"><a :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
+               <template scope="scope"><a style="color:#333" :href="scope.row.url" target="_blank">{{ scope.row.title}}</a></template>
              </el-table-column>
            </el-table>    
        <!-- 分页 strart -->
@@ -472,7 +514,7 @@
            @current-change="similarData_arc_handleCurrentChange_cpa"
            :current-page="similarData_arc_currentPage_cpa"
            :page-size="similarData_arc_pageSize"
-           layout="total,  prev, pager, next, jumper"
+           layout="total,  prev, pager, next"
            :total="this.similarData_arc_total_cpa"
            v-show="this.similarData_arc_total_cpa!==0">
        </el-pagination>
@@ -481,12 +523,13 @@
    </el-dialog>
 </div>  
 </div>
+</div>
 </template>
 <script >
 import echart from 'echarts'
-import ecStat from 'echarts-stat'
-import _echart from '../../assets/js/_echart.js'
-import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage }  from '../../assets/js/map.js'
+/*import ecStat from 'echarts-stat'*/
+import _echart from '../../../assets/js/_echart.js'
+import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage,startLoading,endLoading,s2ab,downloadExl}  from '../../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -516,8 +559,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           dropdown_sort:['2','3','4','5','6','7','8','9','10'],
           sj:[1,2,3,4,5,6,7,8,9,10],
           time: GetSessionStorage('time0')!=null ? [new Date(GetSessionStorage('time0')),new Date(GetSessionStorage('time1'))] : [new Date(new Date().getTime()-604800000), new Date()],
-          fimg:require("../../assets/icon/xiangguanwenzhang.png"),
-          imgf:require("../../assets/icon/xiangguanwenzhang1.png"),
+          fimg:require("../../../assets/icon/xiangguanwenzhang.png"),
+          imgf:require("../../../assets/icon/xiangguanwenzhang1.png"),
           ct_size:'',
           ct_name:'',
           ct_url:'',
@@ -537,6 +580,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           domain_s:[],
           domain_m:[],
           domain:[],
+          domin_popover:false,//媒体分类显示
+          qiye_popover:false,//企业分类显示
           domain_arr:[],
           custom_s:[],
           custom_m:[],
@@ -556,19 +601,18 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           current_jushuNum:GetSessionStorage('current_jushuNum') || 3,
           current_cixing:GetSessionStorage('current_cixing') || '所有词性',
           loading_start:false,
-          publicLoading:false,
           visible_per:false,
           dialo_title:'',
           ct_articlelist_selection:[],
           duibi_show:GetSessionStorage('duibi_show')!=null ? GetSessionStorage('duibi_show') : false,
-          duibiData:[],
+          duibiData:[{'name':'','id':'','topicList':''}],
           del_duibi_flag:false,
           del_duibi_id:'',
           duibiList:[],
           radio_duibi:'',
-          current_project_dom_name:'',
+          current_project_dom_name:'',//当前项目名称
           tableData:[],
-          radio_duibi_Method:1,
+          radio_duibi_Method:2,
           duibiMethodList:[{"type":1,"name":"jaccard "},{"type":2,"name":"cosine"},{"type":3,"name":"generative"},{"type":4,"name":"kl"}],
           radio_duibi_Percent:'0.2',
           duibiPercentList:['0.05','0.1','0.2','0.5'],
@@ -609,12 +653,24 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           similarData_topicId:'',//相似度表格里面自身文章id 获取文章列表需要的参数
           similarData_cpTopicId:'',//相似度表格里面竞品文章id 获取文章列表需要的参数
           pageShow:true,
-          programs:0//进度条数字
+          programs:0,//进度条数字
+          popover1_show:false,//添加竞品第一层popover显示
+          currentDuibiData:'',
+          sort_dropdown_visible_eventNum:true,//true为显示false为隐藏
+          checkedDuibi:false,//对比项目列表的多选框
+          companyData: {//企业数据
+            companyA: '',
+            companyB: ''
+          },
+          ctbCompanyNameList:[],//企业数据excel格式
+          outFile: '',  // 导出excle文件
         }
     },
     mounted : function () {
+        GetLocalStorage();
         let _this = this,project_id = GetLocalStorage('current_projectData_A').project_id;
        /*jq样式*/
+       $('.clientContent').css('height',$(window).height()-280+'px');
        $(window).scroll(function(){
         if($(this).scrollTop()>500){
            $('#panel').css({'position':'fixed','top':'0px','z-index':'999','background-color':'white'});
@@ -638,6 +694,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
        });
        this.domain_arr.length !=0 ? $('.domain .domain_all').removeClass('warning') : '';
        this.custom_arr.length !=0 ? $('.custom .custom_all').removeClass('warning') : '';
+       this.outFile = document.getElementById('downlink');//导出excel所需要的数据元素
        $('#type  button').click(function(){ $(this).addClass('warning').siblings().removeClass('warning');});
 
        $('#dialog_list_es .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialo_es = false;});
@@ -648,14 +705,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                
        $('#dialog_look_duibiProject .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialog_look_duibiProject = false;});
             
-       $('#dialog_similar .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialogSimilar=false;});       
-       
-       $(function(){
-                $('.el-tabs__item').click(function(){
-                  $(this).addClass('is-active');
-                  $(this).parent().find('.el-tabs__item').not($(this)).removeClass('is-active');
-                });
-         });
+       $('#dialog_similar .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialogSimilar=false;}); 
+
        $('.el-dialog__headerbtn').not('#dialog_list_es .el-dialog__headerbtn').click(function(){
         _this.dialoglist = false;
         _this.dialogEchart = false;
@@ -665,6 +716,13 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         _this.dialog_reprint = false;
         _this.dialogCt = true;
        });
+        startLoading();
+        publicSearch('rsa/wxaccount/domain',"GET",{"method":"get"}).then((data) =>{//ajax
+          endLoading();
+          if(successBack(data,this)){
+            this.domain = data.data
+          }
+        });    
         
          //获取行业属性
         /*$.ajax({
@@ -696,34 +754,35 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             };
           }
         });*/
-        //this._start(true,true);    
+        this._start(true,true);    
     },
     methods:{
-      //切换项目查看事件
-      compet_card(oid,ev){
+      //切换项目查看议题
+      compet_card(oid,event){
+        
         let _this=this;
-        //console.log(ev)
-            for(let t=0;t<$('.event .el-tabs__item').length;t++){
+            /*for(let t=0;t<$('.event .el-tabs__item').length;t++){
               $('.event .el-tabs__item')[t].className="el-tabs__item"
             }
-            ev.target.className="el-tabs__item is-active"
-            this.current_project_dom_name= ev.target.innerHTML;
-        for(let i=0;i<this.$store.state.ev_duibiData.length;i++){
-          if(oid==GetLocalStorage('current_projectData_A').project_id){//如果是自身
-              this.del_duibi_flag=false;
+            ev.target.className="el-tabs__item is-active"*/
+          this.current_project_dom_name= event.target.innerHTML;
+        for(let i of this.$store.state.ev_duibiData){
+          if(oid == GetLocalStorage('current_projectData_A').project_id){//如果是自身
+              this.del_duibi_flag = false;
               $(document).ready(function(){
                       _this.dom_write(_this.$store.state.data);
                       _echart.build_event_qipao(_this);
                       //_echart.build_event_allEvent(_this);
                    })
           }else{//点击的是竞品
-            if(this.$store.state.ev_duibiData[i].id==oid){
-              this.del_duibi_flag=true;
-              this.del_duibi_id=oid;
-              console.log(this.$store.state.ev_duibiData[i])
-              if(this.$store.state.ev_duibiData[i].data != undefined){//vuex里面有这个事件id的数据
+            if(i.id == oid){
+
+              this.del_duibi_flag = true;
+              this.del_duibi_id = oid;
+              //console.log(this.$store.state.ev_duibiData[i])
+              if(i.data != undefined){//vuex里面有这个议题id的数据
                 $(function(){
-                  _this.dom_write(_this.$store.state.ev_duibiData[i].data);
+                  _this.dom_write(i.data);
                   _echart.build_event_qipao(_this);
                   //_echart.build_event_allEvent(_this);
                 });
@@ -735,10 +794,11 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
       },
       addDuibi(){//生成对比表格
+        this.duibiData = this.$store.state.ev_duibiData;
         this.duibiData[0].topicList = this.$store.state.data.topicList;//自身
         console.log(this.duibiData)
         this.loading_start=true;
-        this.dialogDuibiMethod=false;
+        //this.dialogDuibiMethod=false;
         this.tableData=[];
         this.table_select=[];
         this.dialog_look_duibiProject=true;
@@ -775,7 +835,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                       maxData.push(j.similarity);
                       let _obj={};
                       _obj.checked=false;
-                      _obj.disabled=false;
+                      _obj.disabled1=false;
+                      _obj.disabled2=false;
                       _obj.num=j.similarity;
                       obj.data.push(_obj)
                     } 
@@ -798,61 +859,69 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         });
          console.log(this.tableData)
       },
-     _start (compet_flag,loading_flag,oid) { //compet_flag竞品事件查询标识，如果true则是自身点击查询;loading_flag--true则显示
+     _start (compet_flag,loading_flag,oid) { //compet_flag竞品议题查询标识，如果true则是自身点击查询;loading_flag--true则显示
       let _this = this;
       let project_id;
       this.$store.state.btn_daochu = false; 
       if(loading_flag){//点击查询
         console.log('点击查询')
-        this.publicLoading = true;
+        startLoading();
       };
       if(compet_flag){//点击自身查询
-        this.$store.state.ev_duibiData = '';
-        this.table_select = [];
-        this.current_project_dom_name = GetLocalStorage('current_projectData_A').project_name;
-        project_id = GetLocalStorage('current_projectData_A').project_id;
+        project_id = GetLocalStorage('current_projectData_A') == null ? this.$router.push('/login') : GetLocalStorage('current_projectData_A').project_id;
         this.duibi_show = false;
       }else{//点击竞品查询
-        project_id = oid;
+        this.del_duibi_id = project_id = oid;
+        console.log('点击的是竞品')
       };
-      $('.event_card').css('display','none')
-      //this.dom_search();//筛选以及保存session
-      this.personSet = [];
-      this.locationSet = [];
-      this.orgSet = [];
-      this.data = [];   
+      
+
       let Dta = {
         "proId": project_id, //项目id
         "articleType": _this.articleType, //文章类型
         "startTime": _this.time[0].getTime(),//时间戳（毫秒级）
         "endTime": _this.time[1].getTime(),
         "topicNum": _this.current_sort,
-        "perNum":_this.current_sort_per,
-        "locNum":_this.current_sort_loc,
-        "orgNum":_this.current_sort_org,
-        "keywordNum": "10",
-        "isTiming":1
+        "perNum":20,
+        "locNum":20,
+        "orgNum":20,
+        "keywordNum": "20",
+        "domainList":_this.domain_arr,
+        "isTiming":1,
+        "ctbCompanyNameList":_this.ctbCompanyNameList//企业数据
       }; 
       let params = {"method":"GET","criteriaStr":JSON.stringify(Dta)}
       publicSearch('rsa/project/'+project_id+'/topic',"GET",params).then((data) =>{//ajax
-        this.publicLoading = false;
+        endLoading();
         if(successBack(data,this)){
           let color;
           if(data.data.time < 60){
-            color = '#67C23A';
+            color = '#03A9F4';
           }else if(data.data.time >= 60 && data.data.time < 120){
-            color = '#E6A23C';
+            color = '#EF9A27';
           }else{
-            color = '#F56C6C';
+            color = '#FF1A1A';
           };
           let time = data.data.time >= 60 ? parseInt(data.data.time/60) + '分钟' + (parseInt(data.data.time))%60 + '秒' : parseInt(data.data.time)+'秒';
-          console.log('事件预计耗时：'+time);
-          this.$confirm('共查询到<i style="color:#409EFF">'+data.data.total+'</i>篇文章，生成议题预计耗时<span style="color:'+color+'">' + time +'</span>'+'，是否继续？', '提示', {
+          console.log('议题预计耗时：'+time);
+          this.$confirm('共查询到<i style="color:#00b38a">'+data.data.total+'</i>篇文章，生成议题预计耗时<span style="color:'+color+'">' + time +'</span>'+'，是否继续？', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               dangerouslyUseHTMLString: true,
+              customClass:'ev_confirmClass',
               type: 'warning'
             }).then(() => {//搜索
+              _this.$store.state.ev_duibiData = '';
+              _this.table_select = [];
+              $('.event_card').css('display','none')
+              _this.dom_search();//筛选以及保存session
+              _this.personSet = [];
+              echart.dispose($('#personSet')[0]);
+              _this.locationSet = [];
+              echart.dispose($('#locationSet')[0]);
+              _this.orgSet = [];
+              echart.dispose($('#orgSet')[0]);
+               _this.data = [];
               _this.loading_start = true;
               _this.programs = 0;
               let timer = setInterval(function(){
@@ -865,8 +934,9 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
               publicSearch('rsa/project/'+project_id+'/topic',"GET",params).then((data) =>{
                 clearInterval(timer);
-                if(successBack(data),this){
-                    console.log('事件实际耗时：'+data.data.realTime);
+                _this.loading_start = false;
+                if(successBack(data,this)){
+                    console.log('议题实际耗时：'+data.data.realTime);
                     console.log(data)
                   if(loading_flag){//点击查询
                     console.log('点击查询')
@@ -877,8 +947,17 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                 //全局数据
                   if(compet_flag){//点击自身查询
                     console.log('点击查询')
+                    _this.current_project_dom_name = GetLocalStorage('current_projectData_A').project_name;
+                    _this.$store.state.ev_duibiData = _this.duibiData = [{'name':'','id':'','topicList':''}];
+                    _this.checkedDuibi = false;
+                    _this.del_duibi_flag = false;
                     _this.$store.state.data = data.data; 
                   }else{//点击竞品查询
+                     _this.del_duibi_flag = true;
+                     _this.popover1_show = true;
+                     _this.duibiData[1] = _this.currentDuibiData;
+                     _this.current_project_dom_name = _this.currentDuibiData.name;
+                    _this.$store.state.ev_duibiData = _this.duibiData;
                     _this.$store.state.duibiButton = true;
                     for(let i = 0;i < _this.$store.state.ev_duibiData.length;i++){ //竞品对比数据添加到vuex
                         if(_this.$store.state.ev_duibiData[i].id == project_id){
@@ -891,6 +970,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                       _echart.build_event_qipao(_this);
                       //_echart.build_event_allEvent(_this);
                   });
+
                 };
               })  
             }).catch(() => {});
@@ -946,6 +1026,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             _this.$confirm('是否删除 '+params.data[3].slice(0,params.data[3].indexOf('/'))+'?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
+                customClass:'ev_confirmClass',
                 type: 'warning'
               }).then(() => {
                  _this.del_keywordList(a,params.data[3],_this.qipao_idarr).then((data) =>{
@@ -982,21 +1063,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           "entityNameList[]":[d],
         };
         return publicSearch('rsa/project/'+project_id+'/topic/entity',"POST",params);
-         /*$.ajax({
-          url:"rsa/project/"+project_id+"/event/entity ",
-          type:"POST",
-          traditional:true,
-          data:{
-            "method":"DELETE", //http方法
-            "proId":project_id, //项目id
-            "eventId":_this.data[c].id, //组织id
-            "entityType":'key',
-            "entityNameArr":[d],
-            },
-            success:function(data){
-                console.log(data)
-            }
-         }) */  
       },
       Mover_ct (i) {
           this.$refs.ct[i].style.boxShadow='2px 2px 2px rgba(72,87,106,.8)';
@@ -1011,7 +1077,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           this.$refs.ct_org[i].style.transition='all 0.5s';
       },
       click_ct_list (i) { window.open(i.url); },
-      Mover (a) { this.$refs.list[a].style.boxShadow = '9px 9px 6px rgba(220,220,220,.8)'; },
+      Mover (a) { this.$refs.list[a].style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)'; },
       Mout (a) { this.$refs.list[a].style.boxShadow = ''; },
       Mover_articleList (i) { this.$refs.articlelist[i].style.color = "#00a17c"; },
       Mover_articleList_reprint (i) { this.$refs.articlelist_reprint[i].style.color = "#00a17c";  },
@@ -1024,7 +1090,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       Mout_ct_list (i) { this.$refs.ct_list[i].style.color = "#999"; }, 
       dropdown_jushu (command) { this.current_jushuNum = command; },
       dropdown_cixing (command) { this.current_cixing = command; },
-      sort_dropdown (command) { this.current_sort = command; }, 
+      sort_dropdown (command) { this.current_sort = command;}, 
       sort_dropdown_keyword(command){
         let indx = command.slice(command.length-1,command.length);
         let num = command.slice(0,command.length-1);
@@ -1084,38 +1150,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                 this.handleCurrentChange(this.currentPage);
               };
             };
-          });
-          /*$.ajax({
-            url:"rsa/project/"+project_id+"/event/article ",
-            type:"POST",
-            traditional:true,
-            data:{
-              "method":"DELETE", //http方法
-              "proId":project_id, //项目id
-              "eventId":_this.data[_this.data_articleList_index].id, //组织id
-              "articleType":_this.articleType,
-              "articleIdArr":arr,
-              },
-            success:function(data){
-              console.log(data)
-              _this.ct_data=_this.ct_data.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
-              if(_this.del_duibi_flag){//自身与竞品的数据分支
-                for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                  if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
-                      _this.$store.state.ev_duibiData[i].data[_this.data_articleList_index].commonResult.eventArticleList=_this.ct_data; 
-                    }
-                  }
-              }else{
-                _this.data[_this.data_articleList_index].commonResult.eventArticleList=_this.ct_data;             
-              };
-              let newdata=[],
-              pageNum=_this.currentPage_list-1;
-              for(let i=_this.page_size_list*pageNum;i<_this.page_size_list*pageNum+_this.page_size_list;i++ ){
-                _this.ct_data[i] !== undefined ? newdata.push(_this.ct_data[i]) : '' 
-              }
-              _this.ct_data_list=newdata;
-            }
-        });*/  
+          });  
       },
       del_threeList(arr){
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
@@ -1132,6 +1167,11 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             if(successBack(data,this)){
               this.ct_data_list = this.ct_data_list.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
               this.ct_data_total = this.ct_data_total - arr.length;
+              for(let i of this.data[this.data_Per_index][this.entityType == 'key' ? this.entityType+'wordList' : this.entityType+'List']){
+                if(i.mention == this.entityName){
+                  i.articleCount = this.ct_data_total;
+                };
+              };
               //初始
               if(this.ct_data_total > 0){
                 this.currentPage * this.page_size > this.ct_data_total ? this.currentPage = this.currentPage - 1 : '';
@@ -1142,34 +1182,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               };
             };
           });  
-        /*$.ajax({
-          url:"rsa/project/"+project_id+"/event/entity/article ",
-          type:"POST",
-          traditional:true,
-          data:{
-            "method":"DELETE", //http方法
-            "proId":project_id, //项目id
-            "eventId":_this.data[_this.data_Per_index].id, //组织id
-            "entityType":_this.list_type.slice(0,3),
-            "entityName": _this.data[_this.data_Per_index].commonResult[_this.list_type][_this.data_second_index].mention,
-            "articleType":_this.articleType,
-            "articleIdArr":arr,
-            },
-          success:function(data){
-            console.log(data);
-            _this.ct_data=_this.ct_data.filter(item => { return arr.indexOf(item.id) === -1; });//前台删除
-            if(_this.del_duibi_flag){//自身与竞品的数据分支
-                for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                  if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
-                      _this.$store.state.ev_duibiData[i].data[_this.data_Per_index].commonResult[_this.list_type][_this.data_second_index].eventArticleList=_this.ct_data;
-                    }
-                  }
-              }else{
-                _this.data[_this.data_Per_index].commonResult[_this.list_type][_this.data_second_index].eventArticleList=_this.ct_data;
-              }
-            _this.format_tabledata_('currentPage','page_size','ct_data','ct_data_list');
-          }
-        });*/
       },
       del_per(t,a,b,c,e){
         let _this=this;
@@ -1201,38 +1213,13 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               _echart.build_event_scatter(f,b,this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2),e,this)
           };
         });  
-        /*$.ajax({
-          url:"rsa/project/"+project_id+"/event/entity ",
-          type:"POST",
-          traditional:true,
-          data:{
-            "method":"DELETE", //http方法
-            "proId":project_id, //项目id
-            "eventId":_this.data[_this.data_Per_index].id, //组织id
-            "entityType":c.slice(0,3),
-            "entityNameArr":_this.mentionArr,
-            },
-            success:function(data){
-              _this[b]=_this[b].filter(item => { return _this.mentionArr.indexOf(item.mention) === -1; });//前台删除
-              if(_this.del_duibi_flag){//自身与竞品的数据分支
-                for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                  if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
-                      _this.$store.state.ev_duibiData[i].data[_this.data_Per_index].commonResult[c]=_this.$store.state.ev_duibiData[i].data[_this.data_Per_index].commonResult[c].filter(item => { return _this.mentionArr.indexOf(item.mention) === -1; }); 
-                    }
-                  }
-              }else{
-                _this.data[_this.data_Per_index].commonResult[c]=_this.data[_this.data_Per_index].commonResult[c].filter(item => { return _this.mentionArr.indexOf(item.mention) === -1; });             
-              };
-              f = _this.data[_this.data_Per_index].commonResult[c].length < _this[e] ? true : false ;
-              _echart.build_event_scatter(f,b,_this.dialo_title.slice(_this.dialo_title.length-4,_this.dialo_title.length-2),e,_this)
-              //console.log( _this.data[_this.data_Per_index].commonResult[c])
-            }
-        });*/
       },
       blur_input (i){
         console.log(this.data[i]);
         console.log(this.$store.state.ev_duibiData);
         console.log(this.$store.state.data);
+        this.$refs.inpt[i].type = 'button';
+        this.data[i].titleTooltip = false;
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         if(this.data[i].name!=this.$refs.inpt[i].value){
         this.loading_start = true;
@@ -1244,6 +1231,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         publicSearch('rsa/project/'+project_id+'/topic/update/title','POST',params).then((data) =>{
             this.loading_start = false;
             if(successBack(data,this)){
+              
               if(this.del_duibi_flag){//自身与竞品的数据分支
                 for(let j of this.$store.state.ev_duibiData){
                   if(j.id == this.del_duibi_id){
@@ -1286,7 +1274,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
       },
       blur_table(dta,i,flag){
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
+        console.log(dta)
+        let project_id = dta.proId == undefined ? dta.project_id : dta.proId;
         let inp = flag ? 'cp_inpt' : '_inpt';
         this.loading_start = true;
         let params = {
@@ -1312,38 +1301,19 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               
             };
         });    
-        /*$.ajax({
-              url:"rsa/project/"+project_id+"/event/label",
-              type:"POST",
-              data:{
-                "method":"PUT", //http方法
-                "proId":project_id, //项目id
-                "eventId":flag ? dta.id : dta.eventId, //组织id
-                "label":_this.$refs[inp][i].value
-                },
-              success:function(data){
-                console.log(data)
-                if(flag){//自身与竞品的数据分支
-                  for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                    if(_this.$store.state.ev_duibiData[h].id==dta.proId){
-                        _this.$store.state.ev_duibiData[h].data[i].label=_this.$refs[inp][i].value;
-                      }
-                    }
-                }else{
-                   _this.$store.state.data[i].label=_this.$refs[inp][i].value;
-                };
-              }
-          });*/
         console.log(dta)
       },
       
       handleCurrentChange (val,entityType,entityName) {
         this.currentPage = val;
-        let url = this.entityType ? 'rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/'+this.data[this.data_Per_index].id+'/entity/article' : 'rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/topic/'+this.data[this.data_articleList_index].id+'/article';
+        //console.log(this.data_Per_index)
+        let proID = '';
+        this.del_duibi_flag ? proID = this.del_duibi_id : proID = GetLocalStorage('current_projectData_A').project_id;
+        let url = this.entityType ? 'rsa/project/'+proID+'/topic/'+this.data[this.data_Per_index].id+'/entity/article' : 'rsa/project/'+proID+'/topic/'+this.data[this.data_articleList_index].id+'/article';
         this.loading_start = true;
         let params = {
             "method": 'GET',
-            "topicId": entityType ? this.data[this.data_Per_index].id : this.data[this.data_articleList_index].id, //议题id
+            "topicId": this.entityType ? this.data[this.data_Per_index].id : this.data[this.data_articleList_index].id, //议题id
             "entityType": this.dialo_title == '相关文章' ? '' : this.entityType,
             "entityName": this.dialo_title == '相关文章' ? '' : this.entityName,
             "articleType": this.articleType, //文章类型
@@ -1404,6 +1374,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       },
       date_change () { date_change(this); },//修改时间验证
       del_ev(i){
+        console.log(this.del_duibi_id)
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         let params = {
           "method": 'POST',
@@ -1449,7 +1420,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               data:{
                 "method":"DELETE", //http方法
                 "proId":project_id, //项目id
-                "eventIdArr":[i.id] //事件id数组
+                "eventIdArr":[i.id] //议题id数组
           },
           success:function(data){
             console.log(data)
@@ -1511,30 +1482,48 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         };  
       },
       open_del_per(){
-        console.log('open_del_per')
-        let a,b,c,d,listData,e;
-        if(this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2)==='人物'){
-          listData=this.data[this.data_Per_index].perList;
-          c='personSet';d='perList';e='current_sort_per';
-        }else if(this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2)==='组织'){
-          listData=this.data[this.data_Per_index].orgList;
-          c='orgSet';d='orgList';e='current_sort_org';
+        if(this.entityType == 'key'){
+          this.del_keywordList(this.data_Per_index,this.entityName,[this.entityName]).then((data) =>{
+                    if(successBack(data,this)){
+                      this.data[this.data_Per_index].keywordList=this.data[this.data_Per_index].keywordList.filter(item => { return [this.entityName].indexOf(item.mention) === -1; });//前台删除
+                      if(this.del_duibi_flag){//自身与竞品的数据分支
+                        for(let h=0;h<this.$store.state.ev_duibiData.length;h++){
+                          if(this.$store.state.ev_duibiData[h].id==this.del_duibi_id){
+                              this.$store.state.ev_duibiData[h].data.topicList[this.data_Per_index].keywordList=this.data[this.data_Per_index].keywordList;
+                            }
+                          }
+                      };
+                      _echart.build_event_qipao(this);
+                      //this.echart_click(this.data_Per_index)
+                      this.dialogCt=false;
+                    };
+                 });
         }else{
-          listData=this.data[this.data_Per_index].locList;
-          c='locationSet';d='locList';e='current_sort_loc';
-        };
-        for(let i=0;i<listData.length;i++){
-          if(listData[i].mention.slice(0,listData[i].mention.indexOf('/'))===this.dialo_title.slice(0,this.dialo_title.length-5)){
-            a=listData[i];
-            this.del_per(a,listData,c,d,e);
-            this.dialogCt=false;
-           }
-        };   
+            let a,b,c,d,listData,e;
+            if(this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2)==='人物'){
+              listData=this.data[this.data_Per_index].perList;
+              c='personSet';d='perList';e='current_sort_per';
+            }else if(this.dialo_title.slice(this.dialo_title.length-4,this.dialo_title.length-2)==='组织'){
+              listData=this.data[this.data_Per_index].orgList;
+              c='orgSet';d='orgList';e='current_sort_org';
+            }else{
+              listData=this.data[this.data_Per_index].locList;
+              c='locationSet';d='locList';e='current_sort_loc';
+            };
+            for(let i=0;i<listData.length;i++){
+              if(listData[i].mention.slice(0,listData[i].mention.indexOf('/'))===this.dialo_title.slice(0,this.dialo_title.length-5)){
+                a=listData[i];
+                this.del_per(a,listData,c,d,e);
+                this.dialogCt=false;
+               }
+            };   
+        }
         //console.log(this.data[this.data_Per_index].commonResult[d])
+        
       },
       ct_articlelist_select(a){ this.ct_articlelist_selection = a ;},
       add_duibi(){
-        this.dialogDuibiList=true;
+        //this.dialogDuibiList=true;
         let data = {
           "method": 'get',
           "project" : {
@@ -1547,47 +1536,24 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           }
         }); 
       },
-      add_duibiName(){
-        let _this=this;
-        console.log(this.radio_duibi)
-        console.log(this.duibiList)
-        this.dialogDuibiList=false;
-        if(this.radio_duibi!=''){
-          this.$store.state.duibiButton=false;
-          this.duibi_show=true;
-          SetSessionStorage('duibi_show',true);
-          this.duibiData=[];
-          let obj={};
-          obj.name=GetLocalStorage('current_projectData_A').project_name;
-          obj.id=GetLocalStorage('current_projectData_A').project_id;
-          obj.topicList = this.$store.state.data.topicList;
-          this.duibiData[0]=obj;
-          let current_project_name;
-          for(let i=0;i<this.duibiList.length;i++){
-            if(this.duibiList[i].id==this.radio_duibi){
-              current_project_name=this.duibiList[i].name;
-              this.duibiData.push(this.duibiList[i]);
-              this.$store.state.ev_duibiData=this.duibiData;
-            }
-          };
-          console.log(this.duibiData)
-          //点完确定的操作
-          $(function(){
-            if($('.event .el-tabs__item')[1].className==='el-tabs__item is-active'){
-              console.log(_this.current_project_dom_name)
-              console.log(current_project_name)
-              if(_this.current_project_dom_name!=current_project_name){
-                $('.event .el-tabs__item')[1].className='el-tabs__item';
-                $('.event .el-tabs__item')[0].className='el-tabs__item is-active';
-                _this.dialogDuibiList = false;
-                _this.del_duibi_flag=false;
-                _this.dom_write(_this.$store.state.data);
-                 _echart.build_event_qipao(_this);
-                 //_echart.build_event_allEvent(_this);   
-              }
-            }
-          });
-        };      
+      add_duibiName(Dta){
+        console.log(Dta)
+        //this.duibiData = [];
+        //let obj = {};
+        console.log(this.duibiData)
+        this.duibiData[0].name = GetLocalStorage('current_projectData_A').project_name;
+        this.duibiData[0].id = GetLocalStorage('current_projectData_A').project_id;
+        this.duibiData[0].topicList = this.$store.state.data.topicList;
+        //this.duibiData[0] = obj;
+        if(Dta){
+          this.currentDuibiData = Dta;
+          this._start(false,true,Dta.id);
+        };
+        if(this.del_duibi_flag){
+          this.duibiData = this.$store.state.ev_duibiData;
+        }
+        
+        console.log(this.duibiData)
       },
       look_venn(index,dta){
         console.log(dta)
@@ -1693,7 +1659,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           tipsMessage('请先生成自身项目议题','warning',this);
           return
         };
-        if(this.$store.state.ev_duibiData.length > 1 && this.$store.state.ev_duibiData[1].data != null){//有竞品时
+        if(this.$store.state.ev_duibiData.length > 1 && this.$store.state.ev_duibiData[1].data != null && this.checkedDuibi){//有竞品时
           let idArr = [];
           for(let i of this.$store.state.ev_duibiData[1].data.topicList){
             idArr.push(i.id);
@@ -1702,7 +1668,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           obj.proId = this.$store.state.ev_duibiData[1].id;
           cpTopicDtoList.push(obj);
         };
-        if(this.table_select.length > 0){//有对比事件时
+        if(this.table_select.length > 0){//有对比议题时
           for(let i of this.table_select){
             let obj = {};
             obj.topicAId = i.proEventId;
@@ -1711,15 +1677,14 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             cpaResult.push(obj);
           };
         };
-        this.$prompt('请输入导出事件名称', '提示', {
+        this.$prompt('请输入导出议题名称', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          customClass:'ev_confirmClass',
           closeOnClickModal:false,
-          beforeClose: (action, instance, done) => {
-             if (action === 'confirm') {
-              done();
-             };
-          }
+          inputPattern:/\S/,
+          inputErrorMessage: '名称不能为空',
+          inputValue:GetLocalStorage('current_projectData_A').project_name
         }).then(({ value }) => {
           let data = {
             "proId":GetLocalStorage('current_projectData_A').project_id,
@@ -1751,10 +1716,10 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         console.log(this.table_select)
       },
       handleCheckedCitiesChange(index,dta,table,data){
-          console.log(table.checked)
+          //console.log(table.checked)
           if(table.checked == true){//加入到table_select
             if(this.table_select.length > 1){//判断是否选中两个
-              tipsMessage('最多选择两个对比事件','warning',this);
+              tipsMessage('最多选择两个对比议题','warning',this);
               table.checked = false;
               return;
             }else{
@@ -1766,28 +1731,177 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
               obj.cpEventId=this.duibiData[1].data.topicList[index].id;
               this.table_select.push(obj);
               for(let i of this.tableData){
-                i.data[index].disabled=true;
+                if(this.table_select.length == 1){
+                  i.data[index].disabled1 = true;
+                }else{
+                  i.data[index].disabled2 = true;
+                }
               };
               for(let i of dta.data){
-                i.disabled=true;
+                if(this.table_select.length == 1){
+                  i.disabled1 = true;
+                }else{
+                  i.disabled2 = true;
+                }
               };
-              dta.data[index].disabled=false;
+              if(this.table_select.length == 1){
+                dta.data[index].disabled1 = false;
+              }else{
+                dta.data[index].disabled2 = false;
+              }
             }
           }else{//从table_select里删除
-            this.table_select.splice(this.table_select.findIndex(item => item.own_eventId===dta.eventId&&item.compet_eventId===this.duibiData[1].data.topicList[index].id), 1)
               for(let i of this.tableData){
-                i.data[index].disabled=false;
+                if(this.table_select.length == 1){
+                  i.data[index].disabled1 = false;
+                  i.data[index].disabled2 = false;
+                }else{
+                  if(i.data[index].disabled1 && i.data[index].disabled2){
+                    i.data[index].disabled2 = false;
+                    continue;
+                  };
+                  if(i.data[index].disabled1 == true && i.data[index].disabled2 == false){
+                    i.data[index].disabled1 = false;
+                    continue;
+                  };
+                  if(i.data[index].disabled2 == true && i.data[index].disabled1 == false){
+                    i.data[index].disabled2 = false;
+                    continue;
+                  };
+                }
               };
               for(let i of dta.data){
-                i.disabled=false;
+                if(this.table_select.length == 1){
+                   i.disabled1 = false;
+                   i.disabled2 = false;
+                }else{
+                  if(i.disabled1 && i.disabled2){
+                   i.disabled2 = false;
+                   continue;
+                  }
+                  if(i.disabled1 == true && i.disabled2 == false){
+                    i.disabled1 = false;
+                    continue;
+                  };
+                  if(i.disabled2 == true && i.disabled1 == false){
+                    i.disabled2 = false;
+                    continue;
+                  };
+                }  
               };
+               this.table_select.splice(this.table_select.findIndex(item => item.own_eventId===dta.eventId&&item.compet_eventId===this.duibiData[1].data.topicList[index].id), 1);
           }
-        console.log(index)
-        console.log(dta)//自身
-        console.log(table)//自身
-        console.log(data)//自身
+        //console.log(index)
+        //console.log(dta)//自身
+        //console.log(table)//自身
+       // console.log(data)//自身
         //console.log(this.duibiData[1].data[index])//竞品
-        console.log(this.table_select)
+        /*console.log(this.duibiData[0])
+        console.log(this.duibiData[1])
+        console.log(this.table_select)*/
+        /*展示图*/
+        let cateList = [],linkList = [],dataList = [],selectIdArr = [];
+        //cateList
+        cateList.push({'name':this.duibiData[0].name});
+        cateList.push({'name':this.duibiData[1].name});
+        //dataList
+        let obj1 = {};
+        obj1.category = obj1.name = this.duibiData[0].name;
+        obj1.x = 25;
+        obj1.y = 50;
+        obj1.nodeType = 1;
+
+        let obj2 = {};
+        obj2.category = obj2.name = this.duibiData[1].name;
+        obj2.x = 75;
+        obj2.y = 50;
+        obj2.nodeType = 2;
+        obj2.symbolSize = obj1.symbolSize = 50;
+
+        dataList.push(obj1);
+        dataList.push(obj2);
+        for(let i = 0 ;i < this.table_select.length;i++){
+          let o = {};
+          o.name = this.duibiData[0].topicList[this.duibiData[0].topicList.findIndex(item => item.id == this.table_select[i].proEventId)].name;
+          cateList.push(o);
+          selectIdArr.push(this.table_select[i].proEventId);
+          selectIdArr.push(this.table_select[i].cpEventId);
+          //dataList
+          let obj = {};
+          obj.category = obj.name = this.duibiData[0].topicList[this.duibiData[0].topicList.findIndex(item => item.id == this.table_select[i].proEventId)].name;
+          this.duibiData[0].topicList[this.duibiData[0].topicList.findIndex(item => item.id == this.table_select[i].proEventId)].articleCount >= this.duibiData[1].data.topicList[this.duibiData[1].data.topicList.findIndex(item => item.id == this.table_select[i].cpEventId)].articleCount ? obj.x = 40 : obj.x = 60;
+          obj.symbolSize = 30;
+          obj.nodeType = 0;
+          obj.cpName = this.duibiData[1].data.topicList[this.duibiData[1].data.topicList.findIndex(item => item.id == this.table_select[i].cpEventId)].name;
+          if(i == 1 ){
+            obj.y = 58;
+          }else{
+            obj.y = 48;
+          }
+          dataList.push(obj);
+        };
+        console.log(cateList);
+        console.log(selectIdArr);
+        
+        //linkList
+
+        for(let i = 2;i < cateList.length;i++){
+          let obj = {};
+          obj.source = cateList[0].name;
+          obj.target = cateList[i].name;
+          linkList.push(obj);
+          let o = {}
+          o.source = cateList[1].name;
+          o.target = cateList[i].name;
+          linkList.push(o);
+        };
+
+        let proFilterTopiclist = this.duibiData[0].topicList.filter(item => { return selectIdArr.indexOf(item.id) === -1; });
+        let cpFilterTopiclist = this.duibiData[1].data.topicList.filter(item => { return selectIdArr.indexOf(item.id) === -1; });
+        let proXY = [{'x':13,'y':48},{'x':10,'y':56},{'x':12,'y':60},{'x':11,'y':43},{'x':17,'y':36},{'x':17,'y':73},{'x':21,'y':34},{'x':24,'y':74},{'x':1,'y':52}];
+        for(let i = 0;i < proFilterTopiclist.length;i++){
+          //相同的标题name
+          cpFilterTopiclist.findIndex(item => item.name == proFilterTopiclist[i].name) != -1 ? cpFilterTopiclist[cpFilterTopiclist.findIndex(item => item.name == proFilterTopiclist[i].name)].name += ' ' : ''
+          //linkList
+          let obj = {};
+          obj.source = this.duibiData[0].name;
+          obj.target = proFilterTopiclist[i].name;
+          linkList.push(obj);
+          //dataList
+          let o = {};
+          o.category = obj.source;
+          o.name = obj.target;
+          o.symbolSize = 30;
+          o.nodeType = 0;
+          o.x = proXY[i].x;
+          o.y = proXY[i].y;
+          dataList.push(o);
+        };
+
+       
+        let cpXY = [{'x':84,'y':43},{'x':86,'y':46},{'x':89,'y':57},{'x':80,'y':35},{'x':93,'y':66},{'x':88,'y':71},{'x':76,'y':26},{'x':81,'y':74},{'x':99,'y':48}];
+        for(let i = 0;i < cpFilterTopiclist.length;i++){
+          let obj = {};
+          obj.source = this.duibiData[1].name;
+          obj.target = cpFilterTopiclist[i].name;
+          linkList.push(obj);
+          //dataList
+          let o = {};
+          o.category = obj.source;
+          o.name = obj.target;
+          o.symbolSize = 30;
+          o.nodeType = 0;
+          o.x = cpXY[i].x;
+          o.y = cpXY[i].y;
+          dataList.push(o);
+        };
+        console.log(linkList);
+        console.log(dataList);
+        /*filterProCpList = [...this.duibiData[0].topicList,...this.duibiData[1].data.topicList].filter(item => { return selectIdArr.indexOf(item.id) === -1; });//过滤后自身和竞品的文章列表*/ 
+        $(function(){
+          _echart.build_graph('DuiBi',cateList.slice(0,2),cateList.slice(2,cateList.length),cateList,dataList,linkList);
+        });
+        
       },
       //改变页数的表格数据变化
       card_click (a) {
@@ -1818,8 +1932,12 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       format_firstTableData(dta,dtaList,pageSize){
         this[dtaList]=this[dta].length > pageSize ? this[dta].slice(0,pageSize) : this[dta];
       },
+      visibleChangeEventNum(a){
+        this.sort_dropdown_visible_eventNum = !a;
+      },
       //筛选条件里的属性与下拉列表的dom数据以及保存
       dom_search(){
+        this.domin_popover = false;
         let domain_arr=[];
         let domain=$('.domain .warning').not('.domain .domain_all');
         for(let i=0;i<domain.length;i++){
@@ -1831,13 +1949,14 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         for(let i=0;i<custom.length;i++){
           custom_arr_name.push(custom[i].innerHTML);
         };
-        let arr_data=this.custom.filter(item => { return custom_arr_name.indexOf(item.name) !== -1; });
+        let arr_data = this.custom.filter(item => { return custom_arr_name.indexOf(item.name) !== -1; });
         for(let i=0;i<arr_data.length;i++){
           custom_arr.push(arr_data[i].id);
         }
         this.domain_arr=domain_arr;
         this.custom_arr=custom_arr;
-        SetSessionStorage('current_sort',this.current_sort);
+        console.log(this.domain_arr)
+        /*SetSessionStorage('current_sort',this.current_sort);
         SetSessionStorage('current_sort_per',this.current_sort_per);
         SetSessionStorage('current_sort_loc',this.current_sort_loc);
         SetSessionStorage('current_sort_org',this.current_sort_org);
@@ -1846,7 +1965,13 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         SetSessionStorage('time0',this.time[0].getTime());
         SetSessionStorage('time1',this.time[1].getTime());
         SetSessionStorage('custom_arr',custom_arr);
-        SetSessionStorage('domain_arr',domain_arr);     
+        SetSessionStorage('domain_arr',domain_arr);*/     
+      },
+      qiye_search(){//筛选企业A和企业B
+        this.qiye_popover = false;
+        this.ctbCompanyNameList[0] = this.companyData.companyA;
+        this.ctbCompanyNameList[1] = this.companyData.companyB;
+        console.log(this.ctbCompanyNameList)
       },
       //查询到文章遍历到dom操作
       dom_write(data){
@@ -1858,7 +1983,8 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           data.topicList[z].locList ? data.topicList[z].locList.sort(Sort('score')) : '' ;
           data.topicList[z].orgList ? data.topicList[z].orgList.sort(Sort('score')) : '' ;
           data.topicList[z].perList ? data.topicList[z].perList.sort(Sort('score')) : '' ;
-          data.topicList[z].sortArr='10';
+          data.topicList[z].sortArr = '10';
+          data.topicList[z].titleTooltip = false;
         }
         this.data=data.topicList;
         if(data.topicList[0].perList != null && data.topicList[0].perList.length > 0){
@@ -1910,53 +2036,111 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         this.similarData_key_currentPage = val;
         this.format_tabledata_('similarData_key_currentPage','similarData_per_pageSize','similarData_key','similarData_key_list');
       },
-      input_write(){}
+      input_write(i){
+        this.$refs.inpt[i].type = 'text';
+        this.data[i].titleTooltip = true;
+      },
+      downloadFile(){ //导出excel
+       console.log(this.data);
+       let Dta = this.data.length <= 3 ? this.data : this.data.slice(0,3);
+       let excelData = [];
+       for(let i of Dta ){
+        let topArr = [];//单个议题数组
+        topArr[0] = {};
+        topArr[0].name = '议题：';
+        topArr[0]['频次'] = i.name;
+        topArr[1] = {};
+        topArr[1].name = '';
+        topArr[1]['频次'] = '热度';
+        for(let j of i.keywordList.slice(0,10)){//g关键词
+          let obj = {};
+              obj.name = j.mention.slice(0,j.mention.indexOf('/'));
+              obj['频次'] = Number((j.score*100).toFixed(2));
+              topArr.push(obj);
+        };
+        
+        if(i.contributionVal != null){//企业贡献率
+          topArr.push({'name':'','频次':'贡献率'});//企业贡献率格式
+          for(let j in i.contributionVal){
+            let obj = {};
+            obj.name = j;
+            obj['频次'] = i.contributionVal[j];
+            topArr.push(obj);
+          };
+        };
+        topArr.push({'name':''})//换行
+        excelData = [...excelData, ...topArr];
+       };
+       console.log(excelData);
+       /*let data = [{}]
+        for (let k in Dta[0]) {
+          data[0][k] = k
+        };
+        data[0].name = '';//excel 表头
+        console.log(data);
+        data = data.concat(Dta);
+        console.log(data);*/
+        downloadExl(excelData,'关键议题',this,'xlsx');//封装完的数据  excel名称
+      },
+      downloadArticleFile(){//导出文章列表excel
+        format_time();
+        let excelData = [{'标题':'标题','时间':'时间','媒体名称':'媒体名称','链接':'链接'}];
+        for(let i of this.ct_articlelist_selection){
+          let obj = {};
+          obj['标题'] = i.title;
+          obj['时间'] = new Date(i.publishTime).Format("yyyy-MM-dd hh:mm:ss");
+          obj['媒体名称'] = i.mediaName;
+          obj['链接'] = i.url;
+          excelData.push(obj);
+        };
+        console.log(excelData);
+        downloadExl(excelData,'议题文章',this,'xlsx',true);//封装完的数据  excel名称 true 列宽格式
+      }
     },
   }
 </script>
 <style lang="scss" >
 .event{
+
   button:hover{
         opacity: 0.8;
       }
   a:hover{
         opacity: 0.8;
       }    
-  .block{
-    .el-date-editor--datetime{
-      input{
-          height: 23px !important;
-          padding-right: 0 ;
-        }
-        .el-input__icon{
-          line-height: 22px;
-        }
-    }
+  .el-date-editor--datetime{
+    input{  
+        line-height: 23px !important;
+        height: 23px !important;
+        padding-right: 0 ;
+      }
+      .el-input__icon{
+        line-height: 22px;
+      }
+  }
     .el-input__inner{
       height: 30px;
     }
-    .btn-group{
-      .btn{
-        background-color: rgb(247, 247, 247);
-        outline: none;
-      }
-      .warning{
-        color: #fff;
-        background-color: #00b38a;
-        border-color: #00b38a;
-      }
-     button{
-      margin-left: 10px;
-      border-radius: 4px !important;
-      padding: 2px 12px;
-     }
-    }
+    
     .el-dropdown{
       >.el-button--default{
         padding: 4px 10px;
       }
     }
     .filter_event{
+      .el-input__prefix{
+        background-image: url('../../../assets/icon/time.png');
+        width: 12px;
+        height: 12px;
+        left: 9px;
+        top:5px;
+        .el-input__icon{
+          opacity: 0;
+        }
+      }
+      .el-popover__reference:hover{
+        color: rgb(0, 179, 138)
+      }
       #domain_m,#custom_m{
         display: none;
       }
@@ -1964,7 +2148,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         display: none;
       }
     }
-  }
   .event_card{
     width: 1240px;
     position: relative;
@@ -1974,12 +2157,10 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       }
      }
      .live{
-        border-color: #4fc4d0 !important;
-        box-shadow: 3px 3px 2px rgba(79, 196, 208,.4) !important;
+        box-shadow: 2px 2px 3px rgba(0,0,0,.2)!important;
      }
      .live1{
-        border-color: #4fc4d0 !important;
-        box-shadow: 3px 3px 2px rgba(79, 196, 208,.4) !important;
+        box-shadow: 2px 2px 3px rgba(0,0,0,.2)!important;
      }
      .card:nth-child(3n){
         margin-right: 1px !important;
@@ -2004,6 +2185,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
         .panel-body{
           padding: 5px;
+          width: 391px;
           height: 310px;
           position: relative;
           border-color: #ebebeb;
@@ -2079,7 +2261,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       }
     }
   } 
-  #dialog_list,#dialog_echart,#dialog_ct,#dialog_list_es,#dialog_reprint,#dialog_DuibiList,#dialog_look_duibiProject,#dialog_DuibiMethod,#dialog_similar{
+  #dialog_list,#dialog_list_es,#dialog_reprint,#dialog_DuibiList{
     .page{
         position: absolute;
         right: 15px; 
@@ -2093,9 +2275,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
         .el-pager .active {
           color: #00b38a;
-        }
-        .el-pagination__jump{
-          display: none;
         }
     }
       .el-dialog{
@@ -2114,35 +2293,37 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             width: 20px;
             height: 20px;
             margin-right: 10px;
-            background-image: url('../../assets/icon/ev_del2.png');
+            background-image: url('../../../assets/icon/ev_del2.png');
             cursor: pointer;
           }
           .el-dialog__close{
             display: none;
           }
         }
-      } 
-    #steps{
-      >div:nth-child(2){
-        width: 400px;
-        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;
-      }
-      .el-step__line{
-        border-color: #bfcbd9;
-      }
-      .el-step{
-        height: 70px !important;
-      }
-    }  
+      }  
   }
   #dialog_echart,#dialog_similar{
+      .el-dialog__header{
+        width: 1175px;
+      }
       .el-dialog__body{
         position:relative;
         padding: 10px 10px;
         height: 800px;
         .page{
-          right: 5px;
-          bottom: 2px;
+            position: absolute;
+            right: 5px; 
+            bottom: 5px;
+            display: inline-block;
+            .el-pagination__total{
+              color:#999;
+            }
+            ul>li{
+              opacity: 1;
+            }
+            .el-pager .active {
+              color: #00b38a;
+            }
         }
         .el-table .cell, .el-table th>div{
           line-height: 30px;
@@ -2150,6 +2331,11 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
         .el-table td{
           height: 30px;
+        }
+        .similarArt{
+          .el-table thead{
+            display: none;
+          }
         }
       }
   }
@@ -2160,20 +2346,41 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       }
   }
   #dialog_look_duibiProject .el-dialog{
-    width:58%;
     .el-dialog__body{
-      padding: 15px 20px;
+      padding: 15px 40px 5px 40px;
     }
   }
   #dialog_ct{
     .el-dialog__body{
-      height: 600px !important;
+      padding:10px 15px 15px 15px;
+      height: 560px !important;
+      .el-button--text:hover span{
+        color: #f56c6c;
+      }
     }
-    .el-table td, .el-table th{
+    .el-table td,.el-table th{
         height: 35px !important;
         text-align: center;
     }
-      .page{
+    .el-table{
+      thead{
+        tr th{
+          border-bottom-width: 0;
+          background-color: #f7f7f7;
+        }
+      }
+      .el-table__row--striped td{
+        background-color: #f7f7f7;
+      }
+      .el-checkbox__input.is-checked .el-checkbox__inner,.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+        background-color: #00b38a;
+        border-color: #00b38a;
+      }
+      .el-checkbox__input.is-focus .el-checkbox__inner{
+        border-color: #00b38a;
+      }
+    }
+    .page{
         position: absolute;
         right: 5px; 
         bottom: 5px;
@@ -2184,37 +2391,31 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         ul>li{
           opacity: 1;
         }
-        .el-pagination__jump{
-          display: none;
+        .el-pager .active {
+          color: #00b38a;
         }
     }
       .el-dialog{
-        border-radius: 4px;
+        border-radius: 16px;
         .el-dialog__header{
-        background: #00b38a;
-        padding: 10px 0;
+        //background: #00b38a;
+        padding: 15px 0;
         text-align: center;
+        border-bottom: 1px solid #ebebeb;
+        width: 600px;
+        margin: 0 auto;
           .el-dialog__title{
-            color: white;
+            color: #333;
             font-weight:500px;
             padding-left: 14px;
           }
-          .el-dialog__headerbtn{
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            background-image: url('../../assets/icon/ev_del2.png');
-            cursor: pointer;
-          }
-          .el-dialog__close{
-            display: none;
+           .el-dialog__headerbtn{
+            top:10px;
+            right: 45px;
+            font-size: 25px;
           }
         }
       } 
-    .el-dialog__body{
-          padding:10px 15px 45px 15px;
-        }
-    
   }
   .progress{
     height: 14px;

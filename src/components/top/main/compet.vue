@@ -1,6 +1,9 @@
 <template>
 <div>
-  <div class="compet container" style="background:#ffffff;padding:15px 10px 0 10px;">
+<p style="line-height: 50px;margin: 0;position: relative">竞品列表
+  <el-button type="warning" style="padding: 4px 29px;position: absolute;right: 0;top:15px;background-color: #fcd482;border-color:#fcd482;"  @click="add_btn">添加</el-button>
+</p>
+  <div class="compet container" style="background:#ffffff;padding:15px 10px 20px 10px;">
     <el-table
         :data="data"
         border
@@ -14,7 +17,9 @@
         <el-table-column
          label="必须包含关键词"
          show-overflow-tooltip>
-         <template scope="scope"><span style="color:#32a880" v-for="i in scope.row.mustIncludeKeywordList">{{i}}&nbsp;&nbsp;</span></template>
+         <template scope="scope">  
+            <span style="color:#32a880" v-for="i in scope.row.mustIncludeKeywordList">{{i}}&nbsp;&nbsp;</span>
+          </template>
        </el-table-column>
        <el-table-column
          label="关键词"
@@ -38,40 +43,45 @@
         </el-table-column>
         <el-table-column label="操作">
          <template scope="scope">
-            <el-button
-            size="small"
-            type="info"
-            @click="write( scope.row)">编辑</el-button>
-          <el-button
-            size="small"
-            type="danger"
-            @click="del(scope.$index, scope.row)">删除</el-button>
+            <el-button type="text" @click="write( scope.row)" style="color: #32a880">编辑</el-button>
+          
+            <el-button type="text" @click="del(scope.row)" style="color:#f56c6c;margin-left: 30px;">删除</el-button>
         </template>
         </el-table-column>
       </el-table>
-    <el-button  @click="add_btn" style="margin:15px 0 5px 0;background-color: #00b38a;border-color: #00b38a;color: white;">添加竞品</el-button>
+    <!-- <el-checkbox style="margin: 10px;" v-model="select_All"   v-show="this.data.length!==0" >全选所有</el-checkbox>
+    <el-button type="text" @click="del('all')" style="color:#f56c6c;margin-left: 5px;" v-show="select_All&&this.data.length!==0" >确认删除</el-button> -->
   </div>
   <!-- 添加用户模态框 -->
-   <el-dialog :title="title" :visible.sync="dialog_add"  id="dialog_add">
-      <el-form label-position="right" label-width="80px" >
+   <el-dialog :title="title" :visible.sync="dialog_add"  id="dialog_add" custom-class="ev_dialogClass">
+      <el-form label-position="right" label-width="120px" >
         <el-form-item label="竞品名称">
-          <el-input v-model="name" placeholder="请输入竞品名称" ></el-input>
+          <el-input v-model="name" placeholder="多个词之间用“，”隔开" ></el-input>
         </el-form-item>
         <el-form-item label="必须包含关键词">
-          <el-input v-model="mustIncludeKeyword" placeholder="必须包含关键词" ></el-input>
-          <span style="font-size: 10px;position: absolute;right: 10px;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
+          <!-- <div class="mustkwcontent" @click="focus('mustkw')" style="padding-left: 10px;border-color:#ebebeb;display: inline-block;width: 400px;">
+             <img src="../../../assets/icon/kw_bixu.png" style="padding-right:5px;height: 18px ">
+               <el-tag
+                 :key="tag"
+                 v-for="tag in mustIncludeKeyword"
+                 :closable="true"
+                 :close-transition="false"
+                 @close="musthandleClose(tag)"
+               >
+               {{tag}}
+               </el-tag>
+               <input type="text" class="form-control" id="mustkw"  placeholder="多个词之间用“，”隔开" @blur="mustcreate_notag" v-model="mustkw" @keyup.enter="mustcreate_notag" style="height: 38px;font-size: 16px;">
+           </div> -->
+          <el-input v-model="mustIncludeKeyword" placeholder="多个词之间用“，”隔开" ></el-input>
         </el-form-item>
         <el-form-item label="关键词">
-          <el-input v-model="includeKeyword" placeholder="关键词" ></el-input>
-          <span style="font-size: 10px;position: absolute;right: 10px;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
+          <el-input v-model="includeKeyword" placeholder="多个词之间用“，”隔开" ></el-input>
         </el-form-item>
         <el-form-item label="标题排除词">
-          <el-input v-model="titleExcludeKeyword" placeholder="标题排除词" ></el-input>
-          <span style="font-size: 10px;position: absolute;right: 10px;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
+          <el-input v-model="titleExcludeKeyword" placeholder="多个词之间用“，”隔开" ></el-input>
         </el-form-item>
         <el-form-item label="排除词">
-          <el-input v-model="contentExcludeKeyword" placeholder="排除词" ></el-input>
-          <span style="font-size: 10px;position: absolute;right: 10px;color:#999"><i style="color:red">*</i>多个词之间用“<i style="color:red">，</i>”隔开</span> 
+          <el-input v-model="contentExcludeKeyword" placeholder="多个词之间用“，”隔开" ></el-input> 
         </el-form-item>
          <el-form-item label="备注">
           <el-input type="textarea" v-model="remark"></el-input>
@@ -85,7 +95,7 @@
 </div>  
 </template>
 <script>
-import { publicSearch,tipsMessage,successBack,GetLocalStorage }  from '../../assets/js/map.js'
+import { publicSearch,tipsMessage,successBack,GetLocalStorage }  from '../../../assets/js/map.js'
 export default {
   mounted :function () {
     this.search();
@@ -105,7 +115,10 @@ export default {
       contentExcludeKeyword:'',
       remark:'',
       title:'',
-      edit_data:''
+      edit_data:'',
+      select_All:false,//全选状态绑定
+      mustags:[],
+      mustkw:'',
   	}
   },
   methods: {
@@ -113,7 +126,7 @@ export default {
       let data = {
         "method": 'get',
         "project" : {
-          'parentId':GetLocalStorage('current_projectData_A').project_id//当前项目id,
+          'parentId':GetLocalStorage('current_projectData_A') == null ? this.$router.push('/login') : GetLocalStorage('current_projectData_A').project_id,//当前项目id,
         }
       };
       publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"GET",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
@@ -198,16 +211,29 @@ export default {
       this.contentExcludeKeyword = a.contentExcludeKeywordList.toString();
       this.remark = a.remark;
       this.edit_data = a;
-      //console.log(a)
+      console.log(this.mustIncludeKeyword)
     },
-    del(a,dta){
+    del(dta){
+      let projectIdList = [],msg = '';
+      if(dta == 'all'){
+        for(let i of this.data){
+          projectIdList.push(i.id);
+        };
+        msg = '所有';
+      }else{
+        projectIdList.push(dta.id);
+        msg = dta.name;
+      };
+
       let data= {
                 "method": 'DELETE',
-                "projectIdList": [dta.id],
+                projectIdList,
                 };
-      this.$confirm('是否删除'+dta.name+ '项目?', '提示', {
+
+      this.$confirm('是否删除'+msg+ '项目?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
+            customClass:'ev_confirmClass',
             type: 'warning'
             }).then(() => {
               publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/competitor',"POST",{'projectDto':JSON.stringify(data)}).then((data) =>{//ajax
@@ -217,7 +243,39 @@ export default {
                   };
               })  
             })
-    }
+    },
+   musthandleClose(tag){
+      this.mustags.splice(this.mustags.indexOf(tag), 1);
+      this.keyword_flag = true;
+    },
+  mustcreate_notag () {
+        let mustkw = this.mustkw;
+        let Tag = [...this.mustags,...this.notags,...this.tags,...this.t_notags];
+        if (mustkw) {
+          if(Tag.indexOf(mustkw) == -1){
+            mustkw = mustkw.replace(/，/ig,','); //转化逗号
+              let dd = mustkw.split(',');
+              if(dd.length > 1){ //若输入逗号即添加的数组长度大于一即链接
+                this.mustags = [...this.mustags,...dd];
+                 for(var j = 0;j < this.mustags.length;j++){
+                  if(this.mustags[j] == ''){
+                    this.mustags.splice(j,1)
+                  }
+                 }
+              }else{
+                this.mustags.push(mustkw);
+              }      
+              this.mustags = Array.from(new Set(this.mustags)); 
+              this.keyword_flag = true;  
+            }else{
+              tipsMessage('请不要输入与排除词、关键词重复的内容','warning',this);  
+            }
+          }    
+        this.mustkw = '';
+      },   
+  focus (n) {
+        $('#'+n+'').focus();
+    }  
   },
   watch:{
       $route (to,from){
@@ -227,12 +285,43 @@ export default {
 }
 </script>
 <style lang="scss" >
+    
  #dialog_add{
-      .el-dialog__body{
-        padding-left: 5px;
-        padding-bottom: 10px;
+  .el-dialog{
+    ::-webkit-input-placeholder {/*Chrome/Safari*/
+      color:#ccc;
+      font-size: 14px;
+      }
+   ::-moz-input-placeholder {/*Firefox*/
+      color:#ccc;
+      font-size: 14px;
+    }
+    width: 600px !important;
+    .el-dialog__header{
+        text-align: center;
+      }
+    .el-dialog__body{
+      padding-left: 5px;
+      padding-bottom: 10px;
+      padding: 10px 5px;
+      .el-input,.el-textarea{
+        width: 420px;
       }
     }
+    .el-dialog__footer{
+      border-top-width: 0px;
+      padding: 10px 20px 15px;
+      .el-button{
+        padding: 8px 15px;
+      }
+      .el-button--primary{
+        padding: 8px 15px;
+        background-color: #32a880;
+        border-color: #32a880;
+      }
+    }
+  }     
+}
 #dialog_project{
   .el-dialog__body{
         padding-top: 10px;
@@ -243,6 +332,9 @@ export default {
      thead{
         th{
           height:25px;
+        }
+        td,th{
+          padding: 6px 0;
         }
         th>.cell{
           padding: 0;
@@ -261,20 +353,15 @@ export default {
      }
    /*    表格内部 */ 
    tbody{
-    .current-row{
-      color: #ccc !important;
-      background-color: #ccc !important;
+    .current-row td{
+      background-color: none;
     }
     .cell{
       text-align: center;
       padding: 0;
-      .el-button--small {
-        padding: 4px 3px;
-        margin-left: 3px;
-      }
     }
-    tr{
-      height:25px;
+    td{
+      padding: 0;
     }
     .el-table-column--selection>.cell{
       padding: 0;
@@ -287,7 +374,15 @@ export default {
         }
       }
      }
+     
+    }
+    .el-checkbox__input.is-checked+.el-checkbox__label{
+      color: #e6a23c;
+    }
+    .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+      background-color: #e6a23c;
+      border-color: #e6a23c;
     }
   }
-
+  
 </style>

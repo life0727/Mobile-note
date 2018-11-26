@@ -14,7 +14,7 @@ module.exports = {
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
     productionGzip: true,
-    productionGzipExtensions: ['js', 'css']
+    productionGzipExtensions: ['js', 'css','png']
   },
   dev: {
     env: require('./dev.env'),
@@ -23,7 +23,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/rsa/': {
-            target: 'http://192.168.3.200:8090/rsa/api/v2.0',//0.3 8090
+            target: 'http://192.168.0.3:8090/rsa/api/v2.0',//0.3 8090
             changeOrigin: true,
             pathRewrite: {
               '^/rsa': '/'

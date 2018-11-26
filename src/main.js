@@ -17,9 +17,10 @@ if (!window.Promise) {
 
 const vuex_store=new Vuex.Store({
 	state:{
+        test:0,
         list_Data:'',//文章管理模块数据
-    		data:'',//事件模块数据
-        ev_duibidata:'',//事件的对比数据
+    		data:[],//事件模块数据
+        ev_duibidata:[],//事件的对比数据
     		//start_data:'',//事件模块原始数据
         btn_daochu:false,//事件导出按钮状态
         duibiButton:false,//展现事件表格的按钮隐藏或者显示状态
@@ -29,6 +30,8 @@ const vuex_store=new Vuex.Store({
         org_duibiData:'',//组织的对比数据
         media_Data:'',
         media_duibiData:'',//媒体的对比数据
+        router:'',//声誉分析切换跳转保存路由地址
+        keyword_tab:'_keywordTab'//keyword模块tab切换添加竞品时默认为竞品tab
         /*refer_articleType:'',//提及率的文章类型
         refer_queryType:'',//提及率的检索方式
         refer_time:'',//提及率的搜索时间

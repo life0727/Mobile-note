@@ -289,7 +289,7 @@ import { publicSearch,tipsMessage,successBack,GetSessionStorage,SetSessionStorag
                 projectData.project_id = data.data.id;
                 projectData.project_name = data.data.name;
                 SetLocalStorage('current_projectData_A',projectData);
-                this.$router.push('/main/refer')
+                this.$router.push('/refer')
             /*SetSessionStorage('start',data.data.name);
             SetSessionStorage('project_id',data.data.id);
             window.location.href="#/main/refer";*/

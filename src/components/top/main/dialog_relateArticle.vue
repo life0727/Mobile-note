@@ -5,7 +5,7 @@
       <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;height: 50px;" v-for="(i,$index) in childMsg.listData" @mouseover="Mover_articleList($index)" @mouseout="Mout_articleList($index)">
         <div class="el-step__head  is-text" style="color: white;">
           <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
-          <span class="el-step__icon"><img src="../../assets/icon/xiangguanwenzhang.png"></span>
+          <span class="el-step__icon"><img src="../../../assets/icon/xiangguanwenzhang.png"></span>
         </div>
         <div class="el-step__main" style="margin-left: 0">
           <div class="el-step__title "  style="width: 480px;height: 32px;overflow:hidden;font-size: 14px;line-height:24px;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"><a :href="i.url"  target="_blank" style="font-weight: 700;color: #48576a;text-decoration: none" ref="dialog_xw_articlelist">标题：{{i.title}}</a>
@@ -27,7 +27,7 @@
 </div> 
 </template>
 <script >
-import { changePage,successBack }  from '../../assets/js/map.js'
+import { changePage,successBack }  from '../../../assets/js/map.js'
   export default{
     props: ['childMsg'],
     data : function(){ 

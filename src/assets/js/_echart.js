@@ -2,8 +2,8 @@ const pubilcMap = require('./map') //map.js方法
 const echarts = require('echarts');
 const color = ['#243591','#2d7dc2','#7055a2','#52a4bc','#cbcbcb','#196883'];
 const quse = function () {  //随机取色方法
-                var arr=['#a4cf27','#fec330','#4fc4d0',' #f46c6d','#7864ad','#ff9740'];
-                return arr[parseInt(Math.random()*6)];
+                var arr=['#80DEEA','#4DB6AC','#728B98','#B0BEC5','#CFD8DC'];
+                return arr[parseInt(Math.random()*5)];
              }; 
 const strMapToObj = function(strMap) {
   let obj = Object.create(null);
@@ -445,14 +445,12 @@ var echart = {
               ];
               if(a){
                     for(let i=0;i<_this[b].length;i++){
-                          perData[i][2]=_this[b][i].mention;                   
-                          perData[i][3]=_this[b][i].articleCount;                   
+                          perData[i][2]=_this[b][i].mention;                                     
                       };
                       perData=perData.slice(0,_this[b].length);
                 }else{
                   for(let i=0;i<_this[d];i++){
                       perData[i][2]=_this[b][i].mention;
-                      perData[i][3]=_this[b][i].articleCount; 
                   };
                   perData=perData.slice(0,_this[d]);
                 }; 
@@ -465,12 +463,6 @@ var echart = {
                         text: '',
                         x: '35%',
                         y: 0
-                    },
-                    toolbox: {
-                        show : true,
-                        feature : {
-                            saveAsImage : {show: true}
-                        }
                     },
                     tooltip: {
                        formatter: function (obj) {
@@ -509,10 +501,7 @@ var echart = {
                       },
                       itemStyle: {
                           normal: {
-                              color: '#5aa8ee',
-                              shadowColor: 'rgba(0,0,139, 0.8)',
-                              shadowBlur: 15,
-                              opacity: 0.9
+                              color: '#22AAEA',
                           }
                       },
                       data:perData,
@@ -544,7 +533,7 @@ var echart = {
                     },{
                       hoverAnimation: false,
                       type: 'pie',
-                      radius: ['0', '13%'],
+                      radius: ['0', '16%'],
                       label: {
                           normal: {
                               show: false,
@@ -553,9 +542,9 @@ var echart = {
                       },
                       itemStyle: {
                           normal: {
-                              color: 'rgba(118, 233, 244,1)'
+                              color: 'rgba(35,170,234,.4)'
                           },
-                          emphasis:{color:'rgba(118, 233, 244,1)'}
+                          emphasis:{color:'rgba(35,170,234,.4)'}
                       },
                       data: [{
                               value: 23
@@ -564,7 +553,7 @@ var echart = {
                     },{
                       hoverAnimation: false,
                       type: 'pie',
-                      radius: ['13%', '40%'],
+                      radius: ['16%', '44%'],
                       label: {
                           normal: {
                               show: false,
@@ -573,9 +562,9 @@ var echart = {
                       },
                       itemStyle: {
                           normal: {
-                              color: 'rgba(118, 233, 244,.7)'
+                              color: 'rgba(35,170,234,.3)'
                           },
-                           emphasis:{color:'rgba(118, 233, 244,.7)'}
+                           emphasis:{color:'rgba(35,170,234,.3)'}
                       },
                        data: [{
                               value: 23
@@ -584,7 +573,7 @@ var echart = {
                     },{
                       hoverAnimation: false,
                       type: 'pie',
-                      radius: ['40%', '70%'],
+                      radius: ['44%', '77%'],
                       label: {
                           normal: {
                               show: false,
@@ -593,9 +582,9 @@ var echart = {
                       },
                       itemStyle: {
                           normal: {
-                              color: 'rgba(118, 233, 244,.4)'
+                              color: 'rgba(35,170,234,.2)'
                           },
-                          emphasis:{color:'rgba(118, 233, 244,.4)'}
+                          emphasis:{color:'rgba(35,170,234,.2)'}
                       },
                       data: [{
                               value: 23
@@ -604,7 +593,7 @@ var echart = {
                     },{
                       type: 'pie',
                       hoverAnimation: false,
-                      radius: ['70%', '100%'],
+                      radius: ['77%', '100%'],
                       legendHoverLink:false,
                       label: {
                           normal: {
@@ -615,9 +604,9 @@ var echart = {
                       },
                       itemStyle: {
                           normal: {
-                              color: 'rgba(118, 233, 244,.2)'
+                              color: 'rgba(35,170,234,.1)'
                           },
-                          emphasis:{color:'rgba(118, 233, 244,.2)'}    
+                          emphasis:{color:'rgba(35,170,234,.1)'}    
                       },
                        data: [{
                               value: 23
@@ -636,31 +625,14 @@ var echart = {
                       _this.entityName = params.data[2];
                       _this.pageShow = false;
                       _this.currentPage = 1;
-                      _this.ct_data_total = params.data[3];
+                      for(let i of _this.data[_this.data_Per_index][_this.entityType+'List']){
+                        if(i.mention == _this.entityName){
+                          _this.ct_data_total = i.articleCount;
+                        };
+                      };
                       _this.currentPage*_this.page_size > _this.ct_data_total ? _this.currentPage = Math.ceil(_this.ct_data_total/_this.page_size) : '';//判断如果页数大于文章总数
                       _this.handleCurrentChange(_this.currentPage,b.slice(0,3),params.data[2]);
                       
-                        //console.log(params)
-                        /*let list=b.slice(0,3)+'List',listData=_this.data[_this.data_Per_index].commonResult[list];
-                        _this.list_type=list;
-                        //console.log(listData);
-                        //console.log(params.data[2]);
-                        for(let i=0;i<listData.length;i++){
-                          if(listData[i].mention.slice(0,listData[i].mention.indexOf('/'))===params.data[2]){
-                            _this.data_second_index=i;
-                            _this.dialo_title=params.data[2]+'的'+c+'详情';
-                            _this.dialogCt=true;
-                            _this.currentPage=1;
-                            _this.ct_data=listData[i].eventArticleList;
-                            if(listData[i].eventArticleList){
-                              for(let t=0;t<listData[i].eventArticleList.length;t++){
-                                  listData[i].eventArticleList[t].publishTime=new Date(listData[i].eventArticleList[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-                                }
-                                _this.ct_data_list = _this.ct_data.length > 12 ? _this.ct_data.slice(0,12) : _this.ct_data;
-                            };
-                            //console.log(listData[i].eventArticleList)
-                          }
-                        }*/
                       }
                   });
         }else{
@@ -668,6 +640,89 @@ var echart = {
                 $('#echart_renwu').html(`<h5 style="margin-top:50px;color:orange;text-align:center;">无数据</h5>`);
               });
         };
+  },
+  build_event_qipao(_this,inx,num){ //event-气泡图
+    //console.log(_this.data)
+      for(let i=0;i<_this.data.length;i++){
+               $(function(){
+                     let echart_card = echarts.init(document.getElementById('echart_card'+i+'')); 
+                    let keywordArr=[];
+                    if(inx==i){//判断下拉是不是当前的
+                      if(_this.data[i].keywordList.length<num){
+                        _this.$message({
+                                message: '所选数量大于数据数量',
+                                type: 'warning'
+                              });
+                        keywordArr=_this.data[i].keywordList;
+                      }else{
+                        keywordArr=_this.data[i].keywordList.slice(0,num);
+                      }
+                    }else{
+                        _this.data[i].keywordList.length < 11 ? keywordArr=_this.data[i].keywordList : keywordArr=_this.data[i].keywordList.slice(0,_this.data[i].sortArr);
+                    };            
+                  /*console.log(keywordArr)*/
+                  let dataBJ=[];
+                  for(let k=0;k<keywordArr.length;k++){
+                    let dataB=new Array();
+                        dataB[0]=k;
+                        dataB[1]=parseInt(Math.random()*260);
+                        dataB[2]=keywordArr[k].score;
+                        dataB[3]=keywordArr[k].mention;
+                        dataBJ.push(dataB)
+                      };
+                      console.log(echart.echart_option_event_qipao(dataBJ))
+                      echart_card.setOption(echart.echart_option_event_qipao(dataBJ));
+                      echart_card.on('click', function (params) {
+                        console.log(params)
+                        //console.log(i)
+                        params.event.event.stopPropagation() ;
+
+                        _this.card_click(i);
+                        _this.dialogCt = true; 
+                        _this.dialo_title = params.data[3].slice(0,params.data[3].indexOf('/'))+'的关键词详情';
+                        _this.entityType = 'key';
+                        _this.entityName = params.data[3];
+                        _this.pageShow = false;
+                        _this.currentPage = 1;
+                        for(let i of _this.data[i].keywordList){
+                          if(i.mention == _this.entityName){
+                            _this.ct_data_total = i.articleCount;
+                          }
+                        };
+                        _this.currentPage*_this.page_size > _this.ct_data_total ? _this.currentPage = Math.ceil(_this.ct_data_total/_this.page_size) : '';//判断如果页数大于文章总数
+                        _this.handleCurrentChange(_this.currentPage,'key',params.data[3]);
+                       // console.log(_this.data[i].keywordList)
+                        /*_this.qipao_idarr.push(params.data[3]);
+                       // console.log(  _this.data[i].keywordList)
+                        _this.$confirm('是否删除 '+params.data[3].slice(0,params.data[3].indexOf('/'))+'?', '提示', {
+                          confirmButtonText: '确定',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                          }).then(() => {
+                            _this.del_keywordList(i,params.data[3],_this.qipao_idarr).then((data) =>{
+                              if(pubilcMap.successBack(data,_this)){
+                                _this.data[i].keywordList=_this.data[i].keywordList.filter(item => { return _this.qipao_idarr.indexOf(item.mention) === -1; });//前台删除
+                                if(_this.del_duibi_flag){//自身与竞品的数据分支
+                                    for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
+                                      if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
+                                          _this.$store.state.ev_duibiData[h].data.topicList[i].keywordList=_this.data[i].keywordList;
+                                        }
+                                      }
+                                 }
+                                echart.build_event_qipao(_this,inx,num)
+                              };
+                            });
+                            
+                          }).catch(() => {
+                            _this.$message({
+                              type: 'warning',
+                              message: '已取消删除'
+                            });          
+                          });*/            
+                      });
+               }); 
+              
+          };
   },
   build_event_allEvent(_this){// event-总事件折线图
       let all_arr=[];
@@ -739,81 +794,11 @@ var echart = {
       };
       all_event_echart.setOption(all_event_option);
   },
-  build_event_qipao(_this,inx,num){ //event-气泡图
-    //console.log(_this.data)
-      for(let i=0;i<_this.data.length;i++){
-          /*for(let t=0;t<_this.data[i].eventArticleList.length;t++){
-                    _this.data[i].eventArticleList[t].publishTime=new Date(_this.data[i].eventArticleList[t].publishTime).Format("yyyy-MM-dd hh:mm:ss");
-                };*/
-               $(function(){
-                     let echart_card = echarts.init(document.getElementById('echart_card'+i+'')); 
-                   //_this.data[i].commonResult.keywordList.sort(Map.Sort('score'));
-                    let keywordArr=[];
-                    if(inx==i){//判断下拉是不是当前的
-                      if(_this.data[i].keywordList.length<num){
-                        _this.$message({
-                                message: '所选数量大于数据数量',
-                                type: 'warning'
-                              });
-                        keywordArr=_this.data[i].keywordList;
-                      }else{
-                        keywordArr=_this.data[i].keywordList.slice(0,num);
-                      }
-                    }else{
-                        _this.data[i].keywordList.length < 11 ? keywordArr=_this.data[i].keywordList : keywordArr=_this.data[i].keywordList.slice(0,_this.data[i].sortArr);
-                    };            
-                  /*console.log(keywordArr)*/
-                  let dataBJ=[];
-                  for(let k=0;k<keywordArr.length;k++){
-                    let dataB=new Array();
-                        dataB[0]=k;
-                        dataB[1]=parseInt(Math.random()*260);
-                        dataB[2]=keywordArr[k].score;
-                        dataB[3]=keywordArr[k].mention;
-                        dataBJ.push(dataB)
-                      };
-                      echart_card.setOption(echart.echart_option_event_qipao(dataBJ));
-                      echart_card.on('click', function (params) {
-                        console.log(params)
-                        params.event.event.stopPropagation() ;
-                       // console.log(_this.data[i].keywordList)
-                        _this.qipao_idarr.push(params.data[3]);
-                       // console.log(  _this.data[i].keywordList)
-                        _this.$confirm('是否删除 '+params.data[3].slice(0,params.data[3].indexOf('/'))+'?', '提示', {
-                          confirmButtonText: '确定',
-                          cancelButtonText: '取消',
-                          type: 'warning'
-                          }).then(() => {
-                            _this.del_keywordList(i,params.data[3],_this.qipao_idarr).then((data) =>{
-                              if(pubilcMap.successBack(data,_this)){
-                                _this.data[i].keywordList=_this.data[i].keywordList.filter(item => { return _this.qipao_idarr.indexOf(item.mention) === -1; });//前台删除
-                                if(_this.del_duibi_flag){//自身与竞品的数据分支
-                                    for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                                      if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
-                                          _this.$store.state.ev_duibiData[h].data.topicList[i].keywordList=_this.data[i].keywordList;
-                                        }
-                                      }
-                                 }
-                                echart.build_event_qipao(_this,inx,num)
-                              };
-                            });
-                            
-                          }).catch(() => {
-                            _this.$message({
-                              type: 'warning',
-                              message: '已取消删除'
-                            });          
-                          });            
-                      });
-               }); 
-              
-          };
-  },
   build_graph(domID,cate,cate_,_categories,_data,_links){ //组织，媒体 对比图 
     let _echart = echarts.init($('#'+domID+'')[0]); 
     let option = {
-                    backgroundColor:'#222222',
-                    color:color,
+                    backgroundColor:'white',
+                    color:['#f06292','#e57373','#ff8a65','#ffb74d','#ffd54f','#fff176','#dce775','#aed581','#81c784','#4dc3e1','#81d4fa'],
                     title: {
                         text: ''
                     },
@@ -825,15 +810,27 @@ var echart = {
                       }
                     },
                     legend: [{
+                            orient:'horizontal',   
+                            icon:'circle',
+                            left:50,   
+                            top:40,  
+                            itemGap:30,
                             data:cate,
                             textStyle: {
-                                            color: 'white'
+                                            color: '#333'
                                         }
                            },{
-                            top:'3%',
+                            orient:'vertical',
+                            icon:'circle', 
+                            right:30,
+                            itemGap:12,
+                            top:'center',
                             data:cate_,
+                            formatter:function(a){
+                              return a.length > 5 ? a.slice(0,5)+'..' : a;
+                            },    
                             textStyle: {
-                                            color: 'white'
+                                            color: '#333'
                                         }
                     }],
                     animationDurationUpdate: 1500,
@@ -845,20 +842,32 @@ var echart = {
                             layout: 'none',
                             symbolSize: 50,
                             roam: true,
+                            focusNodeAdjacency: true,
                             label: {
 
                                 normal: {
+                                  position: 'bottom',
                                   formatter:function(a){
+                                    console.log(a)
                                     if(a.name.indexOf('/')!=-1){
                                       return a.name.slice(0,a.name.indexOf('/'))
                                     }else{
-                                      return a.name
+                                      if(a.data.cpName != null){
+                                        let pro = a.name.length > 11 ? a.name.slice(0,11)+'..' : a.name;
+                                        let cp = a.data.cpName.length > 11 ? a.data.cpName.slice(0,11)+'..' : a.data.cpName;
+                                        console.log(cp)
+                                        return cate[0].name + ' : ' + pro + "\n"
+                                               + cate[1].name + ' : ' + cp
+                                      }else{
+                                        return a.name.length > 11 ? a.name.slice(0,11)+'..' : a.name;
+                                      }
                                     }
                 
                                   },
                                     show: true,
                                     textStyle: {
-                                        fontSize: 10
+                                        fontSize: 10,
+                                        color: '#333'
                                     }
                                 }
                             },
@@ -867,7 +876,8 @@ var echart = {
                             edgeLabel: {
                                 normal: {
                                     textStyle: {
-                                        fontSize: 20
+                                        fontSize: 20,
+                                        color: '#333'
                                     }
                                 }
                             },
@@ -885,7 +895,7 @@ var echart = {
                 };
                _echart.setOption(option) 
   },
-	build_refer_bar(data,domID,tableFlag){  //refer-柱状
+  build_refer_bar(data,domID,tableFlag){  //refer-柱状
       let xAxisData = [],seriesData = [];
       let oitemStyle = {
                   normal:{
@@ -925,8 +935,15 @@ var echart = {
           }
         };
         //tableDAta
-       // console.log(i)
+        //console.log(i)
       };
+      console.log(data)
+      let label = {
+                  normal: {
+                      show: true,
+                      position: 'top'
+                  }
+                };
       for(let i in data[0].articleNum){//生成 xAxisData seriesData
           xAxisData.push(i);
           let obj = {};
@@ -934,6 +951,7 @@ var echart = {
           obj.barGap = '5%';
           obj.barCategoryGap = '60%';
           obj.type = 'bar';
+          obj.label = label;
           obj.data = [articleNumMap.get(i),frequencyMap.get(i)];
           seriesData.push(obj);
       };
@@ -1191,6 +1209,12 @@ var echart = {
                           color: 'rgba(0,0,0,0)'
                       }
                   };//辅助
+      let label = {
+                  normal: {
+                      show: true,
+                      position: 'top'
+                  }
+                };            
     for(let i = 0;i < [...frequencyMap].length;i++){
       //console.log([...frequencyMap][i]);
       let obj = {},data = new Array([...frequencyMap].length).fill('-');
@@ -1199,6 +1223,7 @@ var echart = {
       obj.name = [...frequencyMap][i][0];
       obj.data = data;
       obj.stack = '总量';
+      obj.label = label;
       obj.type = 'bar';
       obj.barCategoryGap = '60%';
       obj.barGap = '5%';
@@ -1210,6 +1235,7 @@ var echart = {
     supObj.yAxisIndex = 1;
     supObj.type = 'bar';
     supObj.name = '';//辅助
+    obj.label = label;
     supObj.barCategoryGap = '60%';
     supObj.barGap = '5%';
     supObj.stack = '总量';
@@ -1222,8 +1248,17 @@ var echart = {
     var option = {
         color,
         tooltip: {
-          formatter: function(params) {
-            return params.name;
+         trigger: 'axis',
+          axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+          },
+          formatter:function(params){
+            console.log(params)
+            let string = "";
+            for(let i of params.reverse()){
+             string += '<span style="height: 10px;width: 10px;display: inline-block;border-radius: 50%;background:'+i.color+'"></span> ' + i.seriesName +'：' + i.value + '<br>'; 
+            }
+            return string  
           }
         },
         title:[{
@@ -1340,6 +1375,7 @@ var echart = {
     _echart.setOption(option);
     return _echart;
   },
+  refer_competNum_Data:'',//声誉竞争力数据 为excel专用
   build_refer_competNum(domID,Data,reputation,mention){//声誉竞争力
     echarts.dispose($('#'+domID+'')[0]);
     let articleNumMap = new Map();//各个企业文章总数
@@ -1369,7 +1405,7 @@ var echart = {
         dataMap.set(i,(strMapToObj(articleNumMap)[i]/sumArticleNum)*500);
       };
       for(let i in strMapToObj(frequencyMap)){ //生成议题领导力数据
-        dataMap.set(i,dataMap.get(i)+(strMapToObj(frequencyMap)[i])/sumFrequency*500);
+        dataMap.set(i,dataMap.get(i)+(strMapToObj(frequencyMap)[i]/sumFrequency)*500);
       };
     };
     //console.log(dataMap);
@@ -1380,19 +1416,32 @@ var echart = {
       obj.barGap = '5%';
       obj.type = 'bar';
       obj.stack = '广告';
-      data[0] = objToStrMap(reputation).get(i);
-      data[1] = objToStrMap(mention).get(i);
-      data[2] = dataMap.get(i);
-      data[3] = objToStrMap(reputation).get(i)*0.3+objToStrMap(mention).get(i)*0.4+dataMap.get(i)*0.3;
+      data[0] = objToStrMap(reputation).get(i).toFixed(2);
+      data[1] = objToStrMap(mention).get(i).toFixed(2);
+      data[2] = dataMap.get(i) == undefined ? '' : dataMap.get(i).toFixed(2);
+      data[3] = (objToStrMap(reputation).get(i)*0.3+objToStrMap(mention).get(i)*0.4+dataMap.get(i)*0.3).toFixed(2);
       obj.data = data;
       legendData.push(i);
       seriesData.push(obj) 
     };
-   // console.log(seriesData)
+   //console.log(seriesData)
+    this.refer_competNum_Data = seriesData;
     let _echart = echarts.init($('#'+domID+'')[0]);
     let option = {
         color,
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis',
+          axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+          },
+          formatter: function (params, ticket, callback) {   
+                        let string = "";
+                        for(let i of params.reverse()){
+                         string += '<span style="height: 10px;width: 10px;display: inline-block;border-radius: 50%;background:'+i.color+'"></span> ' + i.seriesName +'：' + i.value + '<br>'; 
+                        }
+                        return string                                                                                                                            
+                    }
+        },
         toolbox: {
             right: 20,
             feature: {
@@ -1462,17 +1511,11 @@ var echart = {
                         shadowOffsetX: 0,
                         shadowOffsetY: 0,
                         shadowColor: 'rgba(0, 0, 0, 0.5)',
-                        label : {
-                            show: true,
-                            formatter:  function (obj) {
-                                var value = obj.value;
-                                return value[3].slice(0,value[3].indexOf('/'))
-                            }
-                        }
+
                     }
                 };
             var option_echart_card={
-              backgroundColor: '#68c6d4',
+              backgroundColor: '#F2F2F2',
                   color: [
                      quse
                   ],
@@ -1500,10 +1543,7 @@ var echart = {
                       type: 'value',
                       name: '日期',
                       nameGap: 16,
-                      nameTextStyle: {
-                          color: '#fff',
-                          fontSize: 14
-                      },
+                      
                       max: data.length,
                       splitLine: {
                           show: false
@@ -1517,12 +1557,6 @@ var echart = {
                           lineStyle: {
                               color: '#777'
                           }
-                      },
-                      axisLabel: {
-                          formatter: '{value}',
-                          textStyle: {
-                              color: '#fff'
-                          }
                       }
                   },
                   yAxis: {
@@ -1531,10 +1565,7 @@ var echart = {
                       name: 'AQI指数',
                       nameLocation: 'end',
                       nameGap: 20,
-                      nameTextStyle: {
-                          color: '#fff',
-                          fontSize: 16
-                      },
+                      
                       axisLine: {
                           lineStyle: {
                               color: '#777'
@@ -1547,11 +1578,6 @@ var echart = {
                       },
                       splitLine: {
                           show: false
-                      },
-                      axisLabel: {
-                          textStyle: {
-                              color: '#fff'
-                          }
                       }
                   },
                   visualMap: [
@@ -1569,7 +1595,7 @@ var echart = {
                           text: ['圆形大小：PM2.5'],
                           textGap: 30,
                           textStyle: {
-                              color: '#fff'
+                              color: 'red'
                           },
                           inRange: {
                               symbolSize: [1, 509700]
@@ -1590,8 +1616,21 @@ var echart = {
                   ],
                   series: [
                       {
-                          name: '北京',
+                          //name: '北京',
                           type: 'scatter',
+                          label:{
+                            normal:{
+                                show: true,
+                                formatter:  function (obj) {
+                                    var value = obj.value;
+                                    return value[3].slice(0,value[3].indexOf('/'))
+                                },
+                                textStyle:{
+                                  color:'rgb(9, 7, 35)'
+                                }
+                                
+                            }    
+                          }, 
                           itemStyle: itemStyle,
                           data: data
                       }

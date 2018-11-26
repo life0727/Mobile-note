@@ -1,0 +1,357 @@
+      html{
+        font-size: 62.5% !important;
+        /* font-family:"Arial","Microsoft YaHei","黑体",sans-serif!important; */
+        }
+       body{
+        background: rgba(230,230,230,.5)
+       }
+       .SearchBegin{
+        cursor: pointer;
+        padding: 3px 18px;
+        font-size: 14px;
+        background-color: #00b38a;
+        border-color:#00b38a;
+        color: white;
+        line-height: 45px;
+        margin-left: 30px;
+        border-radius: 4px;
+       }
+       .el-loading-spinner i{
+        color:#00b38a !important;
+       }
+       .el-loading-spinner .el-loading-text{
+        color:#00b38a !important;
+       }
+       .page>button:hover i{
+        color:#00b38a !important;
+       }
+       .page .el-pager li:hover{
+        color:#00b38a !important;
+       }
+       .el-message{
+        background-color: #090723 !important;
+        border-color: #090723 !important;
+        border-radius: 0 !important;
+        top:0 !important;
+        width: 100%;
+        height: 158px;
+       }
+       .el-message .el-icon-warning {
+        display: none !important;
+       }
+       .el-message .el-icon-success {
+        display: none !important;
+       }
+       .el-message .el-message__closeBtn{
+        top: 25px;
+        color:white;
+       }
+       .el-message .el-message__content{
+        color: white !important;
+        margin: 0 auto !important;
+        font-size: 20px !important;
+       }
+       button:hover{
+        opacity: 0.8;
+        }
+       #search:hover{
+        opacity: 0.8;
+        }  
+        .mark{
+          background-color: rgba(255,255,255,0) !important;
+        } 
+        .container{
+          width: 1250px;
+        }
+        .el-date-editor .el-input__inner:focus{
+          border-color:  #00b38a;
+        }
+        #dropdown_item img{
+          color:red;
+          display: none;
+        }
+        #dropdown_item>li:hover img{
+            display: inline-block;
+        }
+        .el-dropdown-menu .clearfix .el-badge__content{
+          padding: 1px 6px;
+          border: none;
+        }
+        .el-dropdown-menu .el-dropdown-menu__item:hover{
+          background-color:#ebebeb!important;
+          color: #00b38a !important;
+        }
+        .el-dropdown-menu .proDropdown:hover img{
+          display: inline-block!important;
+        }
+        .el-dropdown-menu .addPro:hover{
+          opacity: 0.8!important;
+        }
+        .is-fullscreen{
+          background-color: rgba(255,255,255,.5) !important;
+        }
+        .el-date-picker .el-date-picker__time-header .el-input .el-input__inner:hover{
+          border-color: #00b38a;
+        }
+        .el-date-picker .el-date-picker__time-header .el-input .el-input__inner:focus{
+          border-color: #00b38a;
+        }
+        .el-date-picker .el-date-picker__time-header .el-time-panel__footer .confirm{
+          color: #00b38a;
+        }
+        .el-date-picker .el-date-picker__header .el-picker-panel__icon-btn:hover{
+          color: #00b38a;
+        } 
+        .el-date-picker .el-date-picker__header-label:hover{
+          color: #00b38a;
+        }
+        .el-date-picker .el-picker-panel__content td a:hover{
+          color: #00b38a;
+        } 
+        .el-date-picker .el-picker-panel__content .current a{
+          color: #00b38a !important;
+        }
+        .el-date-picker .el-date-table td.current:not(.disabled) span{
+          background-color: #00b38a;
+        }
+        .el-date-picker .el-date-table td.current:not(.disabled):hover span{
+          color:white;
+          background-color: #00b38a;
+        }
+        .el-date-picker .el-date-table td.today span{
+          color: #00b38a;
+        }
+        .el-date-picker .el-date-table .available:hover span{
+          color: #00b38a;
+        }
+        .el-date-picker .el-picker-panel__footer .el-button--text{
+          display: none;
+        }
+        .el-date-picker .el-picker-panel__footer .is-plain{
+          color: #fff;
+          background-color: #00b38a;
+          border-color: #00b38a;
+        }
+        .el-date-picker .el-picker-panel__footer .is-plain:hover{
+          color: #fff;
+          background-color: #00b38a;
+          border-color: #00b38a;
+          opacity: 0.8;
+        }
+        .el-date-picker .el-icon-d-arrow-left{
+          display: none;
+        }
+        .el-date-picker .el-icon-d-arrow-right{
+          display: none;
+        }
+        .btn-group .btn{
+          color: #999999;
+          background-color: white;
+          outline: none;
+          border: 1px solid #e4e4e4;
+          font-size: 12px;
+        }
+        .btn-group .warning{
+          color: #fff;
+          background-color: #00b38a;
+          border-color: #00b38a;
+        }
+        .popoverCss{
+            padding: 0 !important;
+          }
+        .popoverCss .list-group-item .fa-plus-circle{
+          display: none;
+        }
+        .popoverCss .list-group-item:hover .fa-plus-circle{
+          display: inline-block !important;
+        }
+        #event .active{
+          color: #555;
+          background-color: #F2F2F2;
+          border-color: #F2F2F2;
+        }
+        #event .list-group-item:focus{
+          background-color: #fff;
+        }
+        #event .list-group-item:hover{
+          background-color: #fff;
+        }
+        #event .list-group-item:hover img{
+          display: inline-block !important;
+        }
+        #event .active:focus{
+          background-color: #F2F2F2;
+        }
+        #event .active:hover{
+          background-color: #F2F2F2;
+        }
+        #event .active:hover img{
+          display: inline-block !important;
+        }
+        #event .list-group-item a{
+          color:#00b38a;
+        }
+        .btn-group .btn-danger{
+          color: #fff;
+          background-color: #d9534f;
+          border-color: #d43f3a;
+        }
+        #ev_popover a:hover i{ 
+          color:#00B38A;
+        }
+        .ev_confirmClass{
+          width: 300px !important;
+        }
+        .ev_confirmClass .el-message-box__input .el-input{
+          width: 90%;
+          left: 5%;
+        }
+        .ev_confirmClass .el-message-box__input .el-message-box__errormsg{
+          margin-left: 12px;
+        }
+        .ev_confirmClass .el-message-box__input .el-input input{
+          height: 30px;
+          line-height: 30px;
+        }
+        .ev_confirmClass .el-message-box__input .el-input input:focus{
+          border-color: #00b38a;
+        }
+        .ev_confirmClass .el-message-box__header{
+          text-align: center;
+          border-bottom: 1px solid #ebebeb;
+          width: 80%;
+          margin: 0 auto;
+          padding: 15px;
+        }
+        .ev_confirmClass .el-icon-warning{
+          display: none;
+        }
+        .ev_confirmClass .el-message-box__message{
+          padding: 0 12px !important;
+        }
+        .ev_confirmClass .el-button--small{
+          border-width: 0px;
+        }
+        .ev_confirmClass .el-button--small:hover{
+          color: #555;
+          background-color: white;
+          border-color: white;
+          opacity: 0.8;
+        }
+        .ev_confirmClass .el-message-box__btns .el-button--primary{
+          color: #fff;
+          background-color: #00b38a;
+          border-color: #00b38a;
+        }
+        .ev_confirmClass .el-message-box__btns .el-button--primary:hover{
+          color: #fff;
+          background-color: #00b38a !important;
+          border-color: #00b38a !important;
+          opacity: 0.8;
+        }
+        .el-dialog .el-dialog__headerbtn .el-dialog__close:hover{
+          color:#00b38a !important;
+        }
+        .el-dialog .el-dialog__headerbtn:hover .el-dialog__close{
+          color:#00b38a !important;
+        }
+        .ev_dialogClass{
+          border-radius: 16px !important;
+          width: 60% !important;
+          margin-top: 10vh !important;
+        }
+        .ev_dialogClass .el-dialog__header{
+          padding: 15px 0;
+          text-align: center;
+          border-bottom: 1px solid #ebebeb;
+          width: 95%;
+          margin: 0 auto;
+        }
+        .ev_dialogClass .el-dialog__title{
+          color: #333;
+          font-weight:500px;
+          padding-left: 14px;
+        }
+        .ev_dialogClass .el-dialog__headerbtn{
+          top:10px;
+          right: 45px;
+          font-size: 25px;
+        }
+        .ev_dialogClass .el-dialog__body{
+          padding: 20px 30px;
+        }
+        .ev_dialogClass .el-dialog__body .el-radio-group{
+          display: block;
+          margin-top: 15px;
+        }
+        .ev_dialogClass .el-dialog__body .el-radio+.el-radio{
+          margin-left:15px;
+        }
+        .ev_dialogClass .el-dialog__body .el-radio__input.is-checked .el-radio__inner{
+          border-color: #00b38a;
+          background: #00b38a;
+        }
+        .ev_dialogClass .el-dialog__body .el-radio__input.is-checked+.el-radio__label{
+          color:#00b38a;
+        }
+        .ev_dialogClass .el-dialog__body .el-checkbox__input.is-checked .el-checkbox__inner{
+          border-color: #00b38a;
+          background: #00b38a;
+        }
+        .ev_dialogClass .el-dialog__footer{
+          border-top: 1px solid #ebebeb;
+          width: 95%;
+          margin: 0 auto;
+        }
+        .ev_dialogClass .el-dialog__footer .el-button{
+          color: #555;
+          background-color: white;
+          border-color: white;
+        }
+        .ev_dialogClass .el-dialog__footer .el-button:hover{
+          color: #555;
+          background-color: white;
+          border-color: white;
+          opacity: 0.8;
+        }
+        .ev_dialogClass .el-dialog__footer .el-button--primary{
+          color: #fff;
+          background-color: #00b38a;
+          border-color: #00b38a;
+          padding: 6px 15px;
+        }
+        .ev_dialogClass .el-dialog__footer .el-button--primary:hover{
+          color: #fff;
+          background-color: #00b38a;
+          border-color: #00b38a;
+          opacity: 0.8;
+        }
+        .ev_dialogClass .el-dialog__body .el-form .el-input input:focus{
+          border-color: #00b38a;
+        }
+        .ev_dialogClass .el-dialog__body .el-form .el-textarea textarea:focus{
+          border-color: #00b38a;
+        }
+        .elfrom_class .el-form-item{
+          margin-bottom: 0;
+        }
+        .elfrom_class .el-form-item__content{
+          width: 70%;
+        }
+        .elfrom_class .el-form-item__content .el-input__inner{
+          line-height: 25px;
+          height: 25px;
+        }
+        .elfrom_class .el-form-item__content .el-input__inner:focus{
+          border-color: #00b38a;
+        }
+        #event .el-checkbox__input.is-checked .el-checkbox__inner{
+          background-color: #00b38a;
+          border-color: #00b38a;
+        }
+        .el-checkbox__input:hover .el-checkbox__inner{
+          border-color: #00b38a;
+        }
+        .popperClassMedia{
+          left:338px !important;
+        }

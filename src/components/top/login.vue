@@ -2,16 +2,16 @@
 <div class="login " style="padding: 0;background-color:#fbf6ea " >
 <!-- 登录主体strat -->
 	<div class="login_main">
-		<img src="../assets/icon/login.png" style="position: absolute;">
+		<img src="../../assets/icon/login.png" style="position: absolute;">
 		<div style="width: 490px;height: 490px;background-color: #f5f5f5;position: absolute;right: 0px;" class="main_left">
 			<div style="width: 470px;height: 470px;background-color: white;border-radius: 5px;margin: 10px 10px;">
-				<img src="../assets/icon/login_biaoti.png" style="margin-top: 60px;margin-left: 85px;">
+				<img src="../../assets/icon/login_biaoti.png" style="margin-top: 60px;margin-left: 85px;">
 				<div style="margin-top: 80px;margin-left: 85px;border-bottom:1px solid #ddd;width: 300px;height: 28px;position: relative;">
-					<img src="../assets/icon/login_user.png">
+					<img src="../../assets/icon/login_user.png">
 					<el-input style="width: 260px;position: absolute;left: 20px;" v-model="username" placeholder="请输入您的账户名"></el-input>
 				</div>
 				<div style="margin-top: 42px;margin-left: 85px;border-bottom:1px solid #ddd;width: 300px;height: 28px;position: relative;">
-					<img src="../assets/icon/login_password.png">
+					<img src="../../assets/icon/login_password.png">
 					<el-input style="width: 260px;position:absolute;left: 20px;" type="password" v-model="password" @keyup.enter.native="login" placeholder="请输入密码"></el-input>
 				</div>
 				<div style="margin-top: 50px;margin-left: 85px;width: 300px;height: 80px;position: relative;">
@@ -29,17 +29,13 @@
 </div>	
 </template>
 <script >
-import { tipsMessage,publicSearch,successBack,SetLocalStorage}  from '../assets/js/map.js'
-import topnav from './top_nav.vue'
+import { tipsMessage,publicSearch,successBack,SetLocalStorage}  from '../../assets/js/map.js'
   export default{
     data : function(){ 
       return{
          username:'',
          password:''   
       }
-    },
-    components:{ 
-      topnav
     },
     methods:{
     	login () {//按钮登录点击
@@ -53,8 +49,8 @@ import topnav from './top_nav.vue'
 				    publicSearch('rsa/project',"GET",{"projectDto": JSON.stringify({"method": 'get'})}).then((data) =>{//查询project
 				    	if(successBack(data,this)){
 				    		if(data.data == null || data.data.length == 0){
-				    			notify('提示',data.message,'warning',this);
-              					this.$router.push('/index/clever');
+				    			tipsMessage(data.message,'warning',this);
+              					this.$router.push('/index/clever/clever_content');
 				    		}else{
 				    			let projectData = {};
 						    	projectData.project_list = data.data;
@@ -62,7 +58,7 @@ import topnav from './top_nav.vue'
 						    	projectData.project_name = data.data[0].name;
 						    	SetLocalStorage('current_projectData_A',projectData);
 						    	//console.log(data)
-						    	this.$router.push('/main/refer')
+						    	this.$router.push('/main/event')
 				    		};
 				    	};
 				    })
@@ -77,7 +73,7 @@ import topnav from './top_nav.vue'
 	            url: 'rsa/authentication',
 	            success: function(data){
 		            if(data.code == 1001){	
-		            	_this.$router.push('/main/refer')
+		            	_this.$router.push('/main/event')
 		             //window.location.href="main/refer";
 		            };
 	            }
@@ -87,6 +83,7 @@ import topnav from './top_nav.vue'
 		});*/
     }
   }
+    	
 </script>
 <style lang="scss" >
 .login{

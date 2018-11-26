@@ -1,7 +1,9 @@
 <template>
-<div v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading">
-  <topnav></topnav>
-  <div class="custom container" style="background:#ffffff;padding:15px 10px 0 10px;">
+<div class="container" v-loading.fullscreen.lock="publicLoading" element-loading-text="系统拼命加载中" element-loading-spinner="el-icon-loading">
+<p style="line-height: 50px;margin: 10px 0 0 0;position: relative">客户列表
+  <el-button type="warning" style="padding: 4px 29px;position: absolute;right: -15px;top:15px;background-color: #fcd482;border-color:#fcd482;"  @click="add_btn">添加</el-button>
+</p>
+  <div class="custom container" style="background:#ffffff;padding:15px 10px;">
        <el-table
         :data="tabledata_user"
         border
@@ -25,7 +27,7 @@
         </el-table-column>
         <el-table-column
           label="QQ号"
-          width=110
+          width=80
           show-overflow-tooltip
           prop="qq">
         </el-table-column>
@@ -45,32 +47,37 @@
           show-overflow-tooltip
           prop="companyAddress">
         </el-table-column>
-        <el-table-column label="操作">
-        <template scope="scope">
-          <el-button
-            size="small"
-            @click="fenpei(scope.row)">项目分配</el-button>
-            <el-button
-            size="small"
-            type="info"
-            @click="write( scope.row)">编辑</el-button>
-          <el-button
-            size="small"
-            type="danger"
-            @click="del(scope.$index, scope.row)">删除</el-button>
-        </template>
-        </el-table-column>
         <el-table-column
           label="备注"
           show-overflow-tooltip>
           <template scope="scope">{{ scope.row.remark}}</template>
         </el-table-column>
+        <el-table-column label="操作">
+        <template scope="scope">
+        <el-button type="text" @click="fenpei(scope.row)" style="color: #32a880">项目分配</el-button>
+          <!-- <el-button
+            size="small"
+            @click="fenpei(scope.row)">项目分配</el-button>-->
+         <el-button type="text" @click="write(scope.row)" style="color: #32a880">编辑</el-button>   
+            <!-- <el-button 
+            size="small"
+            type="info"
+            @click="write( scope.row)">编辑</el-button> -->
+          <el-button type="text" @click="del(scope.row)" style="color:#f56c6c;">删除</el-button>  
+          <!-- <el-button
+            size="small"
+            type="danger"
+            @click="del(scope.$index, scope.row)">删除</el-button> -->
+        </template>
+        </el-table-column>
+        
       </el-table>
-    <el-button  type="info" @click="add_btn" style="margin:15px 0 5px 0;">添加客户</el-button>
+    <!-- <el-checkbox style="margin: 10px;" v-model="select_All"   v-show="this.tabledata_user.length!==0" >全选所有</el-checkbox>
+    <el-button type="text" @click="del('all')" style="color:#f56c6c;margin-left: 5px;" v-show="select_All&&this.tabledata_user.length!==0" >确认删除</el-button> -->
   </div>
   <!-- 添加用户模态框 -->
-    <el-dialog :title="title" :visible.sync="dialog_user" size="tiny" id="dialog_add">
-      <el-form label-position="right" label-width="80px" >
+    <el-dialog :title="title" :visible.sync="dialog_user" size="tiny" id="dialog_add" custom-class="ev_dialogClass">
+      <el-form label-position="right" label-width="120px" >
         <el-form-item label="用户名">
           <el-input v-model="name" placeholder="请输入用户名" ></el-input>
         </el-form-item>
@@ -78,7 +85,7 @@
           <el-input v-model="account" placeholder="请输入账号" :disabled="title=='客户修改'"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input :type="password_type" v-model="password" placeholder="请输入密码" style="position: relative"></el-input><i @click="look_password" :class="password_type=='text' ? 'fa fa-eye-slash' : 'fa fa-eye' " style="position: absolute;right: 10px;line-height: 36px;"></i>
+          <el-input :type="password_type" v-model="password" placeholder="请输入密码" style="position: relative"></el-input><i @click="look_password" :class="password_type=='text' ? 'fa fa-eye-slash' : 'fa fa-eye' " style="position: absolute;right: 75px;line-height: 36px;"></i>
         </el-form-item>
         <el-form-item label="手机号">
           <el-input  v-model="phone" placeholder="请输入手机号"></el-input>
@@ -105,8 +112,8 @@
       </span>
   </el-dialog>
   <!-- 查看用户项目模态框 -->
-    <el-dialog title="项目列表" :visible.sync="dialog_project" size="tiny" id="dialog_project">
-    <p style="color:#13ce66;;margin-bottom: 10px;font-size: 16px;">项目分配至 </p>
+    <el-dialog title="项目列表" :visible.sync="dialog_project" width="400px !important" id="dialog_project" custom-class="ev_dialogClass">
+    <p style="color:#FF5015;">*请选择分配给当前客户的项目 </p>
        <el-table
         :data="projectList"
         border
@@ -132,8 +139,8 @@
 </template>
 
 <script>
-import topnav from './top_nav.vue'
-import { Sort,Map,date_change,SetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage }  from '../assets/js/map.js'
+
+import { Sort,Map,date_change,SetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap }  from '../../assets/js/map.js'
 export default {
   mounted :function () {
     this.search();
@@ -158,7 +165,8 @@ export default {
       selection:[],
       userbId:'',
       title:'',
-      publicLoading:false //公共loading
+      publicLoading:false, //公共loading
+      select_All:false//全选状态绑定
   	}
   },
   methods: {
@@ -176,6 +184,7 @@ export default {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         inputType:'password',
+                        customClass:'ev_confirmClass',
                         closeOnClickModal:false,
                       }).then(({ value }) => {
                         publicSearch('rsa/userA/author',"POST",{"password":value}).then((data) =>{//ajax
@@ -250,6 +259,7 @@ export default {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
                           inputType:'password',
+                          customClass:'ev_confirmClass',
                           closeOnClickModal:false,
                         }).then(({ value }) => {
                           publicSearch('rsa/userA/author',"POST",{"password":value}).then((data) =>{//ajax
@@ -277,6 +287,7 @@ export default {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             inputType:'password',
+                            customClass:'ev_confirmClass',
                             closeOnClickModal:false,
                           }).then(({ value }) => {
                             publicSearch('rsa/userA/author',"POST",{"password":value}).then((data) =>{//ajax
@@ -318,6 +329,7 @@ export default {
                             confirmButtonText: '确定',
                             cancecustomerDtoButtonText: '取消',
                             inputType:'password',
+                            customClass:'ev_confirmClass',
                             closeOnClickModal:false,
                           }).then(({ value }) => {
                             publicSearch('rsa/userA/author',"POST",{"password":value}).then((data) =>{//ajax
@@ -380,6 +392,7 @@ export default {
                         confirmButtonText: '确定',
                         cancecustomerDtoButtonText: '取消',
                         inputType:'password',
+                        customClass:'ev_confirmClass',
                         closeOnClickModal:false,
                       }).then(({ value }) => {
                         publicSearch('rsa/userA/author',"POST",{"password":value}).then((data) =>{//ajax
@@ -397,16 +410,24 @@ export default {
         }
       })  
     },
-    del(a,b){
-      let useraId = "123456";         
+    del(Dta){
+      let userBIds = [],useraId = "123456";
+      if(Dta == 'all'){
+        for(let i of this.tabledata_user){
+          userBIds.push(i.id);
+        };
+      }else{
+        userBIds.push(Dta.id);
+      };         
       let dta = {
                 method : "delete",
-                userBIds : [b.id]
+                userBIds
             };
-      console.log(b);
-      this.$confirm('是否删除'+'?', '提示', {
+      console.log(Dta);
+      this.$confirm(Dta == 'all' ? '是否删除全部' : '是否删除', '提示', {
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
+                  customClass:'ev_confirmClass',
                   type: 'warning'
                 }).then(() => {
                   publicSearch('rsa/userA/'+useraId+'/customer',"POST",{"customerDto":JSON.stringify(dta)}).then((data) =>{//ajax 
@@ -415,6 +436,7 @@ export default {
                                       confirmButtonText: '确定',
                                       cancecustomerDtoButtonText: '取消',
                                       inputType:'password',
+                                      customClass:'ev_confirmClass',
                                       closeOnClickModal:false,
                                     }).then(({ value }) => {
                                       publicSearch('rsa/userA/author',"POST",{"password":value}).then((data) =>{//ajax
@@ -439,18 +461,15 @@ export default {
         this.password_type='text'
       }    
     }
-  },
-  components:{
-    topnav
-  },
+  }/*,
   watch:{
       $route (to,from){
         console.log(from)
-        /*if(from.path==='/main/event'){
+        if(from.path==='/main/event'){
           console.log(4555)
-        }*/
+        }
       }
-    }
+    }*/
 }
 </script>
 <style lang="scss" >
@@ -458,12 +477,22 @@ export default {
       .el-dialog__body{
         padding-left: 5px;
         padding-bottom: 10px;
+        .el-form-item__content{
+          margin: 0 !important;
+          .el-input,.el-textarea{
+            width: 400px !important;
+          }
+        }
       }
     }
 #dialog_project{
   .el-dialog__body{
-        padding-top: 10px;
-      }
+    padding-top: 10px;
+    .el-table td, .el-table th{
+      padding: 4px 0;
+      text-align: center;
+    }
+  }
 }    
   .custom{
   /*    表格头部 */
@@ -488,18 +517,25 @@ export default {
      }
    /*    表格内部 */ 
    tbody{
-    .current-row{
+    /* .current-row{
       color: #ccc !important;
       background-color: #ccc !important;
-    }
-    .cell{
-      text-align: center;
-      padding: 0;
-      .el-button--small {
-        padding: 4px 3px;
-        margin-left: 3px;
+    } */
+    td{
+      padding: 7px 0;
+      .cell{
+        .el-button{
+          padding: 3px 0px;
+        }
+        text-align: center;
+        padding: 0;
+        .el-button--small {
+          padding: 4px 3px;
+          margin-left: 3px;
+        }
       }
     }
+    
     tr{
       height:25px;
     }
@@ -514,6 +550,13 @@ export default {
         }
       }
      }
+    }
+    .el-checkbox__input.is-checked+.el-checkbox__label{
+      color: #e6a23c;
+    }
+    .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+      background-color: #e6a23c;
+      border-color: #e6a23c;
     }
   }
 

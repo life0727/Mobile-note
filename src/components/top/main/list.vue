@@ -98,32 +98,32 @@
                     <span v-show="a.article.articleType==2" style="width:40px;height: 18px;position: absolute;top:10px;border: 1px solid #3dae36;font-size: 14px;border-radius: 4px;padding: 0 5px;color:white;line-height: 16px;background-color:rgba(61,174,54,.8);">微信</span>
                     <span style="width:350px;font-size: 16px;height:18px;line-height: 16px;position: absolute;left:60px;top:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"><a style="color:black" :href="a.article.url" target="_blank">{{a.article.title}}</a></span>
                     <p style="position: absolute;left:60px;top: 38px;">
-                      <span><img src="../../assets/icon/发布者(22x18px).png"></span>
+                      <span><img src="../../../assets/icon/发布者(22x18px).png"></span>
                       <span style="color: #cccccc;font-size: 14px;">{{a.article.author}}</span >&nbsp;<span style="color: #cccccc;font-size: 14px;">▪</span>&nbsp;<span style="color: #cccccc;font-size: 14px;">{{a.article.publishTime}}</span>
                     </p>
                   </div>
                   <div style="width: 131px;height:80px;border-left: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;position: absolute;top:10px;right: 10px;text-align: center;">
-                      <img src="../../assets/icon/del.png" style="position: absolute;right: 0;cursor: pointer;display:none;" ref="del_img" @click="wuguan(a)">
-                    <span style="position: absolute;top: 10px;left:60px;"><img src="../../assets/icon/媒体（26x26px）.png"></span>
+                      <img src="../../../assets/icon/del.png" style="position: absolute;right: 0;cursor: pointer;display:none;" ref="del_img" @click="wuguan(a)">
+                    <span style="position: absolute;top: 10px;left:60px;"><img src="../../../assets/icon/媒体（26x26px）.png"></span>
                     <p style="font-size: 14px;margin-top: 41px;">{{a.article.media}}</p>
                   </div>
                   <div style="width: 421px;height:60px;border-right: 1px solid #dcdcdc;position: absolute;top:90px;" id="keyword_div">
                     <span v-for="b in a.includeKeywordList">{{b}}</span>
                   </div>
                   <div style="width: 131px;height:60px;border-left: 1px solid #dcdcdc;position: absolute;top:90px;right: 10px;">
-                    <span style="position: absolute;top: 10px;left: 52px;"><img src="../../assets/icon/指数（26x26px）.png"></span>
+                    <span style="position: absolute;top: 10px;left: 52px;"><img src="../../../assets/icon/指数（26x26px）.png"></span>
                     <p style="font-size: 14px;margin-top: 41px;">{{a.article.newsIndex}}</p>
                   </div>
                   <div style="height:30px;width:100%;background-color:#f7f7f7;position: absolute;left: 0;bottom: 0;border-top: 1px solid #dcdcdc;" id="bottom_dev">
                     <div style="width:114px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
                       <span style="color:#999999;line-height:15px;">
-                        <img src="../../assets/icon/分类（17x17）.png" style="margin:-3px 3px 0 0;">
+                        <img src="../../../assets/icon/分类（17x17）.png" style="margin:-3px 3px 0 0;">
                         <span style="font-size: 14px;line-height:30px">{{a.article.category}}</span>
                       </span>
                     </div>
                     <div style="width:117px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
                       <span style="color:#999999;line-height:25px;">
-                        <img src="../../assets/icon/标记位置（18x18px）.png" style="margin:0px 3px 0 0;">
+                        <img src="../../../assets/icon/标记位置（18x18px）.png" style="margin:0px 3px 0 0;">
                         <span v-show="a.article.locationLevel==1" style="font-size: 14px;line-height:30px">普通新闻</span>
                         <span v-show="a.article.locationLevel==2" style="font-size: 14px;line-height:30px">频道首页</span>
                         <span v-show="a.article.locationLevel==3" style="font-size: 14px;line-height:30px">频道要闻</span>
@@ -133,19 +133,19 @@
                     </div>
                     <div style="width:114px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
                       <span  @click="dialog_ReprintList(a)" style="color:#999999;cursor: pointer;" class="reprintList">
-                        <img src="../../assets/icon/转发（18x18px）.png" style="margin:-4px 3px 0 0;">
+                        <img src="../../../assets/icon/转发（18x18px）.png" style="margin:-4px 3px 0 0;">
                         <span  style="font-size: 14px;line-height:30px">{{a.article.reprintList== 0 ? '' : a.article.reprintList.length}}</span>
                       </span>
                     </div>
                     <div style="width:114px;border-right:1px solid #dcdcdc;float: left;height: 100%;text-align: center;">
                       <span style="color:#999999;">
-                        <img src="../../assets/icon/点赞（18x18px）.png" style="margin:-4px 3px 0 0;">
+                        <img src="../../../assets/icon/点赞（18x18px）.png" style="margin:-4px 3px 0 0;">
                         <span style="font-size: 14px;line-height:30px" >{{a.article.likeCount}}</span>
                       </span>
                     </div>
                     <div style="width:114px;float: left;height: 100%;text-align: center;">
                       <span style="color:#999999;">
-                        <img src="../../assets/icon/浏览（22x18px）.png" style="margin:-4px 3px 0 0;">
+                        <img src="../../../assets/icon/浏览（22x18px）.png" style="margin:-4px 3px 0 0;">
                         <span style="font-size: 14px;line-height:30px">{{a.article.readCount}}</span>
                       </span>
                     </div>
@@ -607,7 +607,7 @@
         <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;" v-for="(i,$index) in dialog_xw_provinceMap" @mouseover="Mover_articleList($index)" @mouseout="Mout_articleList($index)">
           <div class="el-step__head  is-text" style="color: white;">
             <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
-            <span class="el-step__icon"><img src="../../assets/icon/xiangguanwenzhang.png"></span>
+            <span class="el-step__icon"><img src="../../../assets/icon/xiangguanwenzhang.png"></span>
           </div>
           <div class="el-step__main" style="margin-left: 0">
             <div class="el-step__title "  style="width: 480px;height: 32px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"><a :href="i.article.url"  target="_blank" style="font-weight: 700;color: #48576a;text-decoration: none" ref="dialog_xw_articlelist">标题：{{i.article.title}}</a>
@@ -625,8 +625,8 @@
 </template>
 <script>
 import echarts from 'echarts'
-import _echart from '../../assets/js/_echart.js'
-import { filter_polar,Sort_up,Sort_down,Sort,_Sort,SetSessionStorage,GetSessionStorage,format_time,date_change,Map }  from '../../assets/js/map.js'
+import _echart from '../../../assets/js/_echart.js'
+import { filter_polar,Sort_up,Sort_down,Sort,_Sort,SetSessionStorage,GetSessionStorage,format_time,date_change,Map }  from '../../../assets/js/map.js'
 //import { wordExport }  from '../../assets/js/wordexport.js'
 export default {
   mounted :function () {
