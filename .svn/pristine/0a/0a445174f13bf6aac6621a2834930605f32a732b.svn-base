@@ -1,0 +1,149 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "xlsx",
+        "scope": null,
+        "escapedName": "xlsx",
+        "name": "xlsx",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "C:\\Users\\Administrator\\Desktop\\RS\\RS-yq"
+    ]
+  ],
+  "_from": "xlsx@latest",
+  "_hasShrinkwrap": false,
+  "_id": "xlsx@0.14.0",
+  "_inCache": true,
+  "_location": "/xlsx",
+  "_nodeVersion": "10.9.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/xlsx_0.14.0_1536222719313_0.6284640599198088"
+  },
+  "_npmUser": {
+    "name": "sheetjs",
+    "email": "dev@sheetjs.com"
+  },
+  "_npmVersion": "6.2.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "xlsx",
+    "scope": null,
+    "escapedName": "xlsx",
+    "name": "xlsx",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/xlsx/-/xlsx-0.14.0.tgz",
+  "_shasum": "4da79b08ad9e32106de66613f7a0d3ce559b1fad",
+  "_shrinkwrap": null,
+  "_spec": "xlsx",
+  "_where": "C:\\Users\\Administrator\\Desktop\\RS\\RS-yq",
+  "alex": {
+    "allow": [
+      "crash",
+      "wtf",
+      "holes"
+    ]
+  },
+  "author": {
+    "name": "sheetjs"
+  },
+  "bin": {
+    "xlsx": "./bin/xlsx.njs"
+  },
+  "browser": {
+    "buffer": false,
+    "crypto": false,
+    "stream": false,
+    "process": false,
+    "fs": false
+  },
+  "bugs": {
+    "url": "https://github.com/SheetJS/js-xlsx/issues"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "xlsx.js"
+    }
+  },
+  "dependencies": {
+    "adler-32": "~1.2.0",
+    "cfb": "^1.1.0",
+    "codepage": "~1.14.0",
+    "commander": "~2.17.1",
+    "crc-32": "~1.2.0",
+    "exit-on-epipe": "~1.0.1",
+    "ssf": "~0.10.2"
+  },
+  "description": "SheetJS Spreadsheet data parser and writer",
+  "devDependencies": {
+    "@sheetjs/uglify-js": "~2.7.3",
+    "@types/node": "^8.5.9",
+    "blanket": "~1.2.3",
+    "dtslint": "^0.1.2",
+    "jsdom": "~11.1.0",
+    "mocha": "~2.5.3",
+    "typescript": "2.2.0"
+  },
+  "directories": {},
+  "dist": {
+    "integrity": "sha512-1MDQ7XYRj6JqbXmgCN+ivL6Nr77NzyynM2Inekr5xfmVdsr628FK1nvy6d3T7Y40fbzCj4EMaica4i6YT5UfBA==",
+    "shasum": "4da79b08ad9e32106de66613f7a0d3ce559b1fad",
+    "tarball": "https://registry.npmjs.org/xlsx/-/xlsx-0.14.0.tgz",
+    "fileCount": 26,
+    "unpackedSize": 7796683,
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbkOYACRA9TVsSAnZWagAAZpIP+wel6HGmd3KClf7AsimC\ntK5uQpq1MctIq1yYXYHzC8jE+1z7o36jyUts+Muc+v4e2Nb2vK4NJqDvSeN2\nmjgavzZXERNnk0Npeo2/9YvpoPX9OcWuptO5LQRZidknLm2L694O0WgqtC1S\n82caGPa6eAWo6AtsM7KAzCN46kMN0NtTU98lxRySPzKDPH7VC6FOhYu/5/FS\nHX/f6mmZbkGUkSAuE+dbB/Tvuhm6Oapb2KBzWSc0PazZgmlkNm9InmZUAjGU\nY3sTvmuSAcaFZMASvk+G7b+2JWruQowF2/n+/7zvAeObIwjypZuHt0HQyjko\nhl6qxmdBcynMJGIkUdY0P5icX7vcseaB9PFXOG5TXFMCyLqjkIFI/0JRS9l9\ni1N3lDkuLqu8jllRwYIfvHXv2WGRFcAd023WKlKGOObXUc+d0k+NIb1u+KWP\nPGc/A4RpQKyGdhPmJHsqVP9XiLbz8ApkszdrFkWL8W2O5kARNAsL6DYqHJm4\nucFiO4LqX8fsEk2HtPjInMCXY3bGC/pRKEXCn/efCeKgKnEMKFW2GcWdaTCd\naHoiflu9esd8ce6ex7FVjEY1rDKjNPSy9+nI1g7JZ2816P3EPLs2oYx9wWVk\n1qr8mbUYeAazvyuOOdJBF7MXXIvq4PkJIEnOPp4cI6QX50staHfIclNwjTDc\nu33h\r\n=uqCm\r\n-----END PGP SIGNATURE-----\r\n"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "gitHead": "078e5b7ebac1d8138b118292668a4dddaf0a9455",
+  "homepage": "http://sheetjs.com/opensource",
+  "keywords": [
+    "excel",
+    "xls",
+    "xlsx",
+    "xlsb",
+    "xlsm",
+    "ods",
+    "csv",
+    "dbf",
+    "dif",
+    "sylk",
+    "office",
+    "spreadsheet"
+  ],
+  "license": "Apache-2.0",
+  "main": "./xlsx",
+  "maintainers": [
+    {
+      "name": "sheetjs",
+      "email": "dev@sheetjs.com"
+    }
+  ],
+  "name": "xlsx",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SheetJS/js-xlsx.git"
+  },
+  "scripts": {
+    "build": "make",
+    "dtslint": "dtslint types",
+    "lint": "make fullint",
+    "pretest": "git submodule init && git submodule update",
+    "test": "make travis"
+  },
+  "types": "types",
+  "version": "0.14.0"
+}

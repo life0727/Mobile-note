@@ -1,0 +1,103 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "vue-popper@^0.3.8",
+        "scope": null,
+        "escapedName": "vue-popper",
+        "name": "vue-popper",
+        "rawSpec": "^0.3.8",
+        "spec": ">=0.3.8 <0.4.0",
+        "type": "range"
+      },
+      "C:\\Users\\Administrator\\Desktop\\RS\\RS-yq"
+    ]
+  ],
+  "_from": "vue-popper@>=0.3.8 <0.4.0",
+  "_id": "vue-popper@0.3.8",
+  "_inCache": true,
+  "_location": "/vue-popper",
+  "_nodeVersion": "5.7.1",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/vue-popper-0.3.8.tgz_1469021276869_0.060634257504716516"
+  },
+  "_npmUser": {
+    "name": "qingwei.li",
+    "email": "cinwell.li@gmail.com"
+  },
+  "_npmVersion": "3.10.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "vue-popper@^0.3.8",
+    "scope": null,
+    "escapedName": "vue-popper",
+    "name": "vue-popper",
+    "rawSpec": "^0.3.8",
+    "spec": ">=0.3.8 <0.4.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue-popper/-/vue-popper-0.3.8.tgz",
+  "_shasum": "93d2c06cd2f20f0503a1509d6fcfc2c1ea7c8057",
+  "_shrinkwrap": null,
+  "_spec": "vue-popper@^0.3.8",
+  "_where": "C:\\Users\\Administrator\\Desktop\\RS\\RS-yq",
+  "author": {
+    "name": "qingwei-li",
+    "email": "cinwell.li@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/element-component/vue-popper/issues"
+  },
+  "dependencies": {},
+  "description": "A popper mixin for Vue.",
+  "devDependencies": {
+    "element-ui": "^0.1.1",
+    "gh-pages": "^0.11.0",
+    "popper.js": "^0.5.0",
+    "vue": "^1.0.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "93d2c06cd2f20f0503a1509d6fcfc2c1ea7c8057",
+    "tarball": "https://registry.npmjs.org/vue-popper/-/vue-popper-0.3.8.tgz"
+  },
+  "files": [
+    "lib",
+    "src"
+  ],
+  "gitHead": "df25e6d38ace8f4bd53dc318d7788c87ac691016",
+  "homepage": "https://element-component.github.io/vue-popper/",
+  "keywords": [
+    "popper",
+    "vue",
+    "tooltip",
+    "popover"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "maintainers": [
+    {
+      "name": "qingwei.li",
+      "email": "cinwell.li@gmail.com"
+    }
+  ],
+  "name": "vue-popper",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/element-component/vue-popper.git"
+  },
+  "scripts": {
+    "deploy": "cooking build -c cooking.demo.js -p && gh-pages -d example/dist",
+    "dev": "cooking watch -c cooking.demo.js",
+    "dist": "cooking build -p",
+    "prepublish": "npm run dist"
+  },
+  "version": "0.3.8"
+}

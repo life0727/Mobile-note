@@ -1,0 +1,102 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "chromedriver@^2.21.2",
+        "scope": null,
+        "escapedName": "chromedriver",
+        "name": "chromedriver",
+        "rawSpec": "^2.21.2",
+        "spec": ">=2.21.2 <3.0.0",
+        "type": "range"
+      },
+      "C:\\Users\\Administrator\\Desktop\\vue-note\\Mobile-note"
+    ]
+  ],
+  "_from": "chromedriver@>=2.21.2 <3.0.0",
+  "_id": "chromedriver@2.27.3",
+  "_inCache": true,
+  "_location": "/chromedriver",
+  "_nodeVersion": "7.2.1",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/chromedriver-2.27.3.tgz_1486994540772_0.7345185251906514"
+  },
+  "_npmUser": {
+    "name": "giggio",
+    "email": "giggio@giggio.net"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "chromedriver@^2.21.2",
+    "scope": null,
+    "escapedName": "chromedriver",
+    "name": "chromedriver",
+    "rawSpec": "^2.21.2",
+    "spec": ">=2.21.2 <3.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://registry.npmjs.org/chromedriver/-/chromedriver-2.27.3.tgz",
+  "_shasum": "00674dad4058643a4ad99a8015264449f736a644",
+  "_shrinkwrap": null,
+  "_spec": "chromedriver@^2.21.2",
+  "_where": "C:\\Users\\Administrator\\Desktop\\vue-note\\Mobile-note",
+  "author": {
+    "name": "Giovanni Bassi",
+    "email": "giggio@giggio.net",
+    "url": "http://www.lambda3.com.br"
+  },
+  "bin": {
+    "chromedriver": "./bin/chromedriver"
+  },
+  "bugs": {
+    "url": "https://github.com/giggio/node-chromedriver/issues"
+  },
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "kew": "^0.7.0",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.5.4"
+  },
+  "description": "ChromeDriver for Selenium",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "00674dad4058643a4ad99a8015264449f736a644",
+    "tarball": "https://registry.npmjs.org/chromedriver/-/chromedriver-2.27.3.tgz"
+  },
+  "gitHead": "d208e6db02380c384876cc43a5c8e254619b3041",
+  "homepage": "https://github.com/giggio/node-chromedriver",
+  "keywords": [
+    "chromedriver",
+    "selenium"
+  ],
+  "licenses": [
+    {
+      "type": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  ],
+  "main": "lib/chromedriver",
+  "maintainers": [
+    {
+      "name": "giggio",
+      "email": "giggio@giggio.net"
+    }
+  ],
+  "name": "chromedriver",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/giggio/node-chromedriver.git"
+  },
+  "scripts": {
+    "install": "node install.js"
+  },
+  "version": "2.27.3"
+}

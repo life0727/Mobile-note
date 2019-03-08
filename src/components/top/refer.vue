@@ -9,13 +9,13 @@
       <el-dropdown  @command="sort_dropdown"   @visible-change="visibleChangeRefer">
               <el-button  style="padding: 3px 5px;border-width: 0px;background-color: white;color:#606266">{{current_sort}}<i :class="sort_dropdown_visible_refer ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 16px;color: #333"></i></el-button>    
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in ['或','且']" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in ['或','且']" :key="i" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
       </el-dropdown>
     </div>
     <img src="../../assets/icon/refer_qiye.png" style="margin-left: 15px;">
     
-      <span class="enterpriseArr" style="height: 40px;background-color: white;vertical-align: middle;margin-left: 10px;padding: 10px 5px;color:#00b38a;font-size: 16px;" v-for="(i,$index) in enterpriseData">
+      <span class="enterpriseArr" style="height: 40px;background-color: white;vertical-align: middle;margin-left: 10px;padding: 10px 5px;color:#00b38a;font-size: 16px;" v-for="(i,$index) in enterpriseData" :key="i">
         <el-tooltip :disabled="i.length <= 8" :content="i" placement="top" effect="light">
           <span>{{i.length > 8 ? i.slice(0,7)+'..' : i}}</span>
         </el-tooltip>
@@ -47,7 +47,7 @@
           trigger="click">
           <div class="btn-group domain" role="group" aria-label="..." style="">
             <button type="button" class="btn warning domain_all" :disabled="btn_disabled" style="margin:5px 3px;border-radius: 3px;padding: 2px 10px;">全部</button>
-            <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i,$index) in domain" >{{i}}</button>
+            <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i) in domain" :key="i">{{i}}</button>
           </div>
           <hr style="margin: 10px 0;">
           <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="dom_search" >确定</el-button>
@@ -57,12 +57,20 @@
         <el-dropdown  @command="dropdown_loose" style="margin-left: 425px;" @visible-change="visibleChangemediaLoose">
               <el-button style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">{{current_loose}}<i :class="sort_dropdown_visible_loose? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i></el-button>    
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in ['loose','tight']" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in ['loose','tight']" :command="i" :key="i">{{i}}</el-dropdown-item>
+              </el-dropdown-menu>
+        </el-dropdown>
+
+        <el-dropdown  @command="dropdown_Sentimen" style="margin-left: 30px;" @visible-change="visibleChangemediaSentimen">
+              <el-button style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">{{current_Sentimen}}<i :class="sort_dropdown_visible_Sentimen ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i></el-button>    
+              <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="i in ['含负','排负']" :command="i" :key="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
         </el-dropdown>
 
         <span style="position: absolute;left: 408px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
         <span style="position: absolute;left: 500px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span> 
+        <span style="position: absolute;left: 590px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span> 
          <div class="block" style="display: inline-block" >
           <el-date-picker
            @change="date_change"
@@ -101,6 +109,7 @@
           <span :style="{padding: '5px 25px',borderRadius:'17px',marginLeft:'20px',cursor:'pointer',color:echartShow == 'refer_volumn' ? '#00b38a' : '#666666',border:echartShow == 'refer_volumn' ? '1px solid #00b38a' : '0px solid #666666'}" @click="echartShow = 'refer_volumn'">声量份额</span>
           <span :style="{padding: '5px 25px',borderRadius:'17px',marginLeft:'20px',cursor:'pointer',color:echartShow == 'refer_echart' ? '#00b38a' : '#666666',border:echartShow == 'refer_echart' ? '1px solid #00b38a' : '0px solid #666666'}" @click="echartShow = 'refer_echart'">第一提及率</span>
           <span :style="{padding: '5px 25px',borderRadius:'17px',marginLeft:'20px',cursor:'pointer',color:echartShow == 'refer_mentinFirst' ? '#00b38a' : '#666666',border:echartShow == 'refer_mentinFirst' ? '1px solid #00b38a' : '0px solid #666666'}" @click="echartShow = 'refer_mentinFirst'">议题领导力</span>
+          <span :style="{padding: '5px 25px',borderRadius:'17px',marginLeft:'20px',cursor:'pointer',color:echartShow == 'sentiment_analysis' ? '#00b38a' : '#666666',border:echartShow == 'sentiment_analysis' ? '1px solid #00b38a' : '0px solid #666666',display:current_Sentimen == '含负' ? 'inline' : 'none'}" @click="echartShow = 'sentiment_analysis'">情感分析</span>
         </p>
         <div :style="{position:'absolute',top:'425px',zIndex:echartShow == 'refer_volumn' ? '99' : '-99'}">
           <p style="margin:0 0 0 5px;position: relative;"><span style="line-height: 55px;border-left: 5px solid rgb(0, 179, 138);margin-right: 10px;"></span>声量份额</p>
@@ -113,7 +122,7 @@
         <div :style="{position:'absolute',top:'425px',zIndex:echartShow == 'refer_mentinFirst' ? '99' : '-99'}">
           <p style="margin:0 0 0 5px;position: relative;"><span style="line-height: 55px;border-left: 5px solid rgb(0, 179, 138);margin-right: 10px;"></span>议题列表</p>
           <div class="event_card_refer">
-              <div v-for="(i,$index) in data"  :style="{width:'234px',position:'relative',overflow: 'hidden',float: 'left',padding:'0',margin: '10px 5px 10px 5px',borderRadius: '8px'}" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)">
+              <div v-for="(i,$index) in data" :key="i" :style="{width:'234px',position:'relative',overflow: 'hidden',float: 'left',padding:'0',margin: '10px 5px 10px 5px',borderRadius: '8px'}" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)">
                 <div style="width: 100%;height:55px;padding: 0 5px;position: relative;">
                   <div style="width: 15px;height: 66px;margin-left: 8px; " ><el-checkbox style="margin-top: 15px;" v-model="i.checked" @change="select(i)"></el-checkbox></div>
                   <p style="position: absolute;top: 13px;left:40px;font-size: 16px;">
@@ -130,15 +139,15 @@
                   <table width="100%" border="1"  style="border-width:0px"> 
                     <tr>
                       <td width=""></td>
-                      <td v-for="(j,$index) in i.tableData" :style="{backgroundColor:$index%2 == 0 ? 'rgba(180, 222, 246, 1)' : ''}">{{j.name.length > 2 && i.tableData.length > 3 ? j.name.slice(0,2)+'..' : j.name}}</td>
+                      <td v-for="(j,$index) in i.tableData" :key="j" :style="{backgroundColor:$index%2 == 0 ? 'rgba(180, 222, 246, 1)' : ''}">{{j.name.length > 2 && i.tableData.length > 3 ? j.name.slice(0,2)+'..' : j.name}}</td>
                     </tr>
                     <tr>
                       <td style="width: 48px">文章数</td>
-                      <td v-for="a in i.tableData">{{a.articleNum}}</td>
+                      <td v-for="a in i.tableData" :key="a">{{a.articleNum}}</td>
                     </tr>
                     <tr>
                       <td style="width: 48px">词频数</td>
-                      <td v-for="f in i.tableData">{{f.frequency}}</td>
+                      <td v-for="f in i.tableData" :key="f">{{f.frequency}}</td>
                     </tr>
                   </table> 
                 </div>
@@ -148,7 +157,13 @@
           <div id="refer_mentinFirst" style="width: 1218px;height: 420px;margin: 5px auto;">
             <p v-show="this.selectData.length == 0" style="margin: 10% 42%;color: #f34c81">暂无数据，请选择相应议题</p>
           </div>
-        </div>  
+        </div> 
+        <div :style="{position:'absolute',top:'425px',zIndex:echartShow == 'sentiment_analysis' && current_Sentimen == '含负' ? '99' : '-99'}">
+          <p style="margin:0 0 0 5px;position: relative;"><span style="line-height: 55px;border-left: 5px solid rgb(0, 179, 138);margin-right: 10px;"></span>情感分析</p>
+          <div id="sentiment_analysis" style="width: 1218px;height: 300px;margin: 5px auto;">
+            <p v-show="this.current_Sentimen == '含负'" style="margin: 10% 42%;color: #f34c81">暂无数据，请选择含负面后再搜索重试</p>
+          </div>
+        </div> 
     </div>
     <!-- 相关文章模态框 -->
     <el-dialog title="相关文章" :visible.sync="refer_dialog_articleList_switch" width="580px !important" id="refer_articleList" custom-class="ev_dialogClass">
@@ -209,14 +224,13 @@ import _echart from '../../assets/js/_echart.js'
 import { format_time,date_change,changePage,publicSearch,tipsMessage,successBack,similar,GetLocalStorage,startLoading,endLoading,s2ab,downloadExl }  from '../../assets/js/map.js'
 export default {
   mounted:function () {  
-  console.log(navigator.userAgent) 
+  //console.log('refer') 
    startLoading();
    publicSearch('rsa/wxaccount/domain',"GET",{"method":"get"}).then((data) =>{//ajax
-    endLoading();
-        if(successBack(data,this)){
-          this.domain = data.data
-        }
-      });
+      endLoading();
+      if(!successBack(data,this)) return;
+      this.domain = data.data
+    });
    $('.clientContent').css('height',$(window).height()-353+'px');    
    $('.domain .domain_all').click(function(){
       $('.domain button').not($(this)).removeClass('warning');
@@ -234,11 +248,13 @@ export default {
     return {
       articleType:2,
       current_loose:'tight',
+      current_Sentimen:'排负',
       queryType:0,
       time:[new Date(new Date().getTime()-604800000), new Date()],
       current_sort:'或',//行业核心关键词的搜索方式 或或者且
       sort_dropdown_visible_refer:true,//true为显示false为隐藏
       sort_dropdown_visible_loose:true,//true为显示false为隐藏
+      sort_dropdown_visible_Sentimen:true,//true为显示false为隐藏
       industry:'',//行业input
       enterprise:'',//企业input
       enterpriseData:[],
@@ -272,9 +288,9 @@ export default {
       outFile: '',  // 导出excle文件
     }
   },
-    components:{
-      dialogRelateArticle
-    },
+  components:{
+    dialogRelateArticle
+  },
   methods: {
     search(){
       let _this = this;
@@ -298,13 +314,14 @@ export default {
           "domainList":this.domain_arr,
           "isTiming":1,
           "fmrLoose":this.current_loose == 'loose' ? 1 : 0,
+          "isSentimentAnalysis":this.current_Sentimen == '排负' ? 1 : 0,
           "industryAnd":this.current_sort == '或' ? 0 : 1//0-或
       };  
       let params = {"method": 'get',"criteriaStr":JSON.stringify(Dta)};
        startLoading();
       publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/reputationindex',"GET",params).then((data) =>{//ajax
         endLoading();
-        if(successBack(data,this)){
+        if(!successBack(data,this)) return;
           let color;
           if(data.data.time < 60){
             color = '#67C23A';
@@ -336,19 +353,30 @@ export default {
               publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/reputationindex',"GET",params).then((data) =>{
                 this.loading = false;
                 clearInterval(timer);
-                if(successBack(data,this)){
+                if(!successBack(data,this)) return;
                   console.log('实际耗时：'+data.data.realTime);
                   this.selectData = data.data.topicList.slice(0,3);//默认选中前三个
-                  console.log(this.selectData)
+                  //console.log(this.selectData)
                   /*this.$store.state.refer_articleType = this.articleType;
                   this.$store.state.refer_queryType = this.queryType;
                   this.$store.state.refer_time = this.time;
                   this.$store.state.refer_industry = this.industry;
                   this.$store.state.refer_enterpriseData = this.enterpriseData;*/
+                //  let posData = {
+                //         "小蓝": 3,
+                //         "ofo": 23,
+                //         "摩拜": 15
+                //     };
+                //   let negData = {
+                //         "小蓝": 25,
+                //         "ofo": 113,
+                //         "摩拜": 75
+                //     };
                   _echart.build_refer_pie(data.data.topicList,'refer_echart');
+                  _echart.build_sentiment_pie(data.data.posCountMap,data.data.negCountMap,'sentiment_analysis',this.current_Sentimen,this); //data.data.posCountMap,data.data.negCountMap
                   _echart.build_refer_bar(data.data.topicList,'refer_volumn',true);
                   _echart.build_refer_bar2('refer_mentinFirst',this.selectData);
-                  _echart.build_refer_competNum('refer_competNum',this.selectData,data.data.reputation,data.data.mention);
+                  _echart.build_refer_competNum('refer_competNum',this.selectData,data.data.reputation,data.data.mention,data.data.posCountMap,data.data.negCountMap);
 
                   for(let k of data.data.topicList.slice(0,3)){//默认选中前三个
                     k.checked = true;
@@ -356,14 +384,14 @@ export default {
                   this.reputation = data.data.reputation;
                   this.mention = data.data.mention;
                   this.data = data.data.topicList;
-                  console.log(this.data)
+                  this.posCountMap = data.data.posCountMap;
+                  this.negCountMap = data.data.negCountMap;
+                  //console.log(this.data)
                   /*this.$store.state.refer_data = this.data;
                   this.$store.state.refer_mention = this.mention;
                   this.$store.state.refer_reputation = this.reputation;*/
-                }
               })
             }).catch(() => {});
-        };
       })          
     },
     verificationKeyword(i){//判断验证
@@ -385,9 +413,9 @@ export default {
     },
     select(i){//选择议题后的操作
       i.checked == true ? this.selectData.push(i) : this.selectData.splice(this.selectData.findIndex(item => item.id===i.id),1);
-      console.log(this.selectData)
+      //console.log(this.selectData)
       _echart.build_refer_bar2('refer_mentinFirst',this.selectData);//议题领导力
-      _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention);//声誉竞争力
+      _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention,this.posCountMap,this.negCountMap);//声誉竞争力
     },
     refer_export(){
       if(this.selectData.length == 0){
@@ -398,7 +426,7 @@ export default {
       let exportObj = {};
       exportObj.startTime = this.time[0].getTime();
       exportObj.endTime = this.time[1].getTime();
-      exportObj.reputationCompetitiveIndexPic = _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention).getDataURL();
+      exportObj.reputationCompetitiveIndexPic = _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention,this.posCountMap,this.negCountMap).getDataURL();
       exportObj.volumeSharePic = _echart.build_refer_bar(this.data,'refer_volumn').getDataURL();
       exportObj.firstMentionRatePic = _echart.build_refer_pie(this.data,'refer_echart').getDataURL();
       exportObj.topicLeadshipPic = _echart.build_refer_bar2('refer_mentinFirst',this.selectData).getDataURL();
@@ -413,11 +441,10 @@ export default {
       let params = {"report": JSON.stringify(data)};           
       publicSearch('rsa/report',"POST",params).then((data) =>{//ajax导出报告 
         endLoading();
-        if(successBack(data,this)){
+        if(!successBack(data,this)) return;
           var form = $("<form></form>").attr("action", "rsa/report/export").attr("method", "post");
           form.append($("<input></input>").attr("type", "hidden").attr("name", "wordFileRealPath").attr("value", data.data));
           form.appendTo('body').submit().remove();
-        };
       })           
     },
     refer_dialog_articleList(dta){//弹窗
@@ -429,13 +456,36 @@ export default {
       this.refer_currentPage*10 > dta.articleCount ? this.refer_currentPage = Math.ceil(dta.articleCount/10) : '';//判断如果页数大于文章总数
       changePage(this,dta,10,this.refer_currentPage).then((data) =>{//ajax获取数据
         this.loading = false;
-        if(successBack(data,this)){
+        if(!successBack(data,this)) return;
           this.dialogRelateArticleData.listData = data.data.articleList;//传递个子组件的文章列表数据
           this.dialogRelateArticleData.data = dta;//传递子组件的ajax参数数据
           this.$nextTick(function () {
            this.dialogRelateArticleData.pageShow = true;
           })
-        }; 
+      });
+    },
+    refer_dialog_sentiment_articleList(data){
+      if(!data.value) return;
+      let dta = {
+                  'id':this.selectData[0].id.slice(0,this.selectData[0].id.length-1),
+                  'polar':data.name == '正面' ? 1 : -1,
+                  'enterpriseName':data.seriesName,
+                  'articleCount':data.value 
+                };
+      this.refer_dialog_articleList_switch = true;
+      this.dialogRelateArticleData.pageShow = false;
+      this.dialogRelateArticleData.articleType = this.articleType;
+      this.loading = true;
+      this.refer_currentPage = 1;
+      this.refer_currentPage*10 > dta.articleCount ? this.refer_currentPage = Math.ceil(dta.articleCount/10) : '';//判断如果页数大于文章总数
+      changePage(this,dta,10,this.refer_currentPage,'sentiment').then((data) =>{//ajax获取数据
+        this.loading = false;
+        if(!successBack(data,this)) return;
+          this.dialogRelateArticleData.listData = data.data.articleList;//传递个子组件的文章列表数据
+          this.dialogRelateArticleData.data = dta;//传递子组件的ajax参数数据
+          this.$nextTick(function () {
+           this.dialogRelateArticleData.pageShow = true;
+          })
       });
     },
     refer_writeName(data){
@@ -456,7 +506,7 @@ export default {
             }
           };
           _echart.build_refer_bar2('refer_mentinFirst',this.selectData);//议题领导力
-          _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention);//声誉竞争力
+          _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention,this.posCountMap,this.negCountMap);//声誉竞争力
           tipsMessage('修改成功','success',this);
         }).catch(() => {
           tipsMessage('取消修改','info',this);      
@@ -517,8 +567,12 @@ export default {
     sort_dropdown (command) { this.current_sort = command;},
     visibleChangeRefer(a){ this.sort_dropdown_visible_refer = !a;}, 
     dropdown_loose(command){ this.current_loose = command ;},
+    dropdown_Sentimen(command){ this.current_Sentimen = command ;this.current_Sentimen == '排负' ? this.echartShow = 'refer_mentinFirst' : ''},
     visibleChangemediaLoose(a){
       this.sort_dropdown_visible_loose = !a;
+    },
+    visibleChangemediaSentimen(a){
+      this.sort_dropdown_visible_Sentimen = !a;
     },
     downloadFile(){ //导出excel
       //填充excel数据

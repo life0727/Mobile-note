@@ -1,200 +1,219 @@
 import { Loading } from 'element-ui'
-export function startLoading(){//Loading
-  Loading.service({'text':'系统拼命加载中','spinner':'el-icon-loading'});
+export function startLoading() { //Loading
+    Loading.service({ 'text': '系统拼命加载中', 'spinner': 'el-icon-loading' });
 }
 
-export function endLoading(){//Loading
-  Loading.service({'text':'系统拼命加载中','spinner':'el-icon-loading'}).close();
+export function endLoading() { //Loading
+    Loading.service({ 'text': '系统拼命加载中', 'spinner': 'el-icon-loading' }).close();
 }
-export function Map () { //通用map方法
-              this.data = new Object();
-              this.put = function (key, value) {
-                  this.data[key] = value;
-              };
-              this.get = function (key) {
-                  return this.data[key];
-              };
-              this.remove = function (key) {
-                  this.data[key] = null;
-              };
-              this.isEmpty = function () {
-                  return this.data.length == 0;
-              };
-              this.size = function () {
-                  return this.data.length;
-              };
-          }
+export function Map() { //通用map方法
+               
+    this.data = new Object();           
+    this.put = function(key, value) {                this.data[key] = value;            };           
+    this.get = function(key) {                return this.data[key];            };           
+    this.remove = function(key) {                this.data[key] = null;            };           
+    this.isEmpty = function() {                return this.data.length == 0;            };           
+    this.size = function() {                return this.data.length;            };       
+}
 
-export function jsonToStrMap (jsonStr) { 
-      return new Map(JSON.parse(jsonStr));
+export function jsonToStrMap(jsonStr) {
+    return new Map(JSON.parse(jsonStr));
+}
+
+export function filter_polar(data, mapData) { //地图省份数据且过滤（'正，中，负'）后的数据
+    for (let l in mapData) {
+        let obj = new Object();
+        if (l !== '正' && l !== '中' && l !== '负') {
+            obj.province = l;
+            obj.num = mapData[l];
+            data.push(obj);
+        }
     }
+}
 
-export function filter_polar(data,mapData){  //地图省份数据且过滤（'正，中，负'）后的数据
-        for( let l in mapData){
-            let obj = new Object();
-            if(l !== '正'&&l !== '中'&&l !== '负'){
-              obj.province=l;
-              obj.num=mapData[l];
-              data.push(obj);
-            }   
-        }
-      }
+export function date_change(_this) { //Time = _this.time //通用验证时间方法
+    Date.prototype.toJSON = function() { return this.toLocaleString(); }
+    if (_this.time[0] == undefined || _this.time[1] == undefined || _this.time[1].getTime() < _this.time[0].getTime()) {
+        _this.time = [new Date(new Date().getTime() - 604800000), new Date()];
+        _this.$message({
+            message: '请检查您的时间格式',
+            type: 'warning'
+        });
+    }
+}
 
-export function date_change (_this){ //Time = _this.time //通用验证时间方法
-        Date.prototype.toJSON = function () { return this.toLocaleString(); }
-        if(_this.time[0]==undefined||_this.time[1]==undefined||_this.time[1].getTime()<_this.time[0].getTime()){
-          _this.time=[new Date(new Date().getTime()-604800000), new Date()];
-          _this.$message({
-              message: '请检查您的时间格式',
-              type: 'warning'
-            });
-         }
-      }
+export function Sort(property) { //数组对象排序方法升序 news_top.sort(_Sort('num'));
+    return function(a, b) {
+        var value1 = a[property];
+        var value2 = b[property];
+        return value1 - value2;
+    }
+}
 
-export function Sort(property){ //数组对象排序方法升序 news_top.sort(_Sort('num'));
-                            return function(a,b){
-                                var value1 = a[property];
-                                var value2 = b[property];
-                                return value1 - value2;
-                            }
-                        }
+export function _Sort(property) { //数组对象排序方法倒序 data.sort(_Sort('num'));
+    return function(a, b) {
+        var value1 = a[property];
+        var value2 = b[property];
+        return value2 - value1;
+    }
+};
 
-export function _Sort(property){  //数组对象排序方法倒序 data.sort(_Sort('num'));
-                            return function(a,b){
-                                var value1 = a[property];
-                                var value2 = b[property];
-                                return value2 - value1;
-                            }
-                        };   
+export function Sort_up(property, c) { //数组对象排序方法升序 data.sort(Sort_down('article','publishTime'));
+    return function(a, b) {
+        var value1 = a[property][c];
+        var value2 = b[property][c];
+        return value1 - value2;
+    }
+}
 
-export function Sort_up(property,c){ //数组对象排序方法升序 data.sort(Sort_down('article','publishTime'));
-          return function(a,b){
-              var value1 = a[property][c];
-              var value2 = b[property][c];
-              return value1 - value2;
-          }
-        }
+export function Sort_down(property, c) { //数组对象排序方法倒序 data.sort(Sort_down('article','publishTime'));
+    return function(a, b) {
+        var value1 = a[property][c];
+        var value2 = b[property][c];
+        return value2 - value1;
+    }
+}
 
-export function Sort_down(property,c){  //数组对象排序方法倒序 data.sort(Sort_down('article','publishTime'));
-          return function(a,b){
-              var value1 = a[property][c];
-              var value2 = b[property][c];
-              return value2 - value1;
-          }
-        }                          
+export function GetSessionStorage(data) { return JSON.parse(window.sessionStorage.getItem(data)) } //获取sessionStorage方法      
 
-export function GetSessionStorage(data){ return JSON.parse(window.sessionStorage.getItem(data))} //获取sessionStorage方法      
+export function GetLocalStorage(data) { return JSON.parse(window.localStorage.getItem(data)) } //获取localStorage方法      
 
-export function GetLocalStorage(data){ return JSON.parse(window.localStorage.getItem(data))} //获取localStorage方法      
+export function SetSessionStorage(name, data) { window.sessionStorage.setItem(name, JSON.stringify(data)) } //存储localStorage方法  
 
-export function SetSessionStorage(name,data){ window.sessionStorage.setItem(name,JSON.stringify(data))} //存储localStorage方法  
+export function SetLocalStorage(name, data) { window.localStorage.setItem(name, JSON.stringify(data)) } //存储sessionStorage方法  
 
-export function SetLocalStorage(name,data){ window.localStorage.setItem(name,JSON.stringify(data))} //存储sessionStorage方法  
-
-export function format_time () {  //通用格式化数据时间戳,时间格式方法
-      Date.prototype.Format = function (fmt) {  
+export function format_time() { //通用格式化数据时间戳,时间格式方法
+    Date.prototype.Format = function(fmt) {
         var o = {
-              "M+": this.getMonth() + 1, //月份 
-              "d+": this.getDate(), //日 
-              "h+": this.getHours(), //小时 
-              "m+": this.getMinutes(), //分 
-              "s+": this.getSeconds(), //秒 
-              "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-              "S": this.getMilliseconds() //毫秒 
-          };
-          if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-          for (var k in o)
-          if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-          return fmt;
-        }
+            "M+": this.getMonth() + 1, //月份 
+            "d+": this.getDate(), //日 
+            "h+": this.getHours(), //小时 
+            "m+": this.getMinutes(), //分 
+            "s+": this.getSeconds(), //秒 
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+            "S": this.getMilliseconds() //毫秒 
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
     }
+}
 
-export function similar(data,cp_data,key){//两个对象选取重复的字段然后返回一个数组
-        let own=[],cp=[];
-        for(let i of data){
-          own.push(i[key])
-        };
-        for(let i of cp_data){
-          cp.push(i[key])
-        };
-        return Array.from(new Set([...new Set(own)].filter(x => new Set(cp).has(x))));
-      }
+export function similar(data, cp_data, key) { //两个对象选取重复的字段然后返回一个数组
+    let own = [],
+        cp = [];
+    for (let i of data) {
+        own.push(i[key])
+    };
+    for (let i of cp_data) {
+        cp.push(i[key])
+    };
+    return Array.from(new Set([...new Set(own)].filter(x => new Set(cp).has(x))));
+}
 
-export function changePage(_this,dta,pageSize,pageNum){//页码变化方法
-  //console.log(pageNum)
-    return new Promise( (resolve,reject) => {
+export function changePage(_this, dta, pageSize, pageNum, sentiment) { //页码变化方法
+    //console.log(pageNum)
+    let url = sentiment ? 'rsa/project/' + GetLocalStorage('current_projectData_A').project_id + '/reputationindex/sentiment/' + dta.id + '/article' : 'rsa/project/' + GetLocalStorage('current_projectData_A').project_id + '/reputationindex/topic/' + dta.id + '/article';
+    return new Promise((resolve, reject) => {
         $.ajax({
             type: "GET",
-            url: 'rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/reputationindex/topic/'+dta.id+'/article',
+            url,
             data: {
-              "method": 'GET',
-              "topicId": dta.id, //议题id
-              "articleType": _this.articleType, //文章类型
-              "pageSize": pageSize,//每页数量
-              "pageNum": pageNum //页码
+                "method": 'GET',
+                "topicId": sentiment ? null : dta.id, //议题id
+                "repId": sentiment ? dta.id : null, //议题id
+                "articleType": _this.articleType, //文章类型
+                "pageSize": pageSize, //每页数量
+                "pageNum": pageNum, //页码
+                "polar": sentiment ? dta.polar : null, //情感分析文章接口
+                "enterpriseName": sentiment ? dta.enterpriseName : null //企业名称
             },
-            success:function(res){
+            success: function(res) {
                 resolve(res)
             },
-            fail:function(err){
+            fail: function(err) {
                 reject(err);
             }
         })
-    })  
+    })
 }
 
-export function publicSearch(url,method,params){//通用search方法
-    url = '/'+url;
-    return new Promise( (resolve,reject) => {
+export function changePageForNesShare(_this, url, dta, pageSize, pageNum,){ //新闻股价页面变化方法
+    return new Promise((resolve, reject) => {
         $.ajax({
-            type:method,
+            type: "GET",
             url,
-            data: params,
-            success:function(res){
-              resolve(res)
+            data: {
+                "method": 'GET',
+                "stockId": dta.stockId, //议题id
+                "timeType": dta.timeType, //议题id
+                "startTime": dta.startTime, //文章类型
+                pageSize,
+                pageNum
             },
-            error:function(err){
-              reject(err);
+            success: function(res) {
+                resolve(res)
+            },
+            fail: function(err) {
+                reject(err);
             }
         })
-    }) 
-}  
+    })     
+}
 
-export function successBack(data,_this){//判断成功回调
-    if(data.code == 200){
+export function publicSearch(url, method, params) { //通用search方法
+    url = '/' + url;
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: method,
+            url,
+            data: params,
+            success: function(res) {
+                resolve(res)
+            },
+            error: function(err) {
+                reject(err);
+            }
+        })
+    })
+}
+
+export function successBack(data, _this) { //判断成功回调
+    if (data.code == 200) {
         return true;
-    }else if(data.code == 1000){//未登录
+    } else if (data.code == 1000) { //未登录
         _this.$router.push('/login')
-        //window.location.href='/login'
-        tipsMessage(data.message,'warning',_this)
+            //window.location.href='/login'
+        tipsMessage(data.message, 'warning', _this)
         return false;
-    }else if(data.code == 1001){//已登录
-      //console.log(_this.$route)
-        if(_this.$route.path == '/login'){//已登录在登录页面
-          SetLocalStorage('account_A',data.data.account);//
-          //_this.$router.push('main/refer')
-          //window.location.href = 'main/refer';
-          tipsMessage(data.message,'success',_this); 
-          return false;
-        }else{//已登录不在登录页面 就继续执行原页面的方法
-          return true;
+    } else if (data.code == 1001) { //已登录
+        //console.log(_this.$route)
+        if (_this.$route.path == '/login') { //已登录在登录页面
+            SetLocalStorage('account_A', data.data.account); //
+            //_this.$router.push('main/refer')
+            //window.location.href = 'main/refer';
+            tipsMessage(data.message, 'success', _this);
+            return false;
+        } else { //已登录不在登录页面 就继续执行原页面的方法
+            return true;
         }
-    }else if(data.code == 1008){//注销用户
-        tipsMessage(data.message,'success',_this);
+    } else if (data.code == 1008) { //注销用户
+        tipsMessage(data.message, 'success', _this);
         _this.$router.push('/login')
-        //window.location.href = '/login';
+            //window.location.href = '/login';
         window.sessionStorage.clear();
         localStorage.clear();
         return false;
-    }else if(data.code == 1308){//项目列表小于一自动跳转添加项目模块
+    } else if (data.code == 1308) { //项目列表小于一自动跳转添加项目模块
         _this.$router.push('/index/clever/clever_content')
-        window.location.href='/index/clever/clever_content';
+        window.location.href = '/index/clever/clever_content';
         return false;
-    }else if(data.code == 1406){//[客户管理][查询操作]该用户下对应的 客户信息查询结果为null/空!
+    } else if (data.code == 1406) { //[客户管理][查询操作]该用户下对应的 客户信息查询结果为null/空!
         _this.tabledata_user = [];
         return false;
-    }else{
-        tipsMessage(data.message,'warning',_this)
+    } else {
+        tipsMessage(data.message, 'warning', _this)
         return false;
     }
 };
@@ -205,59 +224,58 @@ export function successBack(data,_this){//判断成功回调
           message,
           type
         });
-} */ 
+} */
 
-export function tipsMessage(message,type,_this){//提示
-  //console.log(_this)
-  return _this.$message({
-          message,
-          type,
-          showClose: true,
-          //duration:'2000'
-        });
+export function tipsMessage(message, type, _this) { //提示
+    //console.log(_this)
+    return _this.$message({
+        message,
+        type,
+        showClose: true,
+        //duration:'2000'
+    });
 }
 
-export function s2ab (s) { // 字符串转字符流
+export function s2ab(s) { // 字符串转字符流
 
-        var buf = new ArrayBuffer(s.length)
-        var view = new Uint8Array(buf)
-        for (var i = 0; i !== s.length; ++i) {
-          view[i] = s.charCodeAt(i) & 0xFF
-        }
-        return buf
-      }
+    var buf = new ArrayBuffer(s.length)
+    var view = new Uint8Array(buf)
+    for (var i = 0; i !== s.length; ++i) {
+        view[i] = s.charCodeAt(i) & 0xFF
+    }
+    return buf
+}
 
-export function downloadExl(json, downName,_this, type ,colWidth) {  // 导出到excel colWidth 列宽格式
-        let XLSX = require('xlsx')
-        let keyMap = [] // 获取键
-        for (let k in json[0]) {
-          keyMap.push(k)
-        }
-        console.info('keyMap', keyMap, json)
-        let tmpdata = [] // 用来保存转换好的json
-        json.map((v, i) => keyMap.map((k, j) => Object.assign({}, {
-          v: v[k],
-          position: (j > 25 ? _this.getCharCol(j) : String.fromCharCode(65 + j)) + (i + 1)
-        }))).reduce((prev, next) => prev.concat(next)).forEach(function (v) {
-          tmpdata[v.position] = {
+export function downloadExl(json, downName, _this, type, colWidth) { // 导出到excel colWidth 列宽格式
+    let keyMap = [] // 获取键
+    for (let k in json[0]) {
+        keyMap.push(k)
+    }
+    console.info('keyMap', keyMap, json)
+    let tmpdata = [] // 用来保存转换好的json
+    json.map((v, i) => keyMap.map((k, j) => Object.assign({}, {
+        v: v[k],
+        position: (j > 25 ? _this.getCharCol(j) : String.fromCharCode(65 + j)) + (i + 1)
+    }))).reduce((prev, next) => prev.concat(next)).forEach(function(v) {
+        tmpdata[v.position] = {
             v: v.v
-          }
-        })
-        let outputPos = Object.keys(tmpdata)  // 设置区域,比如表格从A1到D10
+        }
+    })
+    let outputPos = Object.keys(tmpdata) // 设置区域,比如表格从A1到D10
         //tmpdata.Cells(x, y).NumberFormatLocal = "yyyy-mm-dd"//时间格式
-        let tmpWB = {
-          SheetNames: ['mySheet'], // 保存的表标题
-          //SSF:'0',
-          Sheets: {
+    let tmpWB = {
+        SheetNames: ['mySheet'], // 保存的表标题
+        //SSF:'0',
+        Sheets: {
             'mySheet': Object.assign({},
-              tmpdata, // 内容
-              {
-                '!ref': outputPos[0] + ':' + outputPos[outputPos.length - 1],// 设置填充区域
-                /*'!merges': [{
-                  s: {c: 0, r: 0},
-                  e: {c: 3, r: 0}
-                }],*/
-                 /*B2: {
+                tmpdata, // 内容
+                {
+                    '!ref': outputPos[0] + ':' + outputPos[outputPos.length - 1], // 设置填充区域
+                    /*'!merges': [{
+                      s: {c: 0, r: 0},
+                      e: {c: 3, r: 0}
+                    }],*/
+                    /*B2: {
                   v: '55555',
                   t: 'n',
                   s: {
@@ -270,29 +288,53 @@ export function downloadExl(json, downName,_this, type ,colWidth) {  // 导出�
                     }
                   }
                 }*/
-              })
-          }
+                })
         }
-        for(let i in tmpWB.Sheets.mySheet){//转化为数字格式
-          if(typeof(tmpWB.Sheets.mySheet[i].v) == 'number'){
+    }
+    for (let i in tmpWB.Sheets.mySheet) { //转化为数字格式
+        if (typeof(tmpWB.Sheets.mySheet[i].v) == 'number') {
             tmpWB.Sheets.mySheet[i].t = 'n';
-          };
         };
-        colWidth ? tmpWB.Sheets.mySheet['!cols'] = [{wpx: 400}, {wpx: 120}, {wpx: 90}, {wpx: 660}] : '';//列宽格式格式
-        console.log(tmpWB)
-        let tmpDown = new Blob([s2ab(XLSX.write(tmpWB,
-          {bookType: (type === undefined ? 'xlsx' : type), bookSST: false, type: 'binary'} // 这里的数据是用来定义导出的格式类型
+    };
+    colWidth ? tmpWB.Sheets.mySheet['!cols'] = [{ wpx: 400 }, { wpx: 120 }, { wpx: 90 }, { wpx: 660 }] : ''; //列宽格式格式
+    console.log(tmpWB)
+    let tmpDown = new Blob([s2ab(XLSX.write(tmpWB, { bookType: (type === undefined ? 'xlsx' : type), bookSST: false, type: 'binary' } // 这里的数据是用来定义导出的格式类型
         ))], {
-          type: ''
-        })  // 创建二进制对象写入转换好的字节流
-        var href = URL.createObjectURL(tmpDown)  // 创建对象超链接
-        _this.outFile.download = downName + '.xlsx'  // 下载名称
-        _this.outFile.href = href;  // 绑定a标签
-         document.body.appendChild(_this.outFile);//兼容火狐
-        _this.outFile.click()  // 模拟点击实现下载
+            type: ''
+        }) // 创建二进制对象写入转换好的字节流
+    var href = URL.createObjectURL(tmpDown) // 创建对象超链接
+    _this.outFile.download = downName + '.xlsx' // 下载名称
+    _this.outFile.href = href; // 绑定a标签
+    document.body.appendChild(_this.outFile); //兼容火狐
+    _this.outFile.click() // 模拟点击实现下载
 
-        setTimeout(function () {  // 延时释放
-          URL.revokeObjectURL(tmpDown); // 用URL.revokeObjectURL()来释放这个object URL
-          document.body.removeChild(_this.outFile);//兼容火狐
-        }, 100)
-      }
+    setTimeout(function() { // 延时释放
+        URL.revokeObjectURL(tmpDown); // 用URL.revokeObjectURL()来释放这个object URL
+        document.body.removeChild(_this.outFile); //兼容火狐
+    }, 100)
+}
+export function myCopy(obj) {
+    var fliter = ['[object Error]', '[object Date]', '[object RegExp]', '[object Function]'];
+
+    function isOject(obj) { //监测是否为正常的引用类型
+        if (typeof obj == 'object' && obj !== null && fliter.every(item => Object.prototype.toString.call(obj) != item)) {
+            return 'isobject'
+        } else {
+            return obj
+        }
+        if ((typeof obj == 'object' || typeof obj == 'function') && obj !== null && Object.prototype.toString.call(obj) !== "[object Error]" && Object.prototype.toString.call(obj) !== "[object Date]" && Object.prototype.toString.call(obj) !== "[object RegExp]") {
+            return 'isobject'
+        } else {
+            return 'isobject'
+        }
+    };
+
+    function deepCopy(obj) {
+        let cloneObj = isOject(obj) === 'isobject' ? (Array.isArray(obj) ? [] : {}) : obj;
+        for (let i in obj) {
+            isOject(obj[i]) === 'isobject' ? cloneObj[i] = deepCopy(obj[i]) : cloneObj[i] = obj[i]
+        };
+        return cloneObj
+    };
+    return deepCopy(obj)
+}

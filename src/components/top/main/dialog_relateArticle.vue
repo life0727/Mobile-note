@@ -2,7 +2,7 @@
 <div class="dialog_relateArticle" v-loading.fullscreen.lock="loading" element-loading-text="系统拼命加载中...">
   <h4 v-show="childMsg.listData == undefined" style="margin: 2% 42%;color: #f34c81">暂无数据</h4>
     <div class="el-steps el-steps--vertical" >
-      <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;height: 50px;" v-for="(i,$index) in childMsg.listData" @mouseover="Mover_articleList($index)" @mouseout="Mout_articleList($index)">
+      <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;height: 50px;" v-for="(i,$index) in childMsg.listData" :key="i" @mouseover="Mover_articleList($index)" @mouseout="Mout_articleList($index)">
         <div class="el-step__head  is-text" style="color: white;">
           <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
           <span class="el-step__icon"><img src="../../../assets/icon/xiangguanwenzhang.png"></span>
@@ -41,7 +41,7 @@ import { changePage,successBack }  from '../../../assets/js/map.js'
       refer_pageChange(val){
         this.loading = true;
         this.articleType = this.childMsg.articleType;
-        changePage(this,this.childMsg.data,10,val).then((data) =>{
+        changePage(this,this.childMsg.data,10,val,this.childMsg.data.polar ? 'sentiment' : null).then((data) =>{
           this.loading = false;
           if(successBack(data,this)){
             this.childMsg.listData = data.data.articleList;

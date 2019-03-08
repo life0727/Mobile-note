@@ -18,23 +18,23 @@
          label="必须包含关键词"
          show-overflow-tooltip>
          <template scope="scope">  
-            <span style="color:#32a880" v-for="i in scope.row.mustIncludeKeywordList">{{i}}&nbsp;&nbsp;</span>
+            <span style="color:#32a880" v-for="i in scope.row.mustIncludeKeywordList" :key="i">{{i}}&nbsp;&nbsp;</span>
           </template>
        </el-table-column>
        <el-table-column
          label="关键词"
          show-overflow-tooltip>
-         <template scope="scope"><span style="color:#32a880" v-for="i in scope.row.includeKeywordList">{{i}}&nbsp;&nbsp;</span></template>
+         <template scope="scope"><span style="color:#32a880" v-for="i in scope.row.includeKeywordList" :key="i">{{i}}&nbsp;&nbsp;</span></template>
        </el-table-column>
        <el-table-column
          label="标题排除词"
          show-overflow-tooltip>
-         <template scope="scope"><span style="color:#ed6354" v-for="i in scope.row.titleExcludeKeywordList">{{i}}&nbsp;&nbsp;</span></template>
+         <template scope="scope"><span style="color:#ed6354" v-for="i in scope.row.titleExcludeKeywordList" :key="i">{{i}}&nbsp;&nbsp;</span></template>
        </el-table-column>
        <el-table-column
          label="排除词"
          show-overflow-tooltip>
-         <template scope="scope"><span style="color:#ed6354" v-for="i in scope.row.contentExcludeKeywordList">{{i}}&nbsp;&nbsp;</span></template>
+         <template scope="scope"><span style="color:#ed6354" v-for="i in scope.row.contentExcludeKeywordList" :key="i">{{i}}&nbsp;&nbsp;</span></template>
        </el-table-column>
        <el-table-column
           label="备注"

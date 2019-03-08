@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+</head>
+<style>
+    #container {
+        width: 100%;
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        color: #fff;
+        background-color: #444;
+        font-size: 30px;
+        margin-top: 200px;
+    }
+    
+    .wrap {
+        color: #444
+    }
+</style>
+
+<body>
+    <!-- <p>产品一</p>
+	    <p>产品二</p>
+	    <p>产品三</p>
+	    <p>产品四</p>
+	    <p>产品五</p> -->
+
+    <div id="container"></div>
+    <button onclick="myclick()">click</button>
+    <button onclick="thisClick(this)">thisClick</button>
+    <button id="oBtn">oBtn</button>
+    <button onclick="(function(){console.log(this)})();">自执行严格模式</button>
+    <!--undefined-->
+    <span id="TrafficLights" style="width: 20px;height: 20px;border-radius: 50%;background-color: red;display: inline-block;"></span>
+    <cus-info></cus-info>
+</body>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"></script>
+<script type="text/javascript">
+    function myCopy(obj) {
+        var fliter = ['[object Error]', '[object Date]', '[object RegExp]', '[object Function]'];
+
+        function isOject(obj) { //监测是否为正常的引用类型
+            if (typeof obj == 'object' && obj !== null && fliter.every(item => Object.prototype.toString.call(obj) != item)) {
+                return 'isobject'
+            } else {
+                return obj
+            }
+        };
+
+        function deepCopy(obj) {
+            let cloneObj = isOject(obj) === 'isobject' ? (Array.isArray(obj) ? [] : {}) : obj;
+            for (let i in obj) {
+                isOject(obj[i]) === 'isobject' ? cloneObj[i] = deepCopy(obj[i]) : cloneObj[i] = obj[i]
+            };
+            return cloneObj
+        };
+        return deepCopy(obj)
+    };
+    //红灯三秒亮一次，绿灯一秒亮一次，黄灯2秒亮一次；如何让三个灯不断交替重复亮灯？（用 Promse 实现）
+    //绿 黄 绿 黄 红
+    /*let TrafficLights = document.getElementById('TrafficLights');
+    let Green = setTimeout(() => {
+    	TrafficLights.style.backgroundColor = 'green'
+    },1000)
+    let Red = setTimeout(() => {
+    	TrafficLights.style.backgroundColor = 'red'
+    },3000) 
+    let Yellow = setTimeout(() => {
+    	TrafficLights.style.backgroundColor = 'yellow'
+    },2000) 
+    let TrafficLightsArr = [Yellow,Green,Red];
+    var loop = () => {
+    	for(let i of TrafficLightsArr){
+    		i
+    	};
+    	loop()
+    }
+    */
+
+    /*let Green = TrafficLights.style.backgroundColor = 'green'
+    let Yellow = TrafficLights.style.backgroundColor = 'yellow'
+    let Red = TrafficLights.style.backgroundColor = 'red'*/
+
+    //TrafficLights.style.backgroundColor = 'orange'
+    //console.log()
+    /*var arr = document.getElementsByTagName("p");
+        for(let i = 0;i<arr.length;i++){
+            arr[i].onclick = function () {
+                alert(i);
+            }
+        }*/
+
+    /*var obj = document.getElementById('oBtn')
+    obj.addEventListener('click',function(){
+    	console.log(this)
+    })*/
+    //"use strict"
+    /*var obj = document.getElementById('myclick')
+    obj.addEventListener('click',function(){
+    	console.log(this)
+    })*/
+    //"use strict"
+    /*function thisClick(i){
+        console.log(i) // 
+    }*/
+    /*function myclick(){
+        console.log(this) // window
+    };
+
+    function myclick(){
+        console.log(this) // undefined
+    };*/
+    /*var count = 2;
+	var container = document.getElementById('container');
+
+	function getUserAction() {
+	    container.innerHTML = count++;
+	    console.log(this)
+	};
+*/
+    //container.onmousemove = getUserAction;
+
+    /*function debounce(f,t){
+    	var timeout;
+    	return function(){
+    		clearTimeout(timeout)
+    		timeout = setTimeout(f,t);
+    	};		
+    };*/
+
+    /*function debounce(f,t){
+    	var timeout;
+    	return function(){
+    		var context = this;
+    		clearTimeout(timeout)
+    		timeout = setTimeout(function(){
+                f.apply(context)
+            }, t);
+    	};		
+    };
+	
+    container.onmousemove = debounce(getUserAction,1000)*/
+
+    /*var a = {
+		a:'对象A',
+		getA:function(){
+			console.log(this)
+		}
+	};
+	
+	//getA();
+	var b = {
+		a:'对象B'
+	};
+	
+	//console.log(getA)
+	var getA = a.getA;
+	var getA2 = getA.bind(a);
+	//console.log(a)
+	//getA2()
+	function run (fn){
+		fn();
+	};
+	//console.log(getA2)
+	a.getA(); //'对象A' || '对象A'          ||'a:{}'
+	getA();  // 'a:{}' || undefind           || undefind
+	run(a.getA); // 'a:{}'  || undefind(此时this指向谁)       ||undefind
+	getA2.call(b)// '对象A' || '对象A'               ||'a:{}'
+	run(getA2);// '对象A' || '对象A'                   ||'a:{}'
+	//console.log(getA)
+	//getA2.call(b);
+ 	*/
+
+    /*function clone(obj){
+    	//let myObj = {};
+    	for(var i in obj){
+    		myObj[i] = obj[i];
+    	};
+    	//myObj = JSON.parse(JSON.stringify(obj)); 
+    	//myObj = obj;
+    	//return myObj;
+    	//return Object.create(obj);
+    	var fn = function(){};
+    	fn.prototype = obj;
+    	return new fn()
+    };
+
+    var a = {name : 'a'};
+    var b = clone(a);
+    console.log(b.name)
+    a.name = 'a1';
+    console.log(b.name)
+    b.name = 'b';
+    console.log(a.name)
+    a.name = 'a2'
+    console.log(b.name)//'b'
+    console.log(a.name)//'a2'*/
+    //var arr = [1,2,3];
+    /*arr.length = 6;
+    document.write(arr.toString())*/
+    //console.log(arr.toString())
+    // var num = 1;
+    // (function(){
+    // 	console.log(num);
+    // 	var num = 2;
+    // 	console.log(num);
+    // })()
+    // 	let data = Symbol();
+    //console.log(typeof undefined)
+    //var exp = undefined;
+    //console.log(typeof(undefined) == 'undefined')
+    //console.log(null === undefined)
+    /*let a = 'st'*/
+    /*var a = function(){};
+    console.log(typeof(a))*/
+    //var exp  = 0
+    //var tmp = true;
+    // var a3 = 1;
+    // var a4 = "Hello";
+    // var a5 = new Object();
+    // var a6 = null;
+    // var a7 = NaN;
+
+    /*if (!tmp && typeof(tmp)!="undefined" && tmp!=0 &&!isNaN(tmp)){ 
+     console.log('类型是null')
+    }
+    console.log(typeof a) /// undefined
+     let a1;
+     console.log(null == undefined) /// undefined*/
+    /* console.log(null == false)
+     let exp = '';
+    if(exp != 0){
+        console.log("exp是undefined或null或NaN")
+    };*/
+
+    /*console.log(0 == undefined)
+     //true在在算式中能隐形转换为1,而null在算式中能隐形转换为0
+     console.log(1 == true) //true
+     console.log(0 == null) //?
+     console.log(0 <= null) //?
+     console.log(0 < null) //?*/
+
+    /* if(!exp  && exp != 0){
+        console.log("exp是undefined或null或NaN") ///0或者字符串""也打印相同的结果所以还要加判断
+    };*/
+
+    /*console.log(isNaN(undefined))
+    let exp = 0/0;
+    if(Number.isNaN(exp)){ 
+      console.log("exp是NaN")
+    }*/
+    /*var exp = null; 
+    if(!exp && exp != 0 && typeof(exp) != 'undefined' && !Number.isNaN(exp)){ 
+    alert("null"); 
+    }*/
+    /*let a = {};
+    a.name = 22;
+    a = {};*/
+    /*let a = 0;
+    a = 1;
+    console.log(a)*/
+    /*var a = {}; // a保存了一个空对象的实例
+    var b = a;  // a和b都指向了这个空对象
+     
+    a.name = 'jozo';
+    console.log(a.name); // 'jozo'
+    console.log(b.name); // 'jozo'
+     
+    b.age = 22;
+    console.log(b.age);// 22
+    console.log(a.age);// 22
+     
+    console.log(a === b);// true*/
+    /*	var a = 1;
+    var b = a;
+    b = 2;
+    console.log(a)*/
+    /*var a = {name : 'fu' , age : '25'};
+    var b = a;
+    b.name = 'li';
+    console.log(a)*/
+    /*var a = new String('a')
+    console.log(typeof a)*/
+    /*const a = 1;
+    a = 2*/
+    /*const b = {};
+    b.name = "fu";
+    console.log(b)
+    b = {name: "li"}*/
+    /*let  arr = [1,2,3,4];
+    for(let i in arr){
+    	console.log(i)
+    }*/
+    //var arr1=[1,2,3,[4]];
+    /*var arr2=Array.from(arr1);
+    arr1[3].push(4);
+    console.log(arr1)
+    console.log(arr2)
+    console.log(arr2 == arr2)*/
+    /*var test=new Array();
+    console.log(test.constructor)
+    console.log(arr1.constructor)*/
+    //function Person(){}; 
+    //var pro = Person.prototype;//得到对象的原型 
+    //var obj = Person.constructor ; // 这样可以得到Person对象。 
+    //console.log(pro)
+    //console.log(obj)
+    /*var arr1 = [1,2,3,[4]];
+    var arr2 = Array.from(arr1);
+    arr1[3].push(4);
+    console.log(arr1 == arr2);  //1234
+    console.log(arr2);  //123*/
+    /*var a = [1,2,3,[4]];
+    var b = [];
+    for(let i = 0;i < a.length;i++){
+        b[i] = a[i];
+    };
+    a[0] = 99;
+    a[3].push(999999999)
+    console.log(a);
+    console.log(b);*/
+    /*var a = [1,2,3,[4]]; 
+    var b = Object.assign([],a);
+    a[0] = 99;
+    a[3].push(999999999);
+    console.log(a); // [99,2,3]
+    console.log(b); // [1,2,3]*/
+    /*var a = {name:'fu',age:'25',sex:{}}
+    var b = {...a};
+    a.name = 'li';
+    a.sex.aaa = 332;
+    console.log(a); // [99,2,3]
+    console.log(b); // [1,2,3]*/
+    /*var a = [1,2,3,[4]];
+    var b = Array.from(a);
+    a[0] = 99;
+    a[3].push(999999999);
+    console.log(a); // [99,2,3]
+    console.log(b); // [1,2,3]*/
+    /*var a = {name:'fu',age:'25',money:{'rmb':100,'$':999}};
+    var b = JSON.parse(JSON.stringify(a));
+    a.money.rmb = 8888;
+    console.log(a); // [99,2,3]
+    console.log(b); // [1,2,3]*/
+    /*var a = {name:'fu',age:'25','fun':function(){}};
+    var b = JSON.parse(JSON.stringify(a));
+    console.log(a)
+    console.log(b)*/
+    /*var arr = [1,2,3];
+    console.log(arr.constructor)*/
+    /*var a = {name:'fu',age:'25',money:{'rmb':100,'$':999}};
+    function deepCopy (a){
+    	let obj = a.constructor == Array ? [] : {};
+    	for(let i in a){
+    		if(a.hasOwnProperty(i)){
+    			if(typeof a[i] == 'object'){
+    				obj[i] = deepCopy(a[i])
+    			}else{
+    				obj[i] = a[i]
+    			}
+    		}
+    	};
+    	return obj;
+    };
+    var b = deepCopy(a);
+    a.money.rmb = 0000000000000000;
+    console.log(b)
+    console.log(a)*/
+    /*let exp = undefined;
+    if(Object.prototype.toString.call(exp) == "[object Null]"){
+        console.log("exp是null")
+    }*/
+    /*var a = {name:'fu',age:'25',money:{'rmb':100,'$':999}};
+    function deepCopy (a){
+    	let obj = a.constructor == Array ? [] : {};//let obj = Array.isArray(a) ? [] : {};都可以判断要拷贝的是数组还是对象
+    	for(let i in a){
+    		if(a.hasOwnProperty(i)){ //判断是否是其自有属性,是的话才拷贝也可以说原型上的属性我不拷贝。
+    			if(Object.prototype.toString.call(a[i]) == "[object Object]"){//如果这一项是object类型,就递归调用deepCopy
+    				obj[i] = deepCopy(a[i])
+    			}else{//直接赋值
+    				obj[i] = a[i]
+    			}
+    		}
+    	};
+    	return obj;
+    };
+    var b = deepCopy(a);
+    a.money.rmb = 0;
+    console.log(b)
+    console.log(a)*/
+    /*function deepClone(initalObj, finalObj) {    
+      var obj = finalObj || {};    
+      for (var i in initalObj) {        
+        var prop = initalObj[i];        // 避免相互引用对象导致死循环，如initalObj.a = initalObj的情况
+        if(prop === obj) {            
+          continue;
+        }        
+        if (typeof prop === 'object') {
+          obj[i] = (prop.constructor === Array) ? [] : Object.create(prop);
+        } else {
+          obj[i] = prop;
+        }
+      }    
+      return obj;
+    }*/
+    /*var a = [1,2,3,[4]];
+    var b = deepClone(a,[]);
+    a[3].push(0)
+    console.log(a)
+    console.log(b)*/
+    /*var a = {name:'fu',age:'25',money:{'rmb':100,'$':999}}
+    var b = deepClone(a,{});
+    a.money.rmb = 0;
+    console.log(a)
+    console.log(b)*/
+    /*var a = {name:'fu',age:'25',money:{'rmb':100,'$':999}}
+    var b = $.extend(true,{},a);
+    a.money.rmb = 0;
+    console.log(a)
+    console.log(b)*/
+    /*var a = [1,2,3];
+
+
+    a.join = a.shift
+    if(a == 1 && a == 2 && a == 3){
+    	console.log('a是什么才能成立')
+    }*/
+    /*function foo() {
+      setTimeout(() => {
+        console.log('id:', this);
+      }, 100);
+    }
+    foo()*/
+    /*var id = 21;
+
+    foo.call({ id: 42 });*/
+    /*var obj = {
+        name: 'hh',
+        func: () => {
+           console.log(this);
+        },
+        fun:function(){
+        	console.log(this.name)
+        }
+    }
+
+    obj.fun();
+    obj.func();*/
+    /*var a = {
+        fn : function(){
+            console.log(this.fn)
+        }
+    }
+    a.fn()*/
+    /*var a = {
+        fn:function(){
+            setTimeout(() => {
+               console.log(this) 
+            },0)
+        }
+    }
+    a.fn()*/
+    /*var a = {
+    	ffn:function(){
+    		(function(){
+    	        setTimeout(function(){
+    	           console.log(this) 
+    	        },0)
+        	})()
+    	}
+        
+    }
+    a.ffn()*/
+    /*var a = function(){
+    	console.log(2222)
+    }
+    var b = () => {
+    	console.log(3333)
+    }
+    a()
+    b()*/
+    /*function func(a){
+         var result = [];
+         for (var i = 0; i < a.length; i++) {
+               result[i] = i
+          }
+            return result;
+     }
+    console.log(func(8))*/
+    /* var funcc = func();
+      console.log(funcc[8]())*/
+    /*var name = "caibaojian.com",
+      person = {
+        name : "kang",
+        getName : function(){
+        	console.log(this)
+    　    return function(){
+      　    console.log(this)
+    　    };
+        }
+      };
+      person.getName()
+      console.log()*/
+    /* var a = function(){
+     	this.name = 22;
+     	//return 55555
+     };
+     var exp = new a();
+     console.log(exp) // 22
+     console.log(exp.name) // 22
+     console.log(a.prototype) // 22
+     console.log(a.__proto__) // 22
+     console.log(exp.__proto__) // 22
+
+     console.log('Object'.__proto__)*/
+    /*var a = function(){
+    	this.name = 'fuquanmeng';
+    	this.say = function(){};
+    }
+    var exp = new a();
+    var exp1 = new a();
+    console.log(exp.name == exp1.name) 
+    console.log(exp.say == exp1.say) 
+    console.log(exp.__proto__.say == exp1.__proto__.say) */
+    /*var obj  ={};
+	obj.__proto__ = CO.prototype;
+	CO.call(obj);
+	return obj;*/
+    /*var a = function(name){
+    	this.name = name;
+    	console.log(arguments)
+    };
+    var exp = new a('fuquanmeng');
+    function extend (arg,arg1){
+    	var obj = {};
+    	obj.__proto__ = arg.prototype;
+    	arg.call(obj,arg1);
+    	return obj;
+    }
+    //extend(a)
+    console.log(extend(a,'fuquanmeng'))*/
+    /*console.log(Object.prototype.toString.call([]))
+    console.log(Math.max(...[1,3,6]))
+    console.log([1,3,6].indexOf(Math.max(...[1,3,6])))
+    console.log([1,3,6].splice(2,1))*/
+    //console.log(!Number.isNaN(NaN))
+    /*let isNumber = (arg) => {
+    	arg.find(function(n){
+    		console.log(n)
+    		if(typeof n != 'number' && !Number.isNaN(n)){
+    			return true
+    		}else{
+    			return false
+    		}
+    	})
+    };
+    isNumber([55,5,NaN])*/
+
+    //console.log([55,5,NaN].find((n) => {return Number.isNaN(n)}))
+
+    //console.log([1, 5, 10, 15].find((value) => { return value > 9 && value < 14}))
+
+
+    /*var sort = (arg) =>{
+    	let res = [];
+    	let mySort = (arg) => {
+    	if(Object.prototype.toString.call(arg) == "[object Array]"){
+    			if(arg.length){
+    				res.unshift(Math.max(...arg));
+    				arg.splice(arg.indexOf(Math.max(...arg)),1);
+    				return mySort(arg);
+    			}else{
+    				return res;
+    			}
+    		}
+    	};
+    	return mySort(arg)
+    }
+	
+    console.log(sort([55,5,22,2,3]))*/
+    /*function a(){};
+	// var temp = new a();
+	 console.log(a.__proto__===Function.prototype);
+    console.log(a.prototype.__proto__===Object.prototype);*/
+    /*var a = new Array();
+    console.log(a.__proto__ === Array.prototype)
+    console.log(a.prototype)*/
+    /*    var a = function(name){
+    	    this.name = name;
+    	    this.say = function(){
+    	        console.log(this.name)
+    	    };
+    	    return {name: 'li'}
+    	};
+    var exp = new a('fu');
+    console.log(exp)*/
+    /*var a = function(name){
+        this.name = name;
+        this.say = function(){
+            console.log(this.name)
+        };
+        console.log(this);
+    };
+    function extend (arg,arg1){
+    		var obj = {};
+    		obj.__proto__ = arg.prototype;
+    		arg.call(obj,arg1);
+    		return obj;
+    	}
+    	extend(a,'fu')
+    //var exp = new a('fu');
+    a()*/
+    //console.log(Array.from(new Set([22,33,22,5])))
+
+    /*function dePlication(arg){
+    	arg.forEach((k,i) => {
+    		if(arg.indexOf(k) != i && arg.indexOf(k) != -1){
+    			arg.splice(i,1);
+    		};
+    	});
+    	return arg;
+    } 
+    console.log(dePlication([22,33,22,5]))*/
+    //console.log([...new Set([22,33,22,5])])
+    /*var a = {
+    	name : 'fu',
+    	say : function(){
+    		console.log(this.name)
+    	}
+    };
+    //a.say();
+    a.say.bind({name:'li'})();*/
+    /*var a = {
+        fn : function(){
+            console.log(this) //window
+        }
+    };
+    var fn1 = a.fn;
+    fn1()*/
+    /*var b = {
+    	name : 'li',
+        fn : function(){
+            console.log(this.name)
+        },
+    }
+    var a = {
+        name : 'fu',
+        fn : function(){
+            console.log(this.name)
+        },
+        fn1 : function(){
+            setTimeout(function(){
+                this.fn() //'fu'
+            }.call(b).call(a),0)
+        }
+    };
+    a.fn1();*/
+    /*const obj = {}
+    function test(...args) {console.log(args)};
+    const newFn = test.call(obj, '静态参数1', '静态参数2')
+    //newFn('动态参数3', '动态参数4')*/
+    //console.log(Array.prototype)
+    /*function a(){
+    	this.name = 'fu',
+    	this.obj = {}
+    };
+    var b =  new a();
+    var c = [1,2,3];
+    var d = {1:'li'};
+    var e = 'fuquanmeng';
+    var g = new Number(1)
+    var h = true;
+
+    console.log(a.prototype)
+    console.log(b.hasOwnProperty('name'))
+    console.log(b.hasOwnProperty('obj'))
+    console.log(b.__proto__ ===  a.prototype)  //1
+    console.log(b.__proto__.__proto__ ===  Object.prototype) //2
+    console.log(a.prototype.__proto__ ===  Object.prototype) //3
+    console.log(a.prototype.constructor === b.constructor)  //4
+    console.log(a.prototype.constructor === b.__proto__.constructor)//5
+    console.log(c.__proto__ === Array.prototype)//6
+    console.log(c.__proto__.__proto__ === Object.prototype)//7
+    console.log(d.__proto__ === Object.prototype) //8
+    console.log(e.__proto__.__proto__ === d.__proto__)//9
+    console.log(g.__proto__.constructor === g.constructor)//10
+    console.log(h.__proto__ === Boolean.prototype)//11
+
+    console.log(a.constructor)//12
+    console.log(a.prototype.__proto__.constructor)//13*/
+    /*function a (){
+    	this.name = 'fu';
+    	this.age = '24';
+    };
+
+    a.prototype.sayName = function(){
+    	console.log(this.name)
+    };
+
+    function b (){
+    	//this.name = 'adw'
+    };
+
+    b.prototype = new a();
+    b.prototype.name = 'li'
+    var child = new b();
+    console.log(child.name)
+    //child.sayName()*/
+    /*function ClassA(sColor) {
+        this.color = sColor;
+    }
+
+    function ClassB() {}
+
+    ClassB.prototype = new ClassA('red');
+    var objB = new ClassB();
+    console.log(objB.color);
+
+    ClassB.prototype = new ClassA();
+    objB = new ClassB('blue');
+    console.log(objB.color);
+
+    ClassB.prototype = new ClassA('red');
+    objB = new ClassB('blue');
+    console.log(objB.color);
+
+    ClassB.prototype = new ClassA();
+    objB = new ClassB();
+    console.log(objB.color);*/
+    /*var a = function(){
+    	this.name = 'fu'
+    }
+    var b = function(){};
+    b.prototype = new a();
+    console.log(b.prototype.constructor == a)*/
+    /*var exp = function(){
+    	this.name = 'li'
+    };
+    function extend (arg){
+    	let obj = typeof exp == 'function' ?  function(){} : {};
+    	console.log(obj)
+    	//var obj = function(){};
+    	//obj.prototype = new exp();
+    	//obj.prototype.
+    	//return new obj();
+
+    }
+    extend(exp)*/
+    //var b = extend(exp)
+    //console.log(b)
+    //console.log('fu'.__proto__.constructor)
+    /*var a = {
+    	name : 'fu'
+    };
+    function extend (arg){
+    	let obj = {};
+    	obj.__proto__ = arg;
+    	return obj;
+    };
+    var exp = extend(a)
+    console.log(exp)
+    　function object(o) {
+
+    　　　　function F() {}
+
+    　　　　F.prototype = o;
+
+    　　　　return new F();
+
+    　　}
+    var exp1 = object(a)
+    console.log(exp1)*/
+    /*var a = [1,2,3,4,5,1,2,5,7];
+    console.log(a.filter((v,k,arr) => {return arr.indexOf(v) == k}))*/
+    /*var a = [];
+    console.log(a.constructor)*/
+    /*var a = function(){}
+    console.log(a.constructor == Function)*/
+
+    /*var a = function(){}
+    var b = new a();
+    console.log(Object instanceof Object);
+    console.log(Function instanceof Function); 
+    console.log(Function instanceof Object);
+    console.log(a instanceof Function);
+    console.log(String instanceof String); 
+    console.log(Boolean instanceof Boolean);
+    console.log(a instanceof a);
+    //a => Function.prototype => Object.prototype != a.prototype false
+    console.log(b instanceof a)
+    */
+    /*var a = function(){};
+    var exp = new a();
+    var str = 'fuquanmeng';
+
+    console.log(a.prototype == exp.__proto__) //true
+    console.log(a.__proto__.__proto__ == Object.prototype) //true
+    console.log(a.prototype.__proto__.constructor) //f object()
+    console.log(a.constructor) // function()
+    console.log(str.constructor == String) //true
+    console.log(str.__proto__.constructor == String) //true
+    console.log(str.__proto__.__proto__.constructor == Object) //true*/
+    /*function Person(){}
+
+    var man = new Person();
+    console.log(Person.prototype)
+    console.log(man.__proto__)
+    Person.prototype={
+        name: "Tom",
+        age: 20,
+        saySomething: function(){
+            alert("What's up?");
+        }
+    };
+    console.log(Person.prototype)
+    console.log(man)*/
+    /*var a = {'num' : 1};
+    var b = a;
+    	a = {'num' : 2}
+     console.log(a)
+     console.log(b)
+
+     b.num = 2 ;
+     console.log(a)*/
+    /*console.log(typeof Math.max)
+    console.log(typeof toString)
+    console.log(typeof [1,3,2].sort)*/
+    /*var a = new Object({'name' : 'fu'});
+    console.log(typeof b)*/
+    /*function clone(Obj) {
+            var buf;
+            if (Obj instanceof Array) {
+                buf = [];                    //创建一个空的数组 
+                var i = Obj.length;
+                while (i--) {
+                    buf[i] = clone(Obj[i]);
+                }
+                return buf;
+            }else if (Obj instanceof Function){
+            	buf = function(){};
+            	buf.prototype = new Obj();
+            	return new buf();
+            }else if (Obj instanceof Object){
+                buf = {};                   //创建一个空对象 
+                for (var k in Obj) {           //为这个对象添加新的属性 
+                    buf[k] = clone(Obj[k]);
+                }
+                return buf;
+            }else{                         //普通变量直接赋值
+                return Obj;
+            }
+        }*/
+    /*var a = function(){
+    	console.log(333)
+    };
+    console.log(a instanceof Function)
+    for(var v in a){
+    	console.log('v')
+    }
+    var b = function(){
+    	console.log(333)
+    };
+    var c = a;
+    a.prototype.method = '111'
+    console.log(a.prototype)
+    console.log(b.prototype)
+    console.log(c.prototype)*/
+    /*var a = function(){
+    	console.log(333)
+    };
+    var b = _.cloneDeep(a);
+    var ada = $.extend(true,{},a);
+    console.log(a)
+    console.log(b)
+    console.log(ada)
+
+    var obj = {
+    	name : function(){
+    		return 1
+    	}
+    }
+    var cloneObj = _.cloneDeep(obj);
+    console.log(cloneObj.name())
+    console.log(Object.getOwnPropertyDescriptors(obj))
+    console.log(Object.getPrototypeOf(obj))
+    var date = new Date();
+    var reg = new RegExp();
+    var err = new Error();
+    var f = new Function();
+    console.log(Object.prototype.toString.call(date))
+    console.log(Object.prototype.toString.call(reg))
+    console.log(Object.prototype.toString.call(err))
+    console.log(Object.prototype.toString.call(f))*/
+    /*function deepCopy (a){
+    	let obj = Array.isArray(a) ? [] : {};//let obj = a.constructor == Array? [] : {};都可以判断要拷贝的是数组还是对象 
+    	for(let i in a){
+    		if(a.hasOwnProperty(i)){ //判断是否是其自有属性,是的话才拷贝也可以说原型上的属性我不拷贝。
+    			if(Object.prototype.toString.call(a[i]) == "[object Object]"){//如果这一项是object类型,就递归调用deepCopy
+    				obj[i] = deepCopy(a[i])
+    			}else{//直接赋值
+    				obj[i] = a[i]
+    			}
+    		}
+    	};
+    	return obj;
+    };
+    var a = {
+    	date: new Date(0),
+        reg: new RegExp('/我是一个正则/ig'),
+        func: function() {
+            console.log('我是一个函数')
+        },
+        err: new Error('我是一个错误')
+
+    }
+    var b = deepCopy(a);
+    console.log(b)*/
+    /*var a = {
+        'date' : new Date(),
+        'Reg' : new RegExp(),
+        'func' : function(){},
+        'err' : new Error()
+    }
+    var b = _.cloneDeep(a)
+    console.log(a.date == b.date)
+    console.log(a.Reg == b.Reg)
+    console.log(a.func == b.func)
+    console.log(a.err == b.err)*/
+    //查找字符串中最多的字符及个数
+    /*var str = '2awdadqw2awdawfadsaqwfd0awdert00awfawawjoihihnh傅傅傅傅傅傅傅傅傅傅';
+    function lookStr (arg) {
+    	let strMap = new Map();
+    	let res;
+    	for(let i of str){
+    		strMap.set(i,1);
+    	};
+    	for(let k = 0; k < str.length; k++){
+    		if(str.indexOf(str[k]) != -1 && str.indexOf(str[k]) != k){
+    			strMap.set(str[k],strMap.get(str[k]) + 1)
+    		}
+    	};
+    	let arr = [];
+    	for(let i of strMap.values()){
+    		arr.push(i)
+    	};
+    	strMap.forEach((v,k,map) => {
+    		if(map.get(k) == Math.max(...arr)){
+    			res = `${k} ${v}`
+    		}
+    	})
+    	console.log(strMap)
+    	return res;
+    	
+    	
+    };
+    console.log(lookStr(str));
+
+    function repeatCharNum(str){
+        var arr = str.split('');
+        str = arr.sort().join('');
+        var re = /(\w)\1+/g;
+        var index = 0;
+        var value = '';
+        str.replace(re,function($0,$1){
+        	console.log($0)
+        	console.log($1)
+            if(index < $0.length){
+                index = $0.length;
+                value = $1 ;
+            }
+        });
+        alert ('最多字符'+value+'出现的次数'+index);
+    };
+    repeatCharNum(str);*/
+    //Object.create()
+    /*var parent = function(){
+    	this.name = 'baba',
+    	this.arr = [1,2,3,4]
+    };
+    parent.prototype.sayName = function(){
+    	console.log('我是baba')
+    };
+    var son = function(){
+    	parent.call(this);
+    };
+    son.prototype = Object.create(parent.prototype);
+    let mySon = new son();
+    let mySon1 = new son();
+    console.log(mySon.arr)
+    console.log(mySon.sayName)
+    mySon.arr.push(5)
+    console.log(mySon.arr)
+    console.log(mySon1.arr)*/
+    /*function Parent (name){ //父类
+        this.name = name;
+        this.arr = [1,2,3];
+        this.sayHello = function(){
+            console.log('hello')
+        }
+    };
+    // 利用call实现
+    function Children (name){
+        Parent.call(this,name); //父类的代码复制到子类里面执行一遍
+    };
+    var exp = new Children('fuquanmeng');
+    var exp1 = new Children('lili');
+    exp.arr.push(4);
+
+    console.log(exp.name) // fuquanmeng
+    console.log(exp1.name) // lili
+    console.log(exp.arr) // [1,2,3,4]
+    console.log(exp1.arr) // [1,2,3]
+    console.log(exp.sayHello === exp1.sayHello) // false
+
+    // 利用'对象冒充'实现  父类构造函数也是函数所以原理和call一致就是在子类执行一次
+    function Children (name){
+        this.method = Parent;
+        this.method(name); //为什么不直接运行？ 此时就是把this指向了Children
+        delete this.method;
+    };
+    var exp = new Children('fuquanmeng');
+    var exp1 = new Children('lili');
+    exp.arr.push(4);
+
+    console.log(exp.name) // fuquanmeng
+    console.log(exp1.name) // lili
+    console.log(exp.arr) // [1,2,3,4]
+    console.log(exp1.arr) // [1,2,3]
+    console.log(exp.sayHello === exp1.sayHello) // false*/
+    /*function Parent (name){ //父类
+        this.name = name;
+        this.arr = [1,2,3];
+        this.sayHello = function(){
+            console.log('hello')
+        }
+    };
+    function Children (){};
+
+
+    Children.prototype = new Parent(); 
+    var exp = new Children('fuquanmeng');
+    var exp1 = new Children('lili');
+    exp.arr.push(4);
+
+    console.log(exp.name) // fuquanmeng
+    console.log(exp1.name) // lili
+    console.log(exp.arr) // [1,2,3,4]
+    console.log(exp1.arr) // [1,2,3,4]
+    console.log(exp.sayHello === exp.sayHello) // true*/
+    /*function Parent (name){ //父类
+        this.name = name; // 普通属性
+        this.arr = [1,2,3]; // 普通属性
+    };
+    Parent.prototype.sayHello = function(){
+        console.log('hello')
+    };
+    function Children(name){
+        Parent.call(this,name)
+    };
+    Children.prototype = new Parent();
+
+    var exp = new Children('fuquanmeng');
+    var exp1 = new Children('lili');
+    exp.arr.push(4);
+
+    console.log(exp.name) // fuquanmeng
+    console.log(exp1.name) // lili
+    console.log(exp.arr) // [1,2,3,4]
+    console.log(exp1.arr) // [1,2,3]
+    console.log(exp.sayHello === exp.sayHello) // true*/
+    /*var a = {name:'fu',age:'25',money:{'rmb':100,'$':999},arr:[1,2,3],num:new Number(1)};;
+    function deepCopy (a){ 
+    	let obj = Array.isArray(a) ? [] : {};//let obj = a.constructor == Array? [] : {};都可以判断要拷贝的是数组还是对象 
+    	for(let i in a){
+    		if(a.hasOwnProperty(i)){ //判断是否是其自有属性,是的话才拷贝也可以说原型上的属性我不拷贝。
+    			if(Object.prototype.toString.call(a[i]) == "[object Object]"){//如果这一项是object类型,就递归调用deepCopy
+    				obj[i] = deepCopy(a[i])
+    			}else{//直接赋值
+    				obj[i] = a[i]
+    			}
+    		}
+    	};
+    	return obj;
+
+    };
+    a.arr.push(5225)
+    var b = deepCopy (a);
+    console.log(b.num)
+    var c = new Error()
+    console.log(Object.prototype.toString.call(c));
+    */
+    /*function isOject(obj){
+    		if(obj !== null && (typeof obj == 'object' || typeof obj == 'Function') && Object.prototype.toString.call(obj) !== "[object Error]" && Object.prototype.toString.call(obj) !== "[object Date]" && Object.prototype.toString.call(obj) !== "[object RegExp]"){
+    			return 'isobject'
+    		}else{
+    			return obj
+    		}
+    	};
+    	//console.log(isOject([]))
+    function deepCopy (a){ 
+    	let obj = isOject(a) === 'isobject' ? (Array.isArray(a) ? [] : {}) : a;
+    	for(let i in a){
+    	    isOject(a[i]) === 'isobject' ? obj[i] = deepCopy(a[i]) : obj[i] = a[i]
+    	};
+    	return obj
+    };
+    //{name:'fu',age:'25',money:{'rmb':100,'$':999},arr:[1,2,3],num:new Number(1),reg:new RegExp(),fun:function(){},err: new Error('我是一个错误')};
+    var a = {name:'fu',age:'25',money:{'rmb':100,'$':999},arr:[1,2,3],num:new Number(1),reg:new RegExp(/^1(3|4|5|7|8)\d{9}$/),fun:function(){},err: new Error('我是一个错误'),date:new Date(0)};
+    var b = _.cloneDeep(a);
+    var bb = deepCopy(a);
+    //a.arr.push(5225)
+    a.num = 2;
+    a.date = new Date();
+    a.err = new Error('22');
+    console.log(b.money === bb.money)
+    console.log(b.reg == bb.reg)
+    console.log(b.err === bb.err)
+    console.log(b.fun === bb.fun)
+    console.log(b.date === bb.date)
+
+    console.log(a)
+    console.log(b)
+    console.log(bb)*/
+    /*var a = {
+            name:'fu',
+            money:{'rmb':100,'$':999},
+            reg:new RegExp(/^1(3|4|5|7|8)\d{9}$/),
+            fun:function(){},
+            err: new Error('我是一个错误'),
+            date:new Date(0)
+        
+    };*/
+    //function deepCopy (a){ 
+    //let obj = Array.isArray(a) ? [] : {};//let obj = a.constructor == Array? [] : //{};都可以判断要拷贝的是数组还是对象 
+    //for(let i in a){
+    //	if(a.hasOwnProperty(i)){ //判断是否是其自有属性,是的话才拷贝也可以说原型上的属性我不拷贝。
+    //if(Object.prototype.toString.call(a[i]) == "[object //Object]"){//如果这一项是object类型,就递归调用deepCopy
+    //	obj[i] = deepCopy(a[i])
+    //	}else{//直接赋值
+    //	obj[i] = a[i]
+    //	}
+    //	}
+    //};
+    //	return obj;
+    //};
+    /*var arrQie = ['[object Error]','[object Date]','[object RegExp]','[object Function]'];
+    function isOject(obj){ //监测是否为正常的引用类型
+    		if(typeof obj == 'object' && obj !== null && arrQie.every(item => Object.prototype.toString.call(obj) != item)){
+    			return 'isobject'
+    		}else{
+    			return obj
+    		}
+    		if((typeof obj == 'object' || typeof obj == 'function') && obj !== null && Object.prototype.toString.call(obj) !== "[object Error]" && Object.prototype.toString.call(obj) !== "[object Date]" && Object.prototype.toString.call(obj) !== "[object RegExp]"){
+    			return 'isobject'
+    		}else{
+    			 return 'isobject'
+    		}
+    };
+    function deepCopy (a){ 
+    	let obj = isOject(a) === 'isobject' ? (Array.isArray(a) ? [] : {}) : a;
+    	for(let i in a){
+    	    isOject(a[i]) === 'isobject' ? obj[i] = deepCopy(a[i]) : obj[i] = a[i]
+    	};
+    	return obj
+    };
+    //var b = $.extend(true,{},a);
+    var b = deepCopy(a);*/
+    /*console.log(a.money === b.money) //false
+    console.log(a.reg === b.reg) //true
+    console.log(a.date === b.date) //true
+    console.log(a.fun === b.fun) //true
+    console.log(a.err === b.err) //true*/
+    /*console.log(isOject(a.money)) //isobject
+    console.log(isOject(a.reg)) //true
+    console.log(isOject(a.date)) //true
+    console.log(isOject(a.fun)) //true
+    console.log(isOject(a.err)) //true
+    console.log(isOject(null)) //true*/
+    //console.log(typeof a.date) //true
+    /*function clone (proto) {
+        function F () {}
+        F.prototype = proto
+        return new F()
+    };
+    sub.prototype = clone(Super.prototype);//其实Object.create()和clone方法原理相同*/
+    //使用Object.create()  //方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
+    /*function Parent (name){ //父类
+        this.name = name;
+        this.arr = [1,2,3];
+    };
+    Parent.prototype.sayHello = function(){
+        console.log('hello')
+    };
+    function Children (name){
+        Parent.call(this,name);
+    };
+    Children.prototype = Object.create(Parent.prototype);
+    //Children.prototype = Parent.prototype;
+    console.log(Children.prototype.constructor == Parent) //true
+    Children.prototype.constructor = Children;
+    Children.prototype.namer = '56444444444';
+
+    var exp = new Children('fuquanmeng');
+    var exp1 = new Children('lili');
+    //var exp2 = new Parent('lili');
+    exp.arr.push(4);
+
+    console.log(exp.name) // fuquanmeng
+    console.log(exp.namer) // fuquanmeng
+    //console.log(exp2.namer) // fuquanmeng
+    console.log(exp1.name) // lili
+    console.log(exp.arr) // [1,2,3,4]
+    console.log(exp1.arr) // [1,2,3]
+    console.log(exp.sayHello === exp.sayHello) // true*/
+    /*var arr = [1,2,3]
+    var newArr = arr.every((item,index,self) => item == 2)
+    console.log(newArr)*/
+    /*function test (arg){
+
+    	arr.includes(arg) ? console.log('dui') : '';
+    	console.log(1111111111111)
+    }
+    test(12)*/
+
+
+    /*function Animal(){
+        this.name = "Animal";
+        this.showName = function(){
+            console.log(this.name);
+        }
+    }
+
+    function Cat(){
+     
+        this.name = "Cat";
+     
+        this.showName1 = function(){
+            console.log(this.name); 
+        }
+        
+        this.showName2 = function(){
+        	Animal.call(this)
+            console.log(this.name); 
+        } 
+     
+        this.showName3 = function(){
+        	this.name = "Cat"
+            console.log(this.__super.name + "=>" + this.name); 
+        }
+    }
+    Cat.prototype = new Animal();
+    Cat.prototype.__super = new Animal();
+    var cat = new Cat();
+
+    console.log(cat instanceof Animal ); // 得到：true
+    cat.showName1();   
+    cat.showName2();   
+    cat.showName3();   */
+    /*var obj = {
+        name: " jsCoder",
+        skill: ["css3","html5", "es6", "react", "angular"],
+        say: function () {      
+            for(let i = 0, len = this.skill.length; i< len; i++){
+            	let _that = this;
+                setTimeout(function(){
+                    console.log("No." + Number(i+1) + _that.name);
+                    console.log(_that.skill[i]);
+                    console.log('--------------------------');
+                },100);
+            }
+        }
+    }
+    */
+    /*var obj = {
+        name: " jsCoder",
+        skill: ["css3", "html5", "es6", "react", "angular"],
+        say: function() {
+            for (var i = 0, len = this.skill.length; i < len; i++) {
+                (function() {
+                    var temp = i;
+                    setTimeout(function() {
+                        console.log("No." + temp + obj.name);
+                        console.log(obj.skill[temp]);
+                        console.log('--------------------------');
+                    }, 100);
+                })();
+            }
+        }
+    };
+    */
+    ///obj.say();
+    /*var arr = [1,2,3,4,1,2,3,2,3,5,1,1];
+    var newArr = arr.filter((item,index,self) => {
+     	return	self.indexOf(item) == index
+    })
+    console.log(newArr)*/
+    /*var arr = [[1,2,2],[3, 4, 5, 5],[6, 7, 8, 9,[11,12,[12,13,[14]]]],10];
+    var res = [];
+    var filter = (arg) => {
+    	arg.forEach((item,index) => {
+    		if(Array.isArray(item)){
+    			filter(item);
+    		}else{
+    			res.push(item);
+    		}
+    	})
+    }
+    filter(arr);
+    res.sort((a,b) => a-b);
+    res = [...new Set(res)];
+    console.log(res)*/
+    /*var _status
+    var quo = function(status){
+        _status = function(){
+          return status;
+        }
+    }
+    quo('dw')
+    console.log(_status())*/
+    /* var a = [];
+            for (var i = 0; i < 10; i++) {
+            	(function(i){
+    	            a[i] = function () {
+    	                console.log(i);
+    	            };
+    	        })(i)    
+            }
+        a[6]() */
+
+    /*var a = [];
+          for (var i = 0; i < 10; i++) {
+              a[i] = function () {
+                  console.log(i);
+              };
+          }
+          a[6]();*/
+    // (function () {
+    /*var serial_maker=function () {
+	            var prefix='';
+	            var seq=0;
+	            return{
+	                set_prefix:function (p) {
+	                    prefix=new String(p)
+	                },
+	                set_seq:function (s) {
+	                    seq=s;
+	                },
+	                gensym:function () {
+	                    var result=prefix+seq;
+	                    seq+=1;
+	                    return result;
+	                }
+	            }
+	        };
+	    
+    //})()    
+        var seqer=serial_maker();
+        seqer.set_prefix('第一');
+        seqer.set_seq(1000);
+        console.log(seqer.gensym())
+        seqer.set_prefix('第二');
+        console.log(seqer.gensym())*/
+    /*    function a (){
+        	var	ne = 0;
+        		return {
+        			setNe : (arg) => {
+        				ne = arg;
+        			},
+        			getNe:function(){
+        				var result = ne + 1;
+        				return result
+        			}
+        		}
+        } 
+        var b = a();
+        console.log(b.getNe())   
+        b.setNe(1)
+        console.log(b.getNe())   */
+    /*    var a = {
+        fn : function (){
+            return function (){
+                console.log(this) //
+            }
+        }
+    } 
+    a.fn()()*/
+    /*function  factorial(num) {
+       if(num<= 1) {
+           return 1;
+       } else {
+          return num * factorial(num-1)
+       }
+    }
+    console.log(factorial(4))*/
+    /*var a = function(){
+    	var num = 1;
+    	//num += 1;
+    	//return num;
+    	return function(){
+    		num += 1;
+    		return num
+    	}
+    }; 
+    var b = a();
+    console.log(b())
+    console.log(b())
+    console.log(a()())*/
+    // var a = function(){
+    //     var name = 'default';
+    //     return {
+    //         setName : (arg) => {
+    //             name = arg
+    //         },
+    //         getName : (arg) => {
+    //             return name
+    //         }
+    //     }
+    // };
+    // var exp = a();
+    // var exp1 = a();
+    // exp.setName('fuquanmeng');
+    // console.log(exp.getName())// 'fuquanmeng'
+    // exp1.setName('lili');
+    // console.log(exp1.getName()); //'lili'
+    /*第二次调用fun(1)时m为1，此时fun闭包了外层函数的n，也就是第一次调用的n=0，即m=1，n=0，并在内部调用第一层fun函数fun(1,0);所以o为0；
+
+    第三次调用fun(2)时m为2，但依然是调用a.fun，所以还是闭包了第一次调用时的n，所以内部调用第一层的fun(2,0);所以o为0
+    0 1 2 
+    0 1 2 
+    0 1 1*/
+
+    /*function fun(n,o){
+        console.log('o =>' + o);
+        var num = 1;
+        return {
+            fun:function(m){
+            	num += 1;
+            	console.log('num =>'+ num)
+                return fun(m,n);
+            }
+        };
+     };
+     // o 和 num 分别打印什么
+     var a = fun(0); //1
+     a.fun(1); //2
+     a.fun(2); //3
+     a.fun(3); //4
+     var b = fun(0).fun(1).fun(2).fun(3); //5
+     var c = fun(0).fun(1); //6
+     c.fun(2); //7
+     c.fun(3); //8*/
+    /* var a = [1,2]
+     console.log(a.slice())*/
+
+    /*function Parent (name){ //父类
+        this.name = name;
+        this.arr = [1,2,3];
+    };
+    Parent.prototype.sayHello = function(){
+        console.log('hello')
+    };
+    */
+    /*class Parent{
+    	constructor(name){
+    		this.name = name;
+    		this.arr = [1,2,3];
+    	}
+    	sayHello(){
+    		console.log('hello')
+    	}
+    }
+    // var exp = new Parent('fuquanmeng')
+    // console.log(exp.name)
+    // console.log(exp.arr)
+    // exp.sayHello();
+    class Children extends Parent{
+    	// constructor(name,job){
+    	// 	//super(name);
+    	// }
+    	sayHai(){};
+    };
+
+    var exp = new Children('fuquanmeng');
+    var exp1 = new Children('lili');
+    exp.arr.push(4);
+
+    console.log(exp.name) // fuquanmeng
+    console.log(exp1.name) // lili
+    console.log(exp.arr) // [1,2,3,4]
+    console.log(exp1.arr) // [1,2,3]
+    console.log(exp.sayHello === exp.sayHello) // true
+    console.log(exp.sayHai === exp.sayHai) // true*/
+    /*class Parent{
+    	constructor(){
+    		this.name = 'fuquanmeng'
+    	}
+    	sayHello(){
+    		console.log('hello')
+    	}
+    }
+    Parent.prototype.job = 'jsCoder';
+
+    class Children extends Parent {
+    	constructor(){
+    		super();
+    		console.log(super.job) //'jsCoder'
+    	}
+    	get _getHello(){
+    		return super.sayHello
+    	}
+    	get _getJob(){
+    		return super.job
+    	}
+    	get _getName(){
+    		return super.name
+    	}
+    	sayHai(){
+    		console.log(super) //报错 必须显式指定是作为函数、还是作为对象使用
+    		super() //报错 
+    	}
+    }
+
+    const exp = new Children();
+    exp._getHello()  //'hello'  //sayHello在父类Parent的原型对象上
+    console.log(exp._getJob) //'jsCoder' //job在父类Parent的原型对象上
+    console.log(exp._getName) //undefined 因为name是父类Parent实例的属性所以super.name就找不到。*/
+
+    /*let exp = Symbol('new1');
+    let obj = {
+    	[exp](){
+    		console.log('awd')
+    	}
+    };
+    let obj1 = {
+    	exp
+    }
+    let str = '123';
+    let obj2 = {
+    	str
+    }
+    console.log(obj)
+    console.log(obj1)
+    console.log(obj2)*/
+    /*var length = 10;
+    function fn() {
+      console.log(this.length);
+    }
+
+    var obj = {
+      length: 5,
+      method: function(fn) {
+        fn();
+        console.log(arguments[0])
+        arguments[0]();
+      }
+    };
+
+    obj.method(fn, 1);*/
+    /*function fn(a) {
+      console.log(a); 
+      var a = 2;
+      function a() {}
+      console.log(a); 
+    }
+
+    fn(1);*/
+    /*console.log(typeof fn);
+
+    var fn = 2;
+    function fn() {};*/
+    /*var url = "http://witmax.cn/index.php?key0=0&key1=1&key2=2";
+    let parseQueryString = (arg) => {
+    	let arr = arg.split('?')[1].split('&'),obj = {};
+    	arr.forEach((item,index,self) => {
+    		obj[item.slice(0,item.indexOf('='))] = item.slice(item.indexOf('=')+1,item.length);
+    	});
+    	return obj
+    }
+
+    console.log(parseQueryString(url))*/
+    // var s = 'aaabbbcccaaabbbaaabbbbbbbbbb';
+    // s = s.split('').sort().join('')
+    // var pattern = /(\w)\1*/g;
+    // var ans = s.match(pattern);
+    // console.log(ans)
+    /*const dom = new Proxy({}, {
+      get(target, property) {
+        return function(attrs = {}, ...children) {
+          const el = document.createElement(property);
+          for (let prop of Object.keys(attrs)) {
+            el.setAttribute(prop, attrs[prop]);
+          }
+          for (let child of children) {
+            if (typeof child === 'string') {
+              child = document.createTextNode(child);
+            }
+            el.appendChild(child);
+          }
+          return el;
+        }
+      }
+    });
+
+    const el = dom.div({},
+      'Hello, my name is ',
+      dom.a({href: '//example.com'}, 'Mark'),
+      '. I like:',
+      dom.ul({},
+        dom.li({}, 'The web'),
+        dom.li({}, 'Food'),
+        dom.li({}, '…actually that\'s it')
+      )
+    );
+
+    document.body.appendChild(el);*/
+
+    /*let num = parseInt(Math.random()*5+1);
+    let arr = [];
+    for(let i = 0;i < num;i++){
+    	arr[i] = (100/(num+1))*(i+1)
+    }
+    console.log(num)
+    console.log(arr)*/
+    //[50]
+    //[33,66]
+    //[25,50,75]
+    //[20,40,60,80]
+    //[16,32,48,60,76]
+
+    /*let originObj = {
+                    label: {
+                        normal: {
+                            show: true,
+                            formatter: "{b} : {c} ({d}%)"
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    },
+                    type: 'pie',
+                    radius : '55%',
+                    //center: ['25%', '50%'],
+                    //data:contentSeriesData,
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    },
+                    animation:false
+                };
+         let obj1 = Object.create(originObj);    
+         let obj2 = Object.create(originObj);
+         obj1.center = 50;    
+         obj2.center = 70;
+         console.log(obj1)    
+         console.log(obj2)  
+         console.log(Object.keys(obj2)) */
+    /*function build_sentiment_pie(posData,negData,domID){ //饼图 情感分析
+    	let originOption = {
+    		title:[],
+    		toolbox: {
+            	right: 20,
+            	feature: {
+                	saveAsImage: {}
+    	        }
+    	    },
+    	    tooltip : {
+    	          trigger: 'item',
+    	          formatter: "{a} <br/>{b} : {c} ({d}%)"
+    	    },
+    	    legend: {
+                  data: ['正面','负面'],
+                  bottom:1,
+                  right:30
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                containLabel: true
+            },
+            series:[]
+    	};
+    	let seriesOption = {
+    		//name: '内容第一提及率',
+            label: {
+                normal: {
+                    show: true,
+                    formatter: "{b} : {c} ({d}%)"
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            type: 'pie',
+            radius : '55%',
+            center: ['25', '50%'],//默认
+            data:[],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            },
+            animation:false
+    	};
+
+        
+    	Object.keys(posData).forEach((item,index,self) => {
+    		let titleObj = {},seriesObj = myCopy(seriesOption),posObj = {name:'正面'},negObj = {name:'负面'};
+    		titleObj.text = seriesObj.name = item;
+    		titleObj.x = (100/(Object.keys(posData).length+1))*(index+1);
+    		seriesObj.center[0] = `${titleObj.x}%`;
+    		originOption.title.push(titleObj);
+    		posObj.value = posData[item];
+    		negObj.value = negData[item];
+    		seriesObj.data = [posObj,negObj];
+    		originOption.series.push(seriesObj);
+    	});
+    	console.log(originOption)
+    };   
+
+
+
+
+
+
+     let posData = {
+        "小蓝" : 3,
+        "ofo" : 23,
+        "摩拜" : 15
+      };
+     let negData = {
+        "小蓝" : 25,
+        "ofo" : 113,
+        "摩拜" : 75
+      };
+     build_sentiment_pie(posData,negData);
+    */
+    /*var a = {n:1};
+    var b = a; // 持有a，以回查
+    a.x = a = {n:2};
+    console.log(a);// --> undefined
+    console.log(b.x);// --> [object Object]*/
+    /* var a = {
+     	'0':'a',
+     	'1':'b',
+     	'2':'c',
+     	length:3,
+     	[Symbol.iterator] : Array.prototype[Symbol.iterator]
+     };
+
+    for(let i of a){
+    	console.log(i)
+    }*/
+    /*var a = function* (){
+    	var b = yield 1;
+    	yield b;
+    	yield b;
+    };
+    var f = a();
+    console.log(f.next())//1
+    console.log(f.next(3))//3
+    console.log(f.next(58))//3*/
+    /*function* dataConsumer() {
+      console.log('Started');
+      console.log(`1. ${yield}`);
+      console.log(`2. ${yield}`);
+      return 'result';
+    }
+
+    let genObj = dataConsumer();
+    //genObj.next();
+    // Started
+    genObj.next('a')
+    // 1. a
+    genObj.next('b')
+    genObj.next('c')*/
+    /*const g = function* (x, y) {
+      let result = yield x + y;
+      return 8;
+    };
+
+    const gen = g(1, 2);
+    gen.next(); // Object {value: 3, done: false}
+
+    console.log(gen.next())*/
+    /*window.open('https://www.douyu.com/member/recommlist/getfreshlistajax?clickNum=1&did=2c70931b180a84b1d202ff3400061501&type=3&show_num=5&uid=259139326&bzdata=1');*/
+    // console.log(typeof Number('wad'))
+    // async function async1() {
+    //     console.log('async1 start')
+    //     await async2()
+    //     console.log('async1 end')
+    // }
+
+    // async function async2() {
+    //     console.log('async2')
+    // }
+
+    // console.log('script start')
+
+    // setTimeout(function() {
+    //     console.log('setTimeout')
+    // }, 0)
+
+    // async1();
+
+    // new Promise(function(resolve) {
+    //     console.log('promise1')
+    //     resolve();
+    // }).then(function() {
+    //     console.log('promise2')
+    // })
+
+    // console.log('script end')
+    //     //////////////////\
+    // 'script start'
+    // 'async1 start'
+    // 'async2'
+    // 'async1 end'
+    // 'promise1'
+    // 'script end'
+    // 'promise2'
+    // 'setTimeout'
+    // async function t1(fun) {
+    //     console.log(1)
+    //     console.log(2)
+    //     await Promise.resolve().then(() => console.log(3))
+    //     console.log(4)
+
+    //     if (fun) {
+    //         return fun()
+    //     }
+    // }
+
+    // t1(function() {
+    //     console.log(5)
+    // })
+
+    // async function async1() {
+    //     console.log('async1 start')
+    //     await async2()
+    //     console.log('async1 end')
+    // }
+
+    // async function async2() {
+    //     console.log('async2')
+    // }
+
+    // console.log('script start')
+
+    // setTimeout(function() {
+    //     console.log('setTimeout')
+    // }, 0)
+
+    // async1();
+
+    // new Promise(function(resolve) {
+    //     console.log('promise1')
+    //     resolve();
+    // }).then(function() {
+    //     console.log('promise2')
+    // })
+
+    // console.log('script end')
+    //script start,async1 start,async2,promise1,script end,promise2,async1 end,setTimeout
+    // async function fn1() {
+    //     return 666
+    // }
+    // async function fn2() {
+    //     666
+    // }
+
+    // function fn3() {
+    //     return 666
+    // }
+    // async function fn4() {
+    //     return new Promise((res) => {
+    //         return 123
+    //     })
+    // }
+    // console.log(fn1())
+    // console.log(fn2())
+    // console.log(fn3())
+    // console.log(fn4())
+
+    // async function async1() {
+    //     console.log(1)
+    //     await async2()
+    //     console.log(2)
+    // }
+    // async function async2() {
+    //     console.log(3)
+    // }
+    // console.log(4)
+    // setTimeout(function() {
+    //     console.log(5)
+    // }, 0)
+    // async1();
+    // new Promise(function(resolve) {
+    //     console.log(6)
+    //     resolve();
+    // }).then(function() {
+    //     console.log(7)
+    // })
+    // console.log(8)
+
+    // 41368725
+    // function proto(time) {
+    //     return new Promise(resolve => resolve(time + 10))
+    // }
+
+    // function step1(time) {
+    //     console.log(time)
+    //     return proto(time)
+    // }
+
+    // function step2(time) {
+    //     console.log(time)
+    //     return proto(time)
+    // }
+
+    // function step3(time) {
+    //     console.log(time)
+    //     return proto(time)
+    // }
+
+    // function doit() {
+    //     console.time("doitwad");
+    //     step1(10)
+    //         .then(res => step2(res))
+    //         .then(res => step3(res))
+    //         .then(res => {
+    //             console.timeEnd("doitwad");
+    //         })
+    // }
+    // doit()
+    // async function doit() {
+    //     console.time("doitwad");
+    //     var res1 = await step1(10);
+    //     var res2 = await step2(res1);
+    //     var res3 = await step3(res2);
+    //     console.timeEnd("doitwad");
+    // }
+    // doit()
+    // async function a() {
+    //     return 666
+    // }
+    // a().then(res => console.log(res))
+    // console.log(a());
+    // console.log(Promise.resolve(666))
+    // let pro = new Promise(resolve => {
+    //     resolve(666)
+    // })
+    // pro.then(res => console.log(res))
+    // console.log(pro);
+    // async function fn1() {
+    //     return 666
+    // }
+    // async function fn2() {
+    //     666
+    // }
+
+    // function fn3() {
+    //     console.log(667)
+    //     return Promise.resolve(667)
+    // }
+
+    // function fn4() {
+    //     console.log(668)
+    //     return new Promise(resolve => resolve(668))
+    // }
+
+    // function fn5() {
+    //     return 666
+    // }
+    // console.log(fn1()) //Promise{<resolved>: 666} 
+    // console.log(fn2()) //Promise{<resolved>: undefined}
+    //     //console.log(fn3()) //666
+
+    // console.log(Promise.resolve(666)) //Promise{<resolved>: 666} 
+    // console.log(new Promise(resolve => resolve(666))) //Promise{<resolved>: 666} 
+
+    // fn1()
+    //     .then(res => fn3())
+    //     .then(res => fn4())
+    // step1(10).then(res => {
+    //     console.log(res)
+    // })
+    // async function doit() {
+    //     var res = await step1(10);
+    //     console.log(res)
+    // }0.
+    // doit()
+    //     class CusInfo extends HTMLElement {
+    //         constructor() {
+    //             super()
+    //             let $text = document.createElement('div')
+    //             $text.innerHTML = `
+    //   <div class="wrap">
+    //     <p>Some Text</p>
+    //   </div>
+    // `
+    //             this.appendChild($text) // this代表当前自定义元素的实例
+    //         }
+    //     }
+    //     customElements.define('cus-info', CusInfo)
+
+    // function origin(arg) {
+    //     return new Promise(reslove => {
+    //         setTimeout(() => {
+    //             console.log(arg);
+    //             resolve(arg + 10);
+    //         }, 10)
+    //     })
+    // }
+
+    // function step1(arg) {
+    //     return origin(arg)
+    // }
+
+    // function step2(arg) {
+    //     return origin(arg)
+    // }
+
+    // function step3(arg) {
+    //     return origin(arg)
+    // }
+
+    // function doIt() {
+    //     let start = 10;
+    //     step1(start)
+    //         .then(res2 => step2(res2))
+    //         .then(res3 => step3(res3))
+    // }
+    // doIt()
+    // Promise.resolve(666)
+    //     .then(res => {
+    //         console.log(res)
+    //         return 777
+    //     })
+    //     .then(res => {
+    //         console.log(res)
+    //         return 888
+    //     })
+    //     .then(res => (console.log(res)))
+
+
+
+
+
+    var reso = [32.05, 32.2, 32.2, 32.2, 32.25, 32.2, 32.2, 32.15, 32.15, 32.15, 32.05, 32.05, 32.05, 32.05, 32.05, 32, 32, 32, 32, 32, 32, 32, 32.05, 32.05, 32.05, 32, 32.05, 32.05, 32, 32, 31.95, 31.95, 32, 31.95, 32, 32, 32, 32, 32, 32, 32, 32, 32, 31.95, 31.95, 32, 31.95, 32, 31.95, 32, 31.95, 31.95, 32, 32, 32, 32, 31.95, 31.95, 31.95, 31.95, 31.95, 31.95, 31.95, 32, 31.95, 32, 32, 32, 32, 32, 32, 32, 31.8, 31.75, 31.75, 31.75, 31.8, 31.8, 31.8, 31.8, 31.75, 31.7, 31.6, 31.5, 31.5, 31.45, 31.45, 31.45, 31.4, 31.35, 31.35, 31.35, 31.35, 31.35, 31.35, 31.35, 31.35, 31.35, 31.45, 31.45, 31.45, 31.45, 31.45, 31.45, 31.45, 31.45, 31.4, 31.4, 31.35, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.4, 31.35, 31.35, 31.35, 31.4, 31.35, 31.35, 31.35, 31.35, 31.3, 31.3, 31.35, 31.3, 31.3, 31.3, 31.25, 31.25, 31.25, 31.25, 31.2, 31.1, 31.15, 31.1, 31.1, 31.05, 31.05, 31.05, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31.05, 31.05, 31.05, 31.05, 31, 31, 31, 31, 31, 31.05, 31.05, 31.05, 31, 31, 31.05, 31, 31, 31, 31, 31, 31, 31, 31.05, 31, 30.85, 31, 31, 31, 31, 30.95, 31, 31, 31, 31, 31.05, 31.05, 31.05, 31.05, 31.05, 31.05, 31.15, 31.15, 31.15, 31.15, 31.2, 31.2, 31.2, 31.2, 31.2, 31.2, 31.2, 31.2, 31.1, 31.1, 31.1, 31.1, 31.15, 31.15, 31.1, 31.15, 31.15, 31.2, 31.2, 31.25, 31.05, 31.05, 31.1, 31.1, 31.1, 31.05, 31.05, 31.05, 31.05, 31.05, 31.05, 31.1, 31.1, 31.1, 31.1, 31.1, 31.1, 31.1, 31.05, 31.15, 31.15, 31.05, 31.1, 31.1, 31.05, 31.1, 31.1, 31.1, 31.05, 31.05, 31.1, 31.1, 31.05, 31.1, 31.1, 31.1, 31.05, 31.05, 31.05, 31.05, 31.05, 31.05, 31.1, 31.05, 31.1, 31.1, 31.1, 31.1, 31.1, 31.05, 31.05, 31.05, 31.05, 31.05, 31.05, 31.1, 31.1, 31.05, 31.1, 31.1, 31.1, 31.05, 31.1, 31.05, 31.1, 31.05, 31.05, 31, 31.05, 31, 31, 31, 30.95, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31];
+    Date.prototype.Format = function(fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份 
+            "d+": this.getDate(), //日 
+            "h+": this.getHours(), //小时 
+            "m+": this.getMinutes(), //分 
+            "s+": this.getSeconds(), //秒 
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+            "S": this.getMilliseconds() //毫秒 
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    option = {
+        title: {
+            text: '动态数据',
+            subtext: '纯属虚构'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    backgroundColor: '#283b56'
+                }
+            }
+        },
+        legend: {
+            data: ['股价走势', '新闻数量']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                dataView: {
+                    readOnly: false
+                },
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        dataZoom: {
+            show: false,
+            start: 0,
+            end: 100
+        },
+        xAxis: [{
+            type: 'category',
+            boundaryGap: true,
+            data: (function() {
+                var now = new Date().getTime() + 3600000 * 4;
+                var res = [];
+                var len = 84;
+                while (len--) {
+                    now = new Date(now - 300000);
+                    res.unshift(now.Format("hh:mm"));
+                }
+                //console.log(res)
+                return res;
+            })()
+        }, {
+            type: 'category',
+            boundaryGap: true,
+            data: (function() {
+                var now = new Date().getTime() + 3600000 * 7;
+                var res = [];
+                var len = 8;
+                while (len--) {
+                    now = new Date(now - 3600000);
+                    res.unshift(now.Format("MM-dd hh点"));
+                }
+                //console.log(res)
+                return res;
+            })()
+        }],
+        yAxis: [{
+            type: 'value',
+            scale: true,
+            name: '股价',
+            max: (Math.max(...reso) + (Math.max(...reso) - Math.min(...reso) - 0.5) / 2).toFixed(2),
+            min: (Math.min(...reso) - (Math.max(...reso) - Math.min(...reso) - 0.5) / 2).toFixed(2),
+            boundaryGap: [0.2, 0.2]
+        }, {
+            type: 'value',
+            scale: true,
+            name: '新闻数量',
+            max: 1200,
+            min: 0,
+            boundaryGap: [0.2, 0.2]
+        }],
+        series: [{
+            name: '新闻数量',
+            type: 'bar',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: (function() {
+                var res = [];
+                var len = 8;
+                while (len--) {
+                    res.push(Math.round(Math.random() * 1000));
+                }
+                return res;
+            })()
+        }, {
+            name: '股价走势',
+            smooth: true,
+            showSymbol: false,
+            type: 'line',
+            /*data:(function (){
+                var res = [];
+                var len = 0;
+                while (len <84) {
+                    res.push((Math.random()*10 + 5).toFixed(1) - 0);
+                    len++;
+                }
+                console.log(res)
+                return reso.slice(0,84);
+            })()*/
+            data: reso.slice(0, 84),
+        }]
+    };
+
+    // fetch('http://data.rsact.com/rsa/project?projectDto=%7B%22method%22%3A%22get%22%7D').then(response => {
+    //     console.log(response.json())
+    //         // console.log(response.text())
+    //     return response.json()
+    //     console.log(response)
+    // }).then(res => {
+    //     console.log(res)
+    // })
+    // class Parent{
+    //     age = "25" //实例属性新写法
+    //     static constructor(){
+    //         this.worker = 'jsWriter'
+    //     }
+        
+    //     //static name = 'awd'
+    // }
+    // console.log(new Parent().age)
+    //8 11 19 22 26 32
+    // 6 8 9 12
+
+    var data = {name: [222,222]};
+    observe(data);
+    data.name[0] = 333; // 哈哈哈，监听到值变化了 kindeng --> dmq
+
+    function observe(data) {
+        if (!data || typeof data !== 'object') {
+            return;
+        }
+        // 取出所有属性遍历
+        Object.keys(data).forEach(function(key) {
+            defineReactive(data, key, data[key]);
+        });
+    };
+
+    function defineReactive(data, key, val) {
+        observe(val); // 监听子属性
+        Object.defineProperty(data, key, {
+            enumerable: true, // 可枚举
+            configurable: false, // 不能再define
+            get: function() {
+                return val;
+            },
+            set: function(newVal) {
+                console.log('哈哈哈，监听到值变化了 ', val, ' --> ', newVal);
+                val = newVal;
+            }
+        });
+    }
+
+
+</script>
+
+</html>

@@ -20,7 +20,7 @@
       trigger="click">
         <div class="list-group" id="ev_popover" style="position: absolute;width:100%;margin-bottom: 0;background: white;
     border: 1px solid #e4e4e4;border-radius: 4px;">
-          <a v-for="i in duibiList" href="javascript:;" class="list-group-item" style="border-width: 0px;cursor:auto;">
+          <a v-for="i in duibiList" :key="i" href="javascript:;" class="list-group-item" style="border-width: 0px;cursor:auto;">
             <span style="cursor:pointer;" @click.stop="add_duibiName(i)">{{i.name}}</span>
             <i class="fa fa-plus-circle" @click.stop="add_duibiName(i)" style="position:absolute;right: 10px;cursor:pointer;"></i>
           </a>
@@ -59,7 +59,7 @@
         trigger="click">
         <div class="btn-group domain" role="group" aria-label="..." style="">
           <button type="button" class="btn warning domain_all" :disabled="btn_disabled" style="margin:5px 3px;border-radius: 3px;padding: 2px 10px;">全部</button>
-          <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i,$index) in domain" >{{i}}</button>
+          <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i) in domain" :key="i">{{i}}</button>
         </div>
         <hr style="margin: 10px 0;">
         <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="dom_search" >确定</el-button>
@@ -70,7 +70,7 @@
       <el-dropdown  @command="sort_dropdown" style="margin-left: 325px;"  @visible-change="visibleChangeEventNum">
               <el-button  style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">{{current_sort}}<i :class="sort_dropdown_visible_eventNum ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i></el-button>    
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in dropdown_sort" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in dropdown_sort" :key="i" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
       </el-dropdown>
 
@@ -138,7 +138,7 @@
           <el-dropdown  @command="sort_dropdown_per" style="">
               <el-button style="padding: 2px 0px;border-width: 0px;background-color:white;color: rgb(0, 179, 138);">{{current_sort_per}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in dropdown_sort_num" :key="i" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
         </h3>
@@ -153,7 +153,7 @@
           <el-dropdown  @command="sort_dropdown_loc" style="">
               <el-button style="padding: 2px 0px;border-width: 0px;background-color:white;color: rgb(0, 179, 138);">{{current_sort_loc}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in dropdown_sort_num" :key="i" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
         </h3>
@@ -168,7 +168,7 @@
           <el-dropdown  @command="sort_dropdown_org" style="">
               <el-button style="padding: 2px 0px;border-width: 0px;background-color:white;color: rgb(0, 179, 138);">{{current_sort_org}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in dropdown_sort_num" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in dropdown_sort_num" :key="i" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
         </h3>
@@ -183,7 +183,7 @@
     </div>
   </div>
   <div class="event_card"  v-show="this.data.length != 0">
-    <div v-for="(i,$index) in data" :class="{ live:$index == data_Per_index}" style="width:387px;height: 230px;border: 1px solid #ebebeb;position: relative;overflow: hidden;cursor: pointer;float: left;padding:0 ;margin: 10px 20px 10px 5px;border-radius: 8px;" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)" @click="card_click($index)">
+    <div v-for="(i,$index) in data" :key="i" :class="{ live:$index == data_Per_index}" style="width:387px;height: 230px;border: 1px solid #ebebeb;position: relative;overflow: hidden;cursor: pointer;float: left;padding:0 ;margin: 10px 20px 10px 5px;border-radius: 8px;" ref="list" @mouseover="Mover($index)" @mouseout="Mout($index)" @click="card_click($index)">
     <img src="../../../assets/icon/del.png" style="position: absolute;top: 2px;right: 0px;cursor: pointer;z-index:10;display: none;" @click.stop="del_ev(i)">
       <div style="width: 100%;height:75px;padding: 0 5px;position: relative;">
         <!-- <div style="width: 65px;height: 76px;margin-left: 10px; " >
@@ -192,11 +192,12 @@
         </div> -->
         <p style="position: absolute;top: 10px;left:10px;font-size: 16px;"><img src="../../../assets/icon/event-title.png" style="padding-right: 6px;color: #333333;"><span> <el-tooltip :disabled="i.titleTooltip" class="item" effect="light" content="双击可编辑议题标题" placement="top" ><input type="button" :value="i.name" @dblclick.stop="input_write($index)" @blur="blur_input($index)" ref="inpt" style="text-align: left;width: 350px;border-width: 0;background-color: white;cursor: auto;outline: none;text-decoration: none;box-shadow: none;font-size: 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></el-tooltip></span></p>
         <p style="position: absolute;top:35px;left:45px;cursor: pointer;color:#BCBCBC" @click="dialog_articleList(i,$index)"><img src="../../../assets/icon/event-like.png" style="padding-right: 6px;">相关文章 <span style="color:#00b38a">({{i.articleCount==null ? 0 : i.articleCount}})</span></p>
+        <p style="position: absolute;top:35px;left:180px;cursor: pointer;color:#BCBCBC" @click="dialog_articleList(i,$index,true)">文章走势 </p>
       </div>
       <el-dropdown @command="sort_dropdown_keyword" style="position: absolute;z-index: 9;right: 0px;" >
               <el-button style="padding: 2px 6px;border-width: 0px;background-color:#ebebeb;color: rgb(0, 179, 138);">{{i.sortArr}}<i class="fa fa-angle-down " style="margin-left: 12px;font-size: 14px;font-weight: 700;color:rgb(51, 51, 51)"></i></el-button> 
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in dropdown_sort_num" :command="i+$index" >{{i}}</el-dropdown-item >
+                  <el-dropdown-item v-for="i in dropdown_sort_num" :key="i" :command="i+$index" >{{i}}</el-dropdown-item >
               </el-dropdown-menu>
       </el-dropdown>
       <div @click.stop="echart_click($index)" style="width: 100%;height:155px;padding: 0 5px;" :id="'echart_card'+$index">
@@ -243,9 +244,16 @@
             </el-pagination>
     </div>
   </el-dialog>
+
+  <!-- 议题新闻走势 -->
+  <el-dialog title="文章走势" :visible.sync="dialogEchartLine" width="700px" id="dialog_ct_line" >
+    <div style="position:absolute;left: 35px;padding: 10px;width:620px;height: 520px;" id="dialogEchartLine">
+
+    </div>
+  </el-dialog>
   <!-- 转发文章 -->
   <el-dialog title="相关文章转发" :visible.sync="dialog_reprint"  id="dialog_reprint">
-      <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;" v-for="(i,$index) in articleList_reprint_list" @mouseover="Mover_articleList_reprint($index)" @mouseout="Mout_articleList_reprint($index)">
+      <div class="el-step is-vertical" style="margin-right: 0px; cursor: pointer;" v-for="(i,$index) in articleList_reprint_list" :key="i" @mouseover="Mover_articleList_reprint($index)" @mouseout="Mout_articleList_reprint($index)">
        <div class="el-step__head  is-text" style="color: white;">
          <div class="el-step__line is-vertical" style="margin-right:0;width: 1px;"> </div>
          <span class="el-step__icon">
@@ -273,7 +281,7 @@
     <el-dialog title="选择对比项目" :visible.sync="dialogDuibiList" id="dialog_DuibiList">
       <p v-show="this.duibiList.length == 0" style="margin: 10% 42%;color: #f34c81">暂无数据，请添加竞品</p>
       <el-radio-group v-model="radio_duibi">
-        <el-radio v-for="i in duibiList" :label="i.id">{{i.name}}</el-radio>
+        <el-radio v-for="i in duibiList" :key="i" :label="i.id">{{i.name}}</el-radio>
       </el-radio-group>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDuibiList = false">取 消</el-button>
@@ -309,11 +317,11 @@
                   <tr >
                     <th width="4%" :rowspan="rowspan" ><p style="word-wrap: break-word; letter-spacing: 3px;padding: 2px 0 10px 2px;width: 25px;color: black"><span >{{table_own_name}}</span></p></th>
                     <th width="" ></th>
-                    <th width="" v-for="(i,$index) in table_compet_data"><span data-toggle="tooltip" data-placement="top" :title="'议题标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index,true)" ref="cp_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
+                    <th width="" v-for="(i,$index) in table_compet_data" :key="i"><span data-toggle="tooltip" data-placement="top" :title="'议题标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index,true)" ref="cp_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
                   </tr>
-                  <tr v-for="(i,$index) in tableData">
+                  <tr v-for="(i,$index) in tableData" :key="i">
                       <th width="" ><span data-toggle="tooltip" data-placement="top" :title="'议题标题:'+i.name"><input type="text" :value="i.name" @blur="blur_table(i,$index)" ref="_inpt" style="width: 100px;outline: none;border-width: 0;text-decoration: none;box-shadow: none;font-size: 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-text-overflow:ellipsis;-o-text-overflow:ellipsis;-moz-text-overflow:ellipsis;"></span></th>
-                      <td v-for="(j,$index) in i.data"><el-checkbox v-model="j.checked" :disabled="j.disabled1 || j.disabled2" @change="handleCheckedCitiesChange($index,i,j,tableData)"></el-checkbox>&nbsp;  <span class="duibi_num" :style="{color: j.max ? '#f34c81' : ''}" @click="look_venn($index,i)">{{j.num}}</span></td>
+                      <td v-for="(j,$index) in i.data" :key="j"><el-checkbox v-model="j.checked" :disabled="j.disabled1 || j.disabled2" @change="handleCheckedCitiesChange($index,i,j,tableData)"></el-checkbox>&nbsp;  <span class="duibi_num" :style="{color: j.max ? '#f34c81' : ''}" @click="look_venn($index,i)">{{j.num}}</span></td>
                   </tr>            
       </table>
       <div style="width: 100%;height: 350px;margin-top: 15px;" v-show="this.table_select.length != 0" id="DuiBi"></div>
@@ -521,9 +529,8 @@
      <!-- 分页 end -->
      </div> 
    </el-dialog>
+ </div>  
 </div>  
-</div>
-</div>
 </template>
 <script >
 import echart from 'echarts'
@@ -546,6 +553,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           dialogEchart:false,
           dialo_es:false,
           dialogCt:false,
+          dialogEchartLine:false,//议题新闻走势
           dialogDuibiList:false,
           dialog_look_duibiProject:false,
           dialogDuibiMethod:false,
@@ -667,6 +675,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
     },
     mounted : function () {
+       
         GetLocalStorage();
         let _this = this,project_id = GetLocalStorage('current_projectData_A').project_id;
        /*jq样式*/
@@ -711,6 +720,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         _this.dialoglist = false;
         _this.dialogEchart = false;
         _this.dialogCt = false;
+        _this.dialogEchartLine = false;
       });
        $('#dialog_reprint .el-dialog__headerbtn').click(function(){
         _this.dialog_reprint = false;
@@ -864,7 +874,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       let project_id;
       this.$store.state.btn_daochu = false; 
       if(loading_flag){//点击查询
-        console.log('点击查询')
+       // console.log('点击查询')
         startLoading();
       };
       if(compet_flag){//点击自身查询
@@ -965,15 +975,14 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
                           console.log(_this.$store.state.ev_duibiData)
                         }
                       }
-                    }
-                  $(document).ready(function(){
+                    };
+                    this.$nextTick(function () {
                       _echart.build_event_qipao(_this);
                       //_echart.build_event_allEvent(_this);
-                  });
-
+                    })
                 };
               })  
-            }).catch(() => {});
+            }).catch((er) => {console.log(er)});
         }
       })                      
     },
@@ -990,21 +999,22 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         }
       };
     },
-    dialog_articleList (i,a){
+    dialog_articleList (i,a,echartLine){
         console.log(i)
         this.entityType = '';//区分点击实体还是议题里的相关文章的标识
         this.data_articleList_index = a;//点击相关文章列表的时候获取到他的总数据的index
         this.dialo_title = '相关文章';
-        this.dialogCt = true;
+        echartLine ? this.dialogEchartLine = true : this.dialogCt = true;
+        //this.dialogCt = true;
         this.ct_data_total = i.articleCount;
         this.pageShow = false;  
         this.currentPage = 1;  
-        this.handleCurrentChange(this.currentPage);
+        this.handleCurrentChange(this.currentPage,false,false,echartLine);
       },
       echart_click (a) { 
+        let _this = this;
         this.dialogEchart = true;
-        let _this=this;
-        $(function(){
+        this.$nextTick(function () {
           echart.dispose($('#echart_max')[0]);
           let echart_max = echart.init($('#echart_max')[0]),dataBJ = [];
           //_this.data[a].keywordList.sort(Sort('score'));
@@ -1304,7 +1314,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         console.log(dta)
       },
       
-      handleCurrentChange (val,entityType,entityName) {
+      handleCurrentChange (val,entityType,entityName,echartLine) {
         this.currentPage = val;
         //console.log(this.data_Per_index)
         let proID = '';
@@ -1320,13 +1330,17 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
             "pageSize": this.page_size,//每页数量
             "pageNum": val //页码
          };
-        publicSearch(url,"GET",params).then((data) =>{
+        this.dialo_title == '相关文章' ? (echartLine ? params.isPage = 0 : params.isPage = 1) : ''; //是否分页
+        publicSearch(url,"GET",params).then((data) =>{ 
             this.loading_start = false;
           if(successBack(data,this)){
             this.ct_data_list = data.data == null ? [] : data.data.articleList;
-            this.$nextTick(function () {
+            echartLine ? this.$nextTick(() => _echart.build_event_line('dialogEchartLine',this.ct_data_list)) : this.$nextTick(() => this.pageShow = true);
+            /*this.$nextTick(() => this.pageShow = true);
+            this.$nextTick(() => _echart.build_event_line('dialogEchartLine',this.ct_data_list));*/
+            /*this.$nextTick(function () {
               this.pageShow = true
-            });
+            });*/
           }
         })
       },
@@ -1898,7 +1912,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         console.log(linkList);
         console.log(dataList);
         /*filterProCpList = [...this.duibiData[0].topicList,...this.duibiData[1].data.topicList].filter(item => { return selectIdArr.indexOf(item.id) === -1; });//过滤后自身和竞品的文章列表*/ 
-        $(function(){
+       this.$nextTick(function () {
           _echart.build_graph('DuiBi',cateList.slice(0,2),cateList.slice(2,cateList.length),cateList,dataList,linkList);
         });
         
@@ -2050,7 +2064,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         topArr[0].name = '议题：';
         topArr[0]['频次'] = i.name;
         topArr[1] = {};
-        topArr[1].name = '';
+        topArr[1].name = '关键词';
         topArr[1]['频次'] = '热度';
         for(let j of i.keywordList.slice(0,10)){//g关键词
           let obj = {};
@@ -2350,7 +2364,7 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
       padding: 15px 40px 5px 40px;
     }
   }
-  #dialog_ct{
+  #dialog_ct,#dialog_ct_line{
     .el-dialog__body{
       padding:10px 15px 15px 15px;
       height: 560px !important;

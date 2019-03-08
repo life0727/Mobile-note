@@ -20,7 +20,7 @@
       trigger="click">
         <div class="list-group" id="ev_popover" style="position: absolute;width:100%;margin-bottom: 0;background: white;
     border: 1px solid #e4e4e4;border-radius: 4px;">
-          <a v-for="i in duibiList" href="javascript:;" class="list-group-item" style="border-width: 0px;cursor:auto;" v-show="duibiData.length < 3">
+          <a v-for="i in duibiList" :key="i" href="javascript:;" class="list-group-item" style="border-width: 0px;cursor:auto;" v-show="duibiData.length < 3">
             <span style="cursor:pointer;" @click.stop="add_duibiName(i)">{{i.name}}</span>
             <i class="fa fa-plus-circle" @click.stop="add_duibiName(i)" style="position:absolute;right: 10px;cursor:pointer;"></i>
           </a>
@@ -34,14 +34,14 @@
       
       <p style="color:#00b38a;margin: 85px" v-show="this.duibiData.length == 1">请至少添加一个竞品</p>
       <div class="list-group" id="event" style="position: absolute;top:115px;width:100%;" v-show="this.duibiData.length > 1">
-        <a v-for="(i,$index) in duibiData.slice(1,duibiData.length)" href="javascript:;" :class="currentProId == i.id ? 'list-group-item active' : 'list-group-item'" style="border-width: 0px;font-size: 16px;cursor: auto;">
+        <a v-for="(i,$index) in duibiData.slice(1,duibiData.length)" :key="i" href="javascript:;" :class="currentProId == i.id ? 'list-group-item active' : 'list-group-item'" style="border-width: 0px;font-size: 16px;cursor: auto;">
           <span v-show="$index == 0">竞品项目：</span><a href="javascript:;" :style="{marginLeft:$index ? '81px' : '0' }" @click="Tab_card(i.id,i.name)">{{i.name}}</a>
           <el-checkbox style="right:50px;position:absolute" :checked="i.check" @change="checkboxChange(i)"></el-checkbox>
-          <img src="../../../assets/icon/del.png" style="right:20px;position:absolute;top: 13px;display: none;cursor: pointer" @click="delCompet(i)"></a>
+          <img src="../../../assets/icon/del.png" style="right:20px;position:absolute;top: 13px;display: none;cursor: pointer" @click="delCompet(i)">
         </a>
       </div>
       <el-button style="padding: 4px 20px;font-size: 14px;background-color: rgb(0, 179, 138);border-color:rgb(0, 179, 138);color:white;position: absolute;bottom: 10px;right: 105px;"  @click="save">导出</el-button>
-      <el-button :style="{padding:'4px 5px',fontSize: '14px',backgroundColor: this.selectDuibiData.length > 1 ? '#00b38a' : '#e4e4e4',borderColor: this.selectDuibiData.length > 1 ? '#00b38a' :'#e4e4e4',color:this.selectDuibiData.length > 1 ? 'white' : '#555',position:'absolute',bottom:'10px',right:'15px'}" :disabled="this.selectDuibiData.length <= 1" @click="look">对比({{this.selectDuibiData.length <= 1 ? 0 : this.selectDuibiData.length-1}}/2)</el-button>
+      <el-button :style="{padding:'4px 5px',fontSize: '14px',backgroundColor: this.selectDuibiData.length > 1 ? '#00b38a' : '#e4e4e4',borderColor: this.selectDuibiData.length > 1 ? '#00b38a' :'#e4e4e4',color:this.selectDuibiData.length > 1 ? 'white' : '#555',position:'absolute',bottom:'10px',right:'15px'}" :disabled="this.selectDuibiData.length <= 1" @click="look">对比({{this.selectDuibiData.length > 1 ? this.selectDuibiData.length-1 : 0}}/2)</el-button>
     </div>
   <img v-show="this.duibiData[0].orgList.length != 0" style="position: absolute;right: 30px;top:-56px;z-index:999;cursor: pointer" slot="reference" src="../../../assets/icon/addDuibi.png">
   </el-popover>
@@ -62,7 +62,7 @@
         trigger="click">
         <div class="btn-group domain" role="group" aria-label="..." style="">
           <button type="button" class="btn warning domain_all" :disabled="btn_disabled" style="margin:5px 3px;border-radius: 3px;padding: 2px 10px;">全部</button>
-          <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i,$index) in domain" >{{i}}</button>
+          <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i) in domain" :key="i">{{i}}</button>
         </div>
         <hr style="margin: 10px 0;">
         <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="dom_search" >确定</el-button>
@@ -73,7 +73,7 @@
       <el-dropdown  @command="dropdown_org" style="margin-left: 325px;" @visible-change="visibleChangeOrgNum">
               <el-button style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">{{current_org}}<i :class="sort_dropdown_visible_OrgNum ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i></el-button>    
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in ['5','10','15','20']" :command="i">{{i}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in ['5','10','15','20']" :key="i" :command="i">{{i}}</el-dropdown-item>
               </el-dropdown-menu>
       </el-dropdown>
       
@@ -129,6 +129,7 @@
         id="Table"
         :data="tableData"
         tooltip-effect="dark"
+        :row-class-name="tableRowClassName"
         style="width:390px;position: absolute;cursor: pointer;"
         @row-click="rowClick"
         @selection-change="SelectionChange">
@@ -307,7 +308,7 @@
           </div>
         </el-dialog>
        <!--  对比图 -->
-        <el-dialog title="对比图" :visible.sync="dialo_duibi" width="1200px"custom-class="ev_dialogClass"  id="dialo_duibi">
+        <el-dialog title="对比图" :visible.sync="dialo_duibi" width="1200px" custom-class="ev_dialogClass"  id="dialo_duibi">
             <div style="width: 100%;height: 100%" id="Duibi"></div>
             <span slot="footer" class="dialog-footer" >
               <el-button @click="dialo_duibi = false">取 消</el-button>
@@ -325,9 +326,9 @@ import {format_time,_Sort,date_change,tipsMessage,GetLocalStorage,publicSearch,s
 export default {
   mounted :function () {
     let _this = this;
-    startLoading();
+    //startLoading();
      publicSearch('rsa/wxaccount/domain',"GET",{"method":"get"}).then((data) =>{//ajax
-      endLoading();
+      //endLoading();
       if(successBack(data,this)){
         this.domain = data.data
       }
@@ -498,7 +499,7 @@ export default {
         if(successBack(data,this)){
           console.log(data)
            let cate = data.data.cateList.slice(0,idarr.length),cate_ = data.data.cateList.slice(idarr.length,data.data.cateList.length),_categories = data.data.cateList,_data = data.data.dataList,_links =  data.data.linkList;
-            $(function(){
+            this.$nextTick(function () {
                 _echart.build_graph('Duibi',cate,cate_,_categories,_data,_links);
             });
         };
@@ -599,7 +600,6 @@ export default {
             }; 
             this.tableData = this.data.length > 10 ? this.data.slice(0,10) : this.data;
             this.rowClick(this.data[0]);
-            
           };
         }); 
          
@@ -627,6 +627,8 @@ export default {
               this.tableData = this.duibiData[0].orgList.length > 10 ? this.duibiData[0].orgList.slice(0,10) : this.duibiData[0].orgList;
             };
             this.search_flag = true;
+            this.currentPage_selfOrg = 1;//恢复默认
+            this.rowClick(this.tableData[0]);//恢复初始状态
           };
         });  
     },
@@ -918,7 +920,11 @@ export default {
         }
       });     
     },
-
+    tableRowClassName({row, rowIndex}){//表格行默认样式
+      if (row.id === this.orgId) {
+          return 'current-row';
+        }
+    },
     SelectionChange(val){//表格选中自身
       this.Selection = val;
       this.Selection.length == 0 ? this.select_All = false : '';
