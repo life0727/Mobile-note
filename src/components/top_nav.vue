@@ -129,7 +129,6 @@ export default{
   },
   mounted  :function () {
     
-    console.log('top_nav')
     $('#admin li').not('.divider').hover(function(){
         $(this).css('background-color','rgba(0, 179, 138,.1)')
       },function(){
