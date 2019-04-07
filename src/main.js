@@ -40,7 +40,6 @@ const vuex_store=new Vuex.Store({
 	},
 	mutations:{
         showUser(state){
-          
         }
     }
 })
