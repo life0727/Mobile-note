@@ -22,6 +22,7 @@ import Media from './components/top/main/media.vue'
 import Compet from './components/top/main/compet.vue'
 import Refer from './components/top/refer.vue'
 import NewsShare from './components/top/NewsShare.vue'
+import ERA from './components/top/entityRelationshipAnalysis.vue'
 //const NewsShare = () => import('./components/top/NewsShare.vue')
 import Topnav from './components/top_nav.vue'
 
@@ -102,6 +103,11 @@ export default new VueRouter({
                 meta: { keepAlive: true }
                 //component:resolve => require(['./components/all_net_analysis'],resolve)
             }, {
+                path: '/ERA',
+                component: ERA,
+                meta: { keepAlive: true }
+                //component:resolve => require(['./components/all_net_analysis'],resolve)
+            },{
                 path: '/keyword',
                 component: Keyword,
                 meta: { keepAlive: false },

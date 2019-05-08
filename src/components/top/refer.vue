@@ -1,5 +1,5 @@
 <template>
- <div class="container" style="padding-top:30px;position: relative">
+ <div class="container" style="padding-top:30px;position: relative" v-loading.fullscreen.lock="loading" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading">
   <a id="downlink"></a><!-- 导出excel表格 -->
     <img v-show="this.data != ''" @click="refer_export" style="position: absolute;right: 30px;top:-27px;z-index:999;cursor: pointer" src="../../assets/icon/export.png">
     <img src="../../assets/icon/refer_industry.png" style="margin-left: 15px;">
@@ -28,32 +28,15 @@
     <el-button icon="el-icon-plus" circle v-show="enterprise.length > 0" @click="verificationKeyword('enterprise')"></el-button>
     <div class="block" style="margin-top: 15px;" >
       <div class="filter_event" style="width: 100%;border: 1px solid rgb(228,228,228);background-color:rgb(247,247,247);position:relative;height: 48px;">
-        <span :style="{position:'absolute',left:'30px',lineHeight:'45px',cursor:'pointer',color: articleType == 2 ? '#00b38a' : '#333'}" @click="btn_disabled=false;articleType=2;">微信</span>
-        <span :style="{position:'absolute',left:'80px',lineHeight:'45px',cursor:'pointer',color: articleType == 1 ? '#00b38a' : '#333'}" @click="btn_disabled=true;articleType=1;">新闻</span>
+        <span :style="{position:'absolute',left:'30px',lineHeight:'45px',cursor:'pointer',color: articleType == 2 ? '#00b38a' : '#333'}" @click="mediaData.btn_disabled=false;articleType=2;">微信</span>
+        <span :style="{position:'absolute',left:'80px',lineHeight:'45px',cursor:'pointer',color: articleType == 1 ? '#00b38a' : '#333'}" @click="mediaData.btn_disabled=true;articleType=1;">新闻</span>
         <span style="position: absolute;left: 140px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
     
         <span :style="{position:'absolute',left:'170px',lineHeight:'45px',cursor:'pointer',color: queryType==0 ? '#00b38a' : '#333'}" @click="queryType=0;">全文</span>
         <span :style="{position:'absolute',left:'215px',lineHeight:'45px',cursor:'pointer',color: queryType==1 ? '#00b38a' : '#333'}" @click="queryType=1;">仅标题</span>
 
         <span style="position: absolute;left: 285px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>  
-
-        <el-popover
-          v-loading.fullscreen.lock="loading" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading"
-          placement="bottom"
-          @hide="dom_search"
-          width="450"
-          :disabled="btn_disabled"
-          v-model="domin_popover"
-          trigger="click">
-          <div class="btn-group domain" role="group" aria-label="..." style="">
-            <button type="button" class="btn warning domain_all" :disabled="btn_disabled" style="margin:5px 3px;border-radius: 3px;padding: 2px 10px;">全部</button>
-            <button type="button" style="margin: 5px 3px;border-radius: 3px;padding: 2px 10px;" class="btn" @click="domain_click($event,'domain')" :disabled="btn_disabled" v-for="(i) in domain" :key="i">{{i}}</button>
-          </div>
-          <hr style="margin: 10px 0;">
-          <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="dom_search" >确定</el-button>
-          <span style="position: absolute;left: 313px;line-height: 45px;cursor: pointer" slot="reference">媒体分类 <i :class="domin_popover ? 'fa fa-angle-up' : 'fa fa-angle-down'" style="margin-left: 2px;"></i></span>
-        </el-popover>
-        
+        <mediaSlot :mediaDATA="mediaData" @receiveFromMediaSlot = "mediaSlotData"></mediaSlot>
         <el-dropdown  @command="dropdown_loose" style="margin-left: 425px;" @visible-change="visibleChangemediaLoose">
               <el-button style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">{{current_loose}}<i :class="sort_dropdown_visible_loose? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i></el-button>    
               <el-dropdown-menu slot="dropdown">
@@ -71,29 +54,8 @@
         <span style="position: absolute;left: 408px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
         <span style="position: absolute;left: 500px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span> 
         <span style="position: absolute;left: 590px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span> 
-         <div class="block" style="display: inline-block" >
-          <el-date-picker
-           @change="date_change"
-           :editable="edit"
-           :clearable="edit"
-           style="position: relative;width:170px;font-size: 12px;margin-left:42px;"
-            v-model="time[0]"
-            type="datetime"
-            placeholder="选择日期时间">
-          </el-date-picker>
-        </div>
-        <div class="block" style="display: inline-block;margin-top: 12px;" >
-            <span class="demonstration" style="margin: 0 5px;">至</span>
-            <el-date-picker
-            @change="date_change"
-            :editable="edit"
-            :clearable="edit"
-            style="position: relative;width:170px;font-size: 12px;"
-              v-model="time[1]"
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
-        </div>
+         <!-- 日期组件 -->
+        <datePicker @receiveFromDatePicker = "dataPickerData"></datePicker>
         <span class="SearchBegin" id="search"  @click="search" >搜索</span>
       </div>
     </div>
@@ -219,9 +181,11 @@
 </template>
 
 <script>
+import datePicker from './util/datePicker.vue'
+import mediaSlot from './util/media-slot.vue'
 import dialogRelateArticle from './main/dialog_relateArticle.vue'
 import _echart from '../../assets/js/_echart.js'
-import { format_time,date_change,changePage,publicSearch,tipsMessage,successBack,similar,GetLocalStorage,startLoading,endLoading,s2ab,downloadExl }  from '../../assets/js/map.js'
+import { changePage,publicSearch,tipsMessage,successBack,similar,GetLocalStorage,startLoading,endLoading,s2ab,downloadExl }  from '../../assets/js/map.js'
 export default {
   mounted:function () {  
   //console.log('refer') 
@@ -232,16 +196,6 @@ export default {
       this.domain = data.data
     });
    $('.clientContent').css('height',$(window).height()-353+'px');    
-   $('.domain .domain_all').click(function(){
-      $('.domain button').not($(this)).removeClass('warning');
-      $(this).addClass('warning');
-   });
-   $('.custom .custom_all').click(function(){
-      $('.custom button').not($(this)).removeClass('warning');
-      $(this).addClass('warning');
-   });
-   this.domain_arr.length !=0 ? $('.domain .domain_all').removeClass('warning') : '';
-   this.custom_arr.length !=0 ? $('.custom .custom_all').removeClass('warning') : '';
    this.outFile = document.getElementById('downlink')//导出excel所需要的数据元素
   },
   data () {
@@ -250,6 +204,10 @@ export default {
       current_loose:'tight',
       current_Sentimen:'排负',
       queryType:0,
+      mediaData:{//媒体分类组件数据
+          btn_disabled:false
+      },
+      domain_arr:[],//媒体分类数据展示
       time:[new Date(new Date().getTime()-604800000), new Date()],
       current_sort:'或',//行业核心关键词的搜索方式 或或者且
       sort_dropdown_visible_refer:true,//true为显示false为隐藏
@@ -257,8 +215,7 @@ export default {
       sort_dropdown_visible_Sentimen:true,//true为显示false为隐藏
       industry:'',//行业input
       enterprise:'',//企业input
-      enterpriseData:[],
-      edit:false,      
+      enterpriseData:[],    
       loading:false,
       data:'',
       reputation : '',
@@ -278,26 +235,18 @@ export default {
       similar_locList:[],
       orgList:[],
       similar_orgList:[],
-      btn_disabled:false,//媒体分类是否可选中
-      domin_popover:false,//媒体分类是否显示
-      domain:[],//媒体分类
-      custom:[],//媒体分类
-      domain_arr:[],//媒体分类
-      custom_arr:[], //媒体分类
       echartShow:'refer_volumn',//控制echart的显示层级
       outFile: '',  // 导出excle文件
     }
   },
   components:{
-    dialogRelateArticle
+    dialogRelateArticle,
+    datePicker,
+    mediaSlot
   },
   methods: {
     search(){
-      let _this = this;
-      /*let companyListStr = [];
-      for(let a of this.enterpriseData){
-        companyListStr.push(a.keywordList);
-      };*/  
+      let _this = this; 
       if(this.enterpriseData.findIndex((n) => n == '') != -1 || this.industry == ''){
         tipsMessage('关键词不能为空','warning',this);
         this.loading = false;
@@ -357,25 +306,12 @@ export default {
                   console.log('实际耗时：'+data.data.realTime);
                   this.selectData = data.data.topicList.slice(0,3);//默认选中前三个
                   //console.log(this.selectData)
-                  /*this.$store.state.refer_articleType = this.articleType;
-                  this.$store.state.refer_queryType = this.queryType;
-                  this.$store.state.refer_time = this.time;
-                  this.$store.state.refer_industry = this.industry;
-                  this.$store.state.refer_enterpriseData = this.enterpriseData;*/
-                //  let posData = {
-                //         "小蓝": 3,
-                //         "ofo": 23,
-                //         "摩拜": 15
-                //     };
-                //   let negData = {
-                //         "小蓝": 25,
-                //         "ofo": 113,
-                //         "摩拜": 75
-                //     };
+
                   _echart.build_refer_pie(data.data.topicList,'refer_echart');
                   _echart.build_sentiment_pie(data.data.posCountMap,data.data.negCountMap,'sentiment_analysis',this.current_Sentimen,this); //data.data.posCountMap,data.data.negCountMap
                   _echart.build_refer_bar(data.data.topicList,'refer_volumn',true);
                   _echart.build_refer_bar2('refer_mentinFirst',this.selectData);
+
                   _echart.build_refer_competNum('refer_competNum',this.selectData,data.data.reputation,data.data.mention,data.data.posCountMap,data.data.negCountMap);
 
                   for(let k of data.data.topicList.slice(0,3)){//默认选中前三个
@@ -387,9 +323,7 @@ export default {
                   this.posCountMap = data.data.posCountMap;
                   this.negCountMap = data.data.negCountMap;
                   //console.log(this.data)
-                  /*this.$store.state.refer_data = this.data;
-                  this.$store.state.refer_mention = this.mention;
-                  this.$store.state.refer_reputation = this.reputation;*/
+
               })
             }).catch(() => {});
       })          
@@ -524,38 +458,8 @@ export default {
       this.similar_keywordList = similar(dta.keywordScreenList,dta.keywordList,'mention');
       this.similar_orgList = similar(dta.orgScreenList,dta.orgList,'mention');
     },
-    //筛选条件里的属性与下拉列表的dom数据以及保存
-    dom_search(){
-      this.domin_popover = false;
-      let domain_arr=[];
-      let domain=$('.domain .warning').not('.domain .domain_all');
-      for(let i=0;i<domain.length;i++){
-        domain_arr.push(domain[i].innerHTML);
-      }
-      let custom_arr_name=[];
-      let custom_arr=[];
-      let custom=$('.custom .warning').not('.custom .custom_all');
-      for(let i=0;i<custom.length;i++){
-        custom_arr_name.push(custom[i].innerHTML);
-      };
-      let arr_data=this.custom.filter(item => { return custom_arr_name.indexOf(item.name) !== -1; });
-      for(let i=0;i<arr_data.length;i++){
-        custom_arr.push(arr_data[i].id);
-      }
-      this.domain_arr=domain_arr;
-      this.custom_arr=custom_arr;   
-    },
-    domain_click(a,b){
-        $('.'+b+''+' '+'.'+b+'_all'+'').removeClass('warning');
-         if(a.target.className=='btn'){
-          a.target.className="btn warning"
-        }else if(a.target.className="btn warning"){
-          a.target.className="btn"
-        }
-    },
     Mover_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "#00a17c"; },
     Mout_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "rgb(72,87,106)"; },
-    date_change (){date_change(this);},
     addEnterpriseData(){ this.enterpriseData.push({keywordList: ''}); },
     delEnterpriseData(i){ this.enterpriseData.splice(i, 1);},//shanchu
     moverFromItem(i){  i != 0 ? this.$refs.delEnterprise[i].style.display="inline-block" : '' },
@@ -599,7 +503,6 @@ export default {
         downloadExl(data, '声誉竞争力指数',this);//封装完的数据  excel名称
     },
     downloadArticleFile(){
-      format_time();
       let Dta = this.dialogRelateArticleData.listData;
       let excelData = [{'标题':'标题','时间':'时间','媒体名称':'媒体名称','链接':'链接'}];
         for(let i of Dta){
@@ -612,7 +515,13 @@ export default {
         };
         console.log(excelData);
         downloadExl(excelData,'文章列表',this,'xlsx',true);//封装完的数据  excel名称 true 列宽格式
-    }
+    },
+    dataPickerData(val){//日期子组件的数据
+      this.time = val;
+    },
+    mediaSlotData(val){ //媒体分类子组件的数据
+      this.domain_arr = val;
+    },
   }
 }
 </script>

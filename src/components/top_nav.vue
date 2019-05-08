@@ -30,25 +30,28 @@
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" v-show="this.$route.path != '/index/clever/clever_content'">
         <ul class="nav navbar-nav">
-          <li style="margin-left: 8px;"><router-link :to="this.$store.state.router || '/main/event'" :class="this.$route.path.slice(0,5)=='/main' ?  'active' : ''" >声誉分析</router-link></li>
-          <li style="margin-left: 20px;"><router-link to="/keyword" :class="this.$route.path=='/keyword' ?  'active' : ''">项目管理</router-link></li>
-          <li style="margin-left: 20px;"><router-link to="/custom" :class="this.$route.path=='/custom' ?  'active' : ''">客户管理</router-link></li>
-          <li style="margin-left: 20px;"><router-link to="/refer" :class="this.$route.path=='/refer' ?  'active' : ''">声誉竞争力</router-link></li>
-          <li style="margin-left: 20px;"><router-link to="/NewsShare" :class="this.$route.path=='/NewsShare' ?  'active' : ''">新闻股价</router-link></li>
+          <li style="margin-left: 6px;"><router-link :to="this.$store.state.router || '/main/event'" :class="this.$route.path.slice(0,5)=='/main' ?  'active' : ''" >声誉分析</router-link></li>
+          <li style="margin-left: 3px;"><router-link to="/keyword" :class="this.$route.path=='/keyword' ?  'active' : ''">项目管理</router-link></li>
+          <li style="margin-left: 3px;"><router-link to="/custom" :class="this.$route.path=='/custom' ?  'active' : ''">客户管理</router-link></li>
+          <li style="margin-left: 3px;"><router-link to="/refer" :class="this.$route.path=='/refer' ?  'active' : ''">声誉竞争力</router-link></li>
+          <li style="margin-left: 3px;"><router-link to="/NewsShare" :class="this.$route.path=='/NewsShare' ?  'active' : ''">新闻股价</router-link></li>
+          <li style="margin-left: 3px;"><router-link to="/ERA" :class="this.$route.path=='/ERA' ?  'active' : ''">实体关联分析</router-link></li>
           <!-- <router-link to="/main/refer"><div :class="this.$route.path=='/main/refer' ? 'el-tabs__item is-active' : 'el-tabs__item'">提及率</div></router-link> -->
           <!-- <li><a href="#"><b>. . .</b></a></li> -->
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li style="margin-left: 15px;">
-              <span style="color:rgba(255,255,255,.6);line-height: 50px;font-size: 18px;">当前项目<i class="fa fa-angle-right " style="font-size: 18px;margin-left: 3px;color:rgba(255,255,255,0.5)"></i></span>
+              <span style="color:rgba(255,255,255,.6);line-height: 50px;font-size: 16px;">当前<i class="fa fa-angle-right " style="font-size: 16px;margin-left: 3px;color:rgba(255,255,255,0.5)"></i></span>
               <el-dropdown style="margin-left: 5px;font-size: 18px;"  @command="handleCommand">
                <span id="dropdown_start" v-show="this.$route.path!=='/index/clever/clever_content'" v-if="this.$route.path!=='/index/clever/clever_content_next'"><span style="cursor: pointer;color: white;" >{{current_item}}</span><img src="../assets/icon/选择（16×７px）.png" style="font-size: 18px;color: white;margin-left: 12px;"></span>                  
                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in item" :key="i" class="proDropdown" style="position:relative;min-width: 120px;" :command="i.name">{{i.name}}
+                  <el-dropdown-item v-for="i in item.slice(0,6)" :key="i" class="proDropdown" style="position:relative;min-width: 120px;" :command="i.name">
+                    {{i.name}}
                     <img src="../assets/icon/del.png" @click.stop="del_item(i)" style="position:absolute;right: 4px;top:10px;display: none;">
                   </el-dropdown-item >
+                  <el-dropdown-item v-show="item.length > 6" divided style="color:#00b38a;text-align:center;border-bottom:1px solid #ebeef5" >更多</el-dropdown-item>
                     <router-link to="/index/clever/clever_content" style="text-decoration: none;color:#00b38a;" >
-                      <li style="list-style: none;line-height: 36px;padding: 0 18px;margin: 0;position: relative;cursor: pointer;" class="addPro">
+                      <li style="list-style: none;line-height: 36px;padding: 0 18px;margin: 0;position: relative;cursor: pointer;text-align:center;" class="addPro">
                         <i class="el-icon-plus"></i>
                           添加项目
                       </li>
@@ -78,12 +81,14 @@
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
+  <dialogList :listData="listDATA" @receiveFromDialoglist="DialoglistData"></dialogList>
   <div style="height: 80px;min-width: 1250px;background-color:rgb(9, 7, 35);" v-show="this.$route.path.slice(0,5) !== '/main'">
     <div class="container">
       <p v-show="this.$route.path == '/keyword'" style="padding-top: 30px;color: white;font-size: 20px;">项目管理</p>
       <p v-show="this.$route.path == '/custom'" style="padding-top: 30px;color: white;font-size: 20px;">客户管理</p>
       <p v-show="this.$route.path == '/refer'" style="padding-top: 30px;color: white;font-size: 20px;">声誉竞争力</p>
       <p v-show="this.$route.path == '/NewsShare'" style="padding-top: 30px;color: white;font-size: 20px;">新闻股价</p>
+      <p v-show="this.$route.path == '/ERA'" style="padding-top: 30px;color: white;font-size: 20px;">实体关联分析</p>
     </div>
   </div>
     <keep-alive>
@@ -93,17 +98,20 @@
 </div>
 
 </template>
-<script >
+<script > 
+import dialogList from './top/util/dialogList'
 import { publicSearch,successBack,SetSessionStorage,GetLocalStorage,SetLocalStorage,tipsMessage }  from '../assets/js/map.js'
 export default{
   name: 'topNav',
+  components:{dialogList},
   data: function () {
   	return {
       data:'',
       sum:'',
       current_item:'',
       item:'', //GetLocalStorage('current_projectData_A').project_list,
-      account:GetLocalStorage('account_A') == null ? '未登录' : GetLocalStorage('account_A')
+      account:GetLocalStorage('account_A') == null ? '未登录' : GetLocalStorage('account_A'),
+      listDATA:''//dialogList数据
   	}
   },
   beforeCreate(){
@@ -173,6 +181,11 @@ export default{
       }   
     },
     handleCommand(command){
+      if(command == undefined){
+        this.show_more(command);
+        return
+      }
+       
         for(let i=0;i<this.item.length;i++){
           if(this.item[i].name === command){
             let projectData = {};
@@ -241,6 +254,20 @@ export default{
       publicSearch('rsa/logout',"POST",'').then((data) =>{
         successBack(data,this);
       })
+    },
+    show_more(a){
+     this.listDATA = {
+        mainName:'项目名称',
+        title:'项目列表',
+        switch:true,
+        data:GetLocalStorage('current_projectData_A').project_list,
+        key:'name',
+        pageSize:10,
+        pagerCount:5
+      }
+    },
+    DialoglistData(val){
+      this.handleCommand(val.name)
     }  
   },
   watch:{

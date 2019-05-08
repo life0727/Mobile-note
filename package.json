@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "echarts": "^3.8.5",
+    "echarts": "^3.6.2",
     "fs": "0.0.1-security",
     "glyphicons": "^0.2.0",
     "node-sass": "^4.5.0",
@@ -42,7 +42,7 @@
     "cross-env": "^3.1.3",
     "cross-spawn": "^4.0.2",
     "css-loader": "^0.25.0",
-    "echarts": "^3.8.5",
+    "echarts": "^3.6.2",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^1.0.1",

@@ -78,29 +78,8 @@
       </el-dropdown>
       
       <span style="position: absolute;left: 380px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
-       <div class="block" style="display: inline-block" >
-        <el-date-picker
-         @change="date_change"
-         :editable="edit"
-         :clearable="edit"
-         style="position: relative;width:170px;font-size: 12px;margin-left:55px;"
-          v-model="time[0]"
-          type="datetime"
-          placeholder="选择日期时间">
-        </el-date-picker>
-      </div>
-      <div class="block" style="display: inline-block;margin-top: 12px;" >
-          <span class="demonstration" style="margin: 0 5px;">至</span>
-          <el-date-picker
-          @change="date_change"
-          :editable="edit"
-          :clearable="edit"
-          style="position: relative;width:170px;font-size: 12px;"
-            v-model="time[1]"
-            type="datetime"
-            placeholder="选择日期时间">
-          </el-date-picker>
-      </div>
+      <!-- 日期组件 -->
+      <datePicker @receiveFromDatePicker = "dataPickerData"></datePicker>
       <span class="SearchBegin" id="search" @click="_search" >搜索</span>
       <span class="SearchBegin"   @click="downloadFile()" v-show="this.data.length != 0">导出excel</span>
     </div>
@@ -321,9 +300,13 @@
 
 <script>
 import echarts from 'echarts'
+import datePicker from '../util/datePicker.vue'
 import _echart from '../../../assets/js/_echart.js'
-import {format_time,_Sort,date_change,tipsMessage,GetLocalStorage,publicSearch,successBack,startLoading,endLoading,s2ab,downloadExl} from '../../../assets/js/map.js'
+import {_Sort,tipsMessage,GetLocalStorage,publicSearch,successBack,startLoading,endLoading,s2ab,downloadExl} from '../../../assets/js/map.js'
 export default {
+  components:{
+    datePicker
+  },
   mounted :function () {
     let _this = this;
     publicSearch('rsa/wxaccount/domain',"GET",{"method":"get"}).then((data) =>{//ajax
@@ -355,7 +338,6 @@ export default {
   },
   data () {
     return {
-        edit:false,
         time:[new Date(new Date().getTime()-604800000), new Date()],
         articleType:2,
         data:[],
@@ -985,7 +967,6 @@ export default {
     },  
     dropdown_media(command){ this.current_media = command ;},
     second_select(a){ this.second_selection = a ;},
-    date_change (){date_change(this);},
     downloadFile(){ //导出excel
       //填充excel数据 this.excelData
       let excelData = [];
@@ -1007,7 +988,6 @@ export default {
         downloadExl(data,'企业前20微信公众号自媒体',this,'xlsx');//封装完的数据  excel名称
     },
     downloadArticleFile(flag){//导出文章列表excel
-        format_time();
         let Dta = flag == '第一层' ? this.articlelist_selection : this.second_selection;
         let excelData = [{'标题':'标题','时间':'时间','媒体名称':'媒体名称','链接':'链接'}];
         for(let i of Dta){
@@ -1020,7 +1000,11 @@ export default {
         };
         console.log(excelData);
         downloadExl(excelData,'文章列表',this,'xlsx');//封装完的数据  excel名称 true 列宽格式
-      }
+      },
+    dataPickerData(val){//日期组件数据
+    //console.log(val)
+      this.time = val
+    }
   },
   watch:{
     select_All(){//自身組織的全选监测

@@ -2,7 +2,7 @@
  <div class="container" style="padding-top:30px;position: relative;">
     <div class="block" style="margin-top: 15px;" >
       <div class="filter_event" style="width: 100%;border: 1px solid rgb(228,228,228);background-color:rgb(247,247,247);position:relative;height: 48px;">
-        <span style="position: absolute;left: 127px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>  
+         
         <el-dropdown  @command="dropdown_Com" style="margin-left: 25px;" @visible-change="visibleChangemediaCom">
               <el-button style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">
                 {{current_Com.stockName}}
@@ -12,32 +12,14 @@
                 <i :class="sort_dropdown_visible_Com? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i>
               </el-button>    
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="i in stockNameList" :command="i" :key="i">{{i.stockName}}</el-dropdown-item>
+                  <el-dropdown-item v-for="i in stockNameList.slice(0,10)" :command="i" :key="i" :style="{lineHeight,fontSize}">{{i.stockName}}</el-dropdown-item>
+                  <el-dropdown-item divided v-show="stockNameList.length > 10" style="color:#00b38a;text-align:center" >更多</el-dropdown-item>
               </el-dropdown-menu>
         </el-dropdown>
-        <div class="block" style="display: inline-block" >
-          <el-date-picker
-           @change="date_change"
-           :editable="edit"
-           :clearable="edit"
-           style="position: relative;width:170px;font-size: 12px;margin-left:42px;"
-            v-model="time[0]"
-            type="datetime"
-            placeholder="选择日期时间">
-          </el-date-picker>
-        </div>
-        <div class="block" style="display: inline-block;margin-top: 12px;" >
-            <span class="demonstration" style="margin: 0 5px;">至</span>
-            <el-date-picker
-            @change="date_change"
-            :editable="edit"
-            :clearable="edit"
-            style="position: relative;width:170px;font-size: 12px;"
-              v-model="time[1]"
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
-        </div>
+        <span style="margin-left: 10px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span> 
+
+        <!-- 日期组件 -->
+        <datePicker @receiveFromDatePicker = "dataPickerData"></datePicker>
         <span class="SearchBegin" id="search"  @click="search" >搜索</span>
       </div>
     </div>
@@ -46,12 +28,32 @@
         <img src="../../assets/icon/noData.png"  style="position:absolute;left:0;right: 0;top: 0;bottom: 0;margin: auto;" v-show="this.data.length == 0">
         <div class="content" v-show="this.data.length != 0">
             <p style="margin:0 0 0 5px;position: relative;"><span style="line-height: 55px;border-left: 5px solid rgb(0, 179, 138);margin-right: 10px;"></span>新闻与股价走势</p>
+            <!-- 大盘指数 -->
+            <el-dropdown  @command="dropdown_MmarketIndexInfo" style="margin-left: 20px;" @visible-change="visibleChangeMmarketIndexInfo" v-show="this.data[0]">
+                  <el-button style="padding: 3px 5px;border-width: 0px;color:#00b38a">
+                    {{current_marketindexinfo.marketIndexName}}
+                    <i :class="sort_dropdown_visible_marketindexinfo ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i>
+                  </el-button>    
+                  <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item v-for="i in marketindexinfoList.slice(1,marketindexinfoList.length)" :command="i" :key="i">{{i.marketIndexName}}</el-dropdown-item>
+                  </el-dropdown-menu>
+            </el-dropdown>
+            <!-- echarts -->
             <div id="ec_NewsShare" style="width: 1218px;height: 600px;margin: 5px auto"></div>
         </div>
     </div>
     <!-- 相关文章模态框 -->
     <el-dialog title="相关新闻" :visible.sync="NewsShare_dialog_articleList_switch" width="700px" id="dialog_ct" >
       <div style="position:absolute;left: 35px;padding: 10px;width:620px;height: 520px;">
+          <el-dropdown  @command="dropdown_SortArtileList" style="margin-left: 25px;position:absolute;z-index:5;top:23px;display:none" @visible-change="visibleChangeSortArticle">
+                <el-button style="padding: 3px 5px;border-width: 0px;background-color: rgb(247, 247, 247);color:#00b38a">
+                  {{current_SortArtileList}}
+                  <i :class="sort_dropdown_visible_SortArticleList ? 'fa fa-angle-down' : 'fa fa-angle-up'" style="margin-left: 6px;font-size: 14px;font-weight: 700;color: #333"></i>
+                </el-button>    
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="i in SortArtileList" :command="i" :key="i">{{i}}</el-dropdown-item>
+                </el-dropdown-menu>
+          </el-dropdown>
           <el-table
             :data="NewsShare_articleList"
             stripe
@@ -59,7 +61,7 @@
             <el-table-column
               label="文章标题"
               show-overflow-tooltip>
-              <template scope="scope"><a style="color:#333" :href="scope.row.url" target="_blank">{{ scope.row.title }}</a></template>
+              <template scope="scope"><a style="color:#333" :href="scope.row.url" target="_blank">{{ scope.row.title }} <span style="color:#666;font-size:12px">({{scope.row.mediaName + ':' + new Date(scope.row.publishTime).Format("yyyy-MM-dd hh:mm:ss")}})</span> </a></template>
             </el-table-column>
           </el-table>
         <el-pagination
@@ -74,12 +76,16 @@
         </el-pagination>
     </div>
   </el-dialog>
+  <dialogList :listData="listDATA" @receiveFromDialoglist="DialoglistData"></dialogList>
  </div>   
 </template>
 
 <script>
+import dialogList from './util/dialogList.vue'
+import datePicker from './util/datePicker.vue'
+import echarts from 'echarts'
 import _echart from '../../assets/js/_echart.js'
-import {format_time,date_change,publicSearch,tipsMessage,successBack,similar,GetLocalStorage,startLoading,endLoading }  from '../../assets/js/map.js'
+import {publicSearch,tipsMessage,successBack,similar,GetLocalStorage,startLoading,endLoading,_Sort}  from '../../assets/js/map.js'
 export default {
   mounted:function () { 
     $('.NewsShare').css('min-height','700px');     
@@ -88,30 +94,52 @@ export default {
   },
   data () {
     return {
-        data:[],
-        edit:false,     
+        data:[],//[0]小于7 [1]大于7
+        lineHeight:'',//股票下拉适配
+        fontSize:'',   //股票下拉适配   
         stockNameList:[],//股票列表
+        marketindexinfoList:[],//大盘基本信息列表
+        SortArtileList:['默认排序','时间正序','时间倒序'],
         current_Com:'',
+        current_marketindexinfo:'',
+        current_SortArtileList:'默认排序',
         time:[new Date(new Date().getTime()-604800000), new Date()],
         sort_dropdown_visible_Com:true,//true为显示false为隐藏
+        sort_dropdown_visible_SortArticleList:true,//true为显示false为隐藏
+        sort_dropdown_visible_marketindexinfo:true,//true为显示false为隐藏
         NewsShare_articleList:[],//文章列表 
         NewsShare_dialog_articleList_switch:false, //相关文章模态框   
         NewsShare_currentPage:1,//默认页码
         NewsShare_articleTotal:0,//文章列表总数
-        paramsData:''//echarts 数据
+        paramsData:'',//echarts 数据
+        firstPrice:'',//股票趋势折线图第一个非0值的点的开盘价
+        bigOption_:'',//大于七天的option为了填充大盘图用
+        listDATA:''//给listData组件的数据
     }
+  },
+  components:{
+    dialogList,
+    datePicker
   },
   methods: {
     getStock(){//获取股票列表
      return publicSearch('rsa/stock',"GET",{'data':'get'}).then((data) =>{
+        if(!successBack(data,this)) return;
          this.stockNameList = data.data;
          this.current_Com = this.stockNameList[0];
+      })
+    },
+    getMarketindexinfo(){//大盘基本信息列表查询
+      return publicSearch('rsa/marketindexinfo',"GET",{'data':'get'}).then((data) =>{
+        if(!successBack(data,this)) return;
+         data.data.unshift({'marketIndexName':'选择大盘'});
+         this.marketindexinfoList = data.data
+         this.current_marketindexinfo = this.marketindexinfoList[0];
       })
     },
     search() {
       this.data = [];
       startLoading();
-      format_time();
       let NewsData = [], //新闻数据数组
           ShareData = [], //股价数据数组
           start, //默认选中的起始
@@ -131,7 +159,8 @@ export default {
       publicSearch('rsa/stock/'+this.current_Com.stockId+'/stockprice',"GET",params).then((data) =>{
         endLoading();
         if(!successBack(data,this)) return;
-        this.data = ['有数据'];
+        console.log(data)
+        this.data = [data.data.timeType];
         if(data.data.timeType == 0){//小于七天
           start = (((this.time[1].getTime() - this.time[0].getTime()) / (3600000 * 24)) - 1) / ((this.time[1].getTime() - this.time[0].getTime()) / (3600000 * 24)) * 100;
           data.data.stockPriceList.forEach((item,index,self)=>{
@@ -154,7 +183,8 @@ export default {
           this.$nextTick()//初始化视图
               .then(()=> _echart.NewsShare('ec_NewsShare', NewsData, ShareData, start, end, xAxisShareData, xAxisNewsData, ShareMaxData, ShareMinData, NewsMaxData, NewsMinData,data.data.stockPriceArticle.total,this)); 
         }else{//大于七天
-          start = (((this.time[1].getTime() - this.time[0].getTime()) / (3600000 * 24)) - 7) / ((this.time[1].getTime() - this.time[0].getTime()) / (3600000 * 24)) * 100;
+          this.getMarketindexinfo()
+          start = 0//(((this.time[1].getTime() - this.time[0].getTime()) / (3600000 * 24)) - 7) / ((this.time[1].getTime() - this.time[0].getTime()) / (3600000 * 24)) * 100;
           if(data.data.stockPriceArticle.total != 0){//新闻数量不等于0
             for(let i in data.data.stockPriceArticle.timeAggMap){
               NewsData.push(data.data.stockPriceArticle.timeAggMap[i]);
@@ -163,12 +193,19 @@ export default {
           data.data.stockPriceList.forEach(item =>{
             let arr = [];
             arr[0] = item.priceOpen;
-            arr[1] = item.priceClosingToday;
+            arr[1] = item.priceClose;
             arr[2] = item.priceLowest;
             arr[3] = item.priceHighest;
+            arr[4] = item.floating;
             ShareData.push(arr);
-            xAxisNewsData.push(new Date(item.crawlTime).Format("yyyy-MM-dd"));
+            xAxisNewsData.push(new Date(item.tradeDate).Format("yyyy-MM-dd"));
           });
+          for(let i of ShareData){ //股票趋势折线图第一个非0值的点的开盘价 作为大盘指数接口使用
+              if(i[0] != undefined){
+                this.firstPrice = i[0];
+                break;
+              } 
+          };
           this.$nextTick()//初始化视图
               .then(()=>_echart.NewsShare('ec_NewsShare', NewsData, ShareData, xAxisNewsData,start,end,data.data.stockPriceArticle.total,this));
         }
@@ -176,7 +213,7 @@ export default {
     },
     newsShare_dialog_articleList(data){
       if(data.componentSubType != 'bar') return; //非新闻
-      this.paramsData = {'startTime': data.name.length == 13 ? new Date(data.name+':00') : new Date(data.name),
+      this.paramsData = {'startTime': data.name.length == 13 ? new Date(data.name.replace(/-/g,'/') + ':00') : new Date(data.name.replace(/-/g,'/')),
                           'timeType': data.name.length == 13 ? 0 : 1,
                           'stockId':this.current_Com.stockId,
                           'pageSize':10};
@@ -192,12 +229,116 @@ export default {
          this.NewsShare_dialog_articleList_switch = true;
          if(!successBack(data,this)) return;
          this.NewsShare_articleTotal = data.data.total;
+         //console.log(data.data.articleList)
+         data.data.articleList.sort(_Sort('publishTime'))
          this.NewsShare_articleList = data.data.articleList;
       })
     },
-    date_change (){date_change(this);},
-    dropdown_Com(command){ this.current_Com = command ;},
+    dropdown_Com(command){command != undefined ? this.current_Com = command : this.show_more()},
+    dropdown_SortArtileList(command){
+      this.current_SortArtileList = command;
+    },
+    dropdown_MmarketIndexInfo(command){ //动态加载echarts
+      this.current_marketindexinfo = command ;
+      let params = {
+        "method": "get",
+        "marketIndexId":command.marketIndexId,//大盘id
+        "startTime":this.time[0], //Date格式 非字符串
+        "endTime":this.time[1],
+        "firstPrice":this.firstPrice//股票趋势折线图第一个非0值的点的开盘价
+      },
+      _this = this,
+      clickFlag,//点击变换颜色参数
+      ShareData = [],
+      maxShareList = [],//股价最高值的最大值
+      minShareList = [],//大盘最低值的最小值
+      absValue = '';//大盘最低值的最小值 -  大盘最低值的最小值 的绝对值
+      startLoading();
+      publicSearch('rsa/marketindex/' + command.marketIndexId,"GET",params).then((data) =>{
+        endLoading();
+        if(!successBack(data,this)) return;
+        console.log(data)
+        // data.data.marketIndexList.forEach((item,index) =>{
+        //   item.dealLowest == null ? '' : minShareList.push(item.dealLowest)
+        // })  
+        // this.bigOption_.series[0].data.forEach((item) =>{
+        //   item[3] == undefined ? '' :  maxShareList.push(item[3])
+        // })
+        // absValue = Math.abs(Math.max(...maxShareList) - Math.min(...minShareList));
+        data.data.marketIndexList.forEach((item,index) =>{
+          let arr = [];
+          // arr[0] = item.dealOpen == null ? undefined : (item.dealOpen + absValue).toFixed(2);
+          // arr[1] = item.dealClose == null ? undefined : (item.dealClose + absValue).toFixed(2);
+          // arr[2] = item.dealLowest == null ? undefined : (item.dealLowest + absValue).toFixed(2);
+          // arr[3] = item.dealHighest == null ? undefined : (item.dealHighest + absValue).toFixed(2);
+            arr[0] = item.dealOpen == null ? undefined : item.dealOpen;
+            arr[1] = item.dealClose == null ? undefined : item.dealClose;
+            arr[2] = item.dealLowest == null ? undefined : item.dealLowest;
+            arr[3] = item.dealHighest == null ? undefined : item.dealHighest;
+            arr[4] = item.floating == null ? undefined : item.floating + '100%';
+          ShareData.push(arr)
+        })
+        //重写Option
+        //this.bigOption_.series[2] = {data:ShareData,name:'大盘',type:'candlestick',itemStyle:{normal:{color:'e57373',color0:'#aed581',borderColor:'#e57373',borderColor0:'#aed581'}}};
+        //this.bigOption_.series[2] = {data:ShareData,name:'大盘',type:'candlestick',itemStyle:{normal:{color:'rgba(255,255,255,0)',color0:'rgba(255,255,255,0)',borderColor:'#e57373',borderColor0:'#aed581'}}};
+        this.bigOption_.series[2] = {data:ShareData,name:'大盘',type:'candlestick',itemStyle:{normal:{color:'rgba(0,0,255,0)',color0:'rgba(0,0,255,0.5)',borderColor:'rgb(0,0,255)',borderColor0:'rgba(0,0,255,0.5)'}}};
+        this.bigOption_.series[1].itemStyle.normal.color = function(params){ return params.dataIndex == clickFlag ? '#98F5FF' : '#2d7dc2'};
+        this.bigOption_.tooltip.formatter = function(params){
+         let findindex = data.data.marketIndexList.findIndex((item) =>{ //获取大盘坐标
+           return item.tradeDate == new Date(params[1].axisValueLabel + ' 00:00').getTime()
+         })
+         let string = `${params[1].axisValueLabel}<br>
+                        大盘<br>
+                        open:${data.data.marketIndexList[findindex].open == null ? '-' : data.data.marketIndexList[findindex].open.toFixed(2)}<br>
+                        close:${data.data.marketIndexList[findindex].close == null ? '-' : data.data.marketIndexList[findindex].close.toFixed(2)}<br>
+                        lowest:${data.data.marketIndexList[findindex].lowest == null ? '-' : data.data.marketIndexList[findindex].lowest.toFixed(2)}<br>
+                        highest:${data.data.marketIndexList[findindex].highest == null ? '-' : data.data.marketIndexList[findindex].highest.toFixed(2)}<br>
+                        floating:${data.data.marketIndexList[findindex].floating == null ? '-' : data.data.marketIndexList[findindex].floating.toFixed(2) + '%'}<br>
+                        股价<br>
+                        open:${_this.bigOption_.series[0].data[findindex][0] == undefined ? '-' : _this.bigOption_.series[0].data[findindex][0]}<br>
+                        close:${_this.bigOption_.series[0].data[findindex][1] == undefined ? '-' : _this.bigOption_.series[0].data[findindex][1]}<br>
+                        lowest:${_this.bigOption_.series[0].data[findindex][2] == undefined ? '-' : _this.bigOption_.series[0].data[findindex][2]}<br>
+                        highest:${_this.bigOption_.series[0].data[findindex][3] == undefined ? '-' : _this.bigOption_.series[0].data[findindex][3]}<br>
+                        floating:${_this.bigOption_.series[0].data[findindex][4] == undefined ? '-' : _this.bigOption_.series[0].data[findindex][4].toFixed(2) + '%'}<br>
+                        新闻：${_this.bigOption_.series[1].data[findindex]}`;
+          return string
+        };
+        //重写点击事件
+        let _echart = echarts.init($('#ec_NewsShare')[0]);
+        _echart.setOption(this.bigOption_);
+        _echart.on('dataZoom',function(params){ //保存缩放的位置
+            _this.bigOption_.dataZoom[0].start = params.batch ? params.batch[0].start : params.start;
+            _this.bigOption_.dataZoom[0].end = params.batch ? params.batch[0].end : params.end;
+        })
+        _echart.on('click', function(params) {
+            //点击后改变柱状图颜色
+            clickFlag = params.dataIndex;
+            _echart.setOption(_this.bigOption_);
+            _this.newsShare_dialog_articleList(params)//事件传值
+        });
+      })
+    },
     visibleChangemediaCom(a){ this.sort_dropdown_visible_Com = !a;},
+    visibleChangeSortArticle(a){ this.sort_dropdown_visible_SortArticleList = !a;},
+    visibleChangeMmarketIndexInfo(a){ this.sort_dropdown_visible_marketindexinfo = !a;},
+    show_more(){
+      this.listDATA = {
+        mainName:'股票名称',
+        title:'股票列表',
+        switch:true,
+        data:this.stockNameList,
+        key:'stockName',//key键
+        pageSize:10,
+        pagerCount:5
+      }
+    },
+    DialoglistData(val){ //股票子组件的数据
+      this.dropdown_Com(val)
+      //this.current_Com = this.stockNameList.filter(item => item.stockId == val.stockId)[0]
+    },
+    dataPickerData(val){//日期子组件的数据
+      this.time = val;
+    }
   }
 }
 </script>

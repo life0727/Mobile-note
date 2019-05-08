@@ -22,7 +22,7 @@
 		</div>
 	</div>
 	<div style="position: absolute;left: 0;right: 0;bottom: 50px;margin: auto;width: 1200px;height: 50px;">
-		<p style="text-align: center;font-size: 12px;">版权所有 © 2005–2017 Rs, Inc. 保留全部权利。</p>
+		<p style="text-align: center;font-size: 12px;">版权所有 © 2005–2019 Rs, Inc. 保留全部权利。</p>
 		<p style="text-align: center;font-size: 12px;">Powered by Apereo Central Authentication Service 4.2.7 2017-09-08T15:34:26.000+08:00</p>
 	</div>
 <!-- 登录主体end -->	

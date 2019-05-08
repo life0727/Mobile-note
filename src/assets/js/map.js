@@ -1,6 +1,6 @@
 import { Loading } from 'element-ui'
-export function startLoading() { //Loading
-    Loading.service({ 'text': '系统拼命加载中', 'spinner': 'el-icon-loading' });
+export function startLoading(text  = '系统拼命加载中') { //Loading
+    Loading.service({ 'text': text, 'spinner': 'el-icon-loading' });
 }
 
 export function endLoading() { //Loading
@@ -31,15 +31,16 @@ export function filter_polar(data, mapData) { //地图省份数据且过滤（'�
     }
 }
 
-export function date_change(_this) { //Time = _this.time //通用验证时间方法
+export function date_change() { //Time = _this.time //通用验证时间方法
     Date.prototype.toJSON = function() { return this.toLocaleString(); }
-    if (_this.time[0] == undefined || _this.time[1] == undefined || _this.time[1].getTime() < _this.time[0].getTime()) {
-        _this.time = [new Date(new Date().getTime() - 604800000), new Date()];
-        _this.$message({
+    if (this.time[0] == undefined || this.time[1] == undefined || this.time[1].getTime() < this.time[0].getTime()) {
+        this.time = [new Date(new Date().getTime() - 604800000), new Date()];
+        this.$message({
             message: '请检查您的时间格式',
             type: 'warning'
         });
     }
+    this.$emit('receiveFromDatePicker',this.time)
 }
 
 export function Sort(property) { //数组对象排序方法升序 news_top.sort(_Sort('num'));
@@ -313,28 +314,14 @@ export function downloadExl(json, downName, _this, type, colWidth) { // 导出�
         document.body.removeChild(_this.outFile); //兼容火狐
     }, 100)
 }
-export function myCopy(obj) {
-    var fliter = ['[object Error]', '[object Date]', '[object RegExp]', '[object Function]'];
-
-    function isOject(obj) { //监测是否为正常的引用类型
-        if (typeof obj == 'object' && obj !== null && fliter.every(item => Object.prototype.toString.call(obj) != item)) {
-            return 'isobject'
-        } else {
-            return obj
-        }
-        if ((typeof obj == 'object' || typeof obj == 'function') && obj !== null && Object.prototype.toString.call(obj) !== "[object Error]" && Object.prototype.toString.call(obj) !== "[object Date]" && Object.prototype.toString.call(obj) !== "[object RegExp]") {
-            return 'isobject'
-        } else {
-            return 'isobject'
-        }
-    };
-
-    function deepCopy(obj) {
-        let cloneObj = isOject(obj) === 'isobject' ? (Array.isArray(obj) ? [] : {}) : obj;
-        for (let i in obj) {
-            isOject(obj[i]) === 'isobject' ? cloneObj[i] = deepCopy(obj[i]) : cloneObj[i] = obj[i]
-        };
-        return cloneObj
-    };
-    return deepCopy(obj)
+export function deepCopy(arg) {
+	let filterArr = ['[object Array]','[object Object]'];
+    let res = filterArr.includes(Object.prototype.toString.call(arg)) ? Array.isArray(arg) ? [] : {} : arg;
+    // Object.keys(arg).forEach((item) => {
+    //     filterArr.includes(Object.prototype.toString.call(arg[item])) ? res[item] = deepCopy(res[item]) : res[item] = arg[item]
+    // })
+    for(let i in arg){
+        res[i] = filterArr.includes(Object.prototype.toString.call(arg[i])) ? deepCopy(arg[i]) : arg[i]
+    }
+    return res;
 }

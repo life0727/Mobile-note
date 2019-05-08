@@ -78,29 +78,8 @@
       </el-dropdown>
       
       <span style="position: absolute;left: 380px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
-       <div class="block" style="display: inline-block" >
-        <el-date-picker
-         @change="date_change"
-         :editable="edit"
-         :clearable="edit"
-         style="position: relative;width:170px;font-size: 12px;margin-left:55px;"
-          v-model="time[0]"
-          type="datetime"
-          placeholder="选择日期时间">
-        </el-date-picker>
-      </div>
-      <div class="block" style="display: inline-block;margin-top: 12px;" >
-          <span class="demonstration" style="margin: 0 5px;">至</span>
-          <el-date-picker
-          @change="date_change"
-          :editable="edit"
-          :clearable="edit"
-          style="position: relative;width:170px;font-size: 12px;"
-            v-model="time[1]"
-            type="datetime"
-            placeholder="选择日期时间">
-          </el-date-picker>
-      </div>
+      <!-- 日期组件 -->
+      <datePicker @receiveFromDatePicker = "dataPickerData"></datePicker>
       <span class="SearchBegin"  id="search" @click="_search" >搜索</span>
       <span class="SearchBegin"   @click="downloadFile()" v-show="this.data.length != 0">导出excel</span>
     </div>
@@ -321,8 +300,9 @@
 
 <script>
 import echarts from 'echarts'
+import datePicker from '../util/datePicker.vue'
 import _echart from '../../../assets/js/_echart.js'
-import {format_time,_Sort,date_change,tipsMessage,GetLocalStorage,publicSearch,successBack,startLoading,endLoading,s2ab,downloadExl} from '../../../assets/js/map.js'
+import {_Sort,tipsMessage,GetLocalStorage,publicSearch,successBack,startLoading,endLoading,s2ab,downloadExl} from '../../../assets/js/map.js'
 export default {
   mounted :function () {
     let _this = this;
@@ -355,9 +335,11 @@ export default {
    this.outFile = document.getElementById('downlink')//导出excel所需要的数据元素
   $('#echart').css('opacity','0');
   },
+  components:{
+    datePicker
+  },
   data () {
     return {
-        edit:false,
         time:[new Date(new Date().getTime()-604800000), new Date()],
         articleType:2,
         data:[],
@@ -450,8 +432,8 @@ export default {
       this.rowClick(this.data[0]);
     },
     add_duibiName(Dta){
-      console.log(Dta)
-      console.log(this.duibiData)
+      //console.log(Dta)
+      //console.log(this.duibiData)
       if(this.duibiData.length >= 3 && Dta){
         tipsMessage('最多添加两个对比竞品','warning',this);
         this.popover2_show = false;
@@ -480,7 +462,7 @@ export default {
         this.duibiData = this.$store.state.ev_duibiData;
       }*/
       
-      console.log(this.duibiData)
+      //console.log(this.duibiData)
     },
     look(){
       this.dialo_duibi = true;
@@ -497,7 +479,7 @@ export default {
       publicSearch('rsa/project/'+GetLocalStorage('current_projectData_A').project_id+'/org/cpa',"GET",params).then((data) =>{//ajax
         endLoading();
         if(successBack(data,this)){
-          console.log(data)
+          //console.log(data)
            let cate = data.data.cateList.slice(0,idarr.length),cate_ = data.data.cateList.slice(idarr.length,data.data.cateList.length),_categories = data.data.cateList,_data = data.data.dataList,_links =  data.data.linkList;
             this.$nextTick(function () {
                 _echart.build_graph('Duibi',cate,cate_,_categories,_data,_links);
@@ -521,7 +503,7 @@ export default {
           endLoading();
           if(successBack(data,this)){
             this.duibiList = data.data.filter(item => { return idArr.indexOf(item.id) == -1; });;
-            console.log(this.duibiList)
+            //console.log(this.duibiList)
           }
         });
     },  
@@ -543,7 +525,7 @@ export default {
       }
     },
     search(duibiTable_flag,Id){// duibiTable_flag ---false 则为点击的自身项目下的组织, true 为点击竞品项目下的组织
-      console.log(duibiTable_flag)
+      //console.log(duibiTable_flag)
         let project_id = '',dataMap = new Map();
         //this.duibiData.length = 1;
         this.search_flag = false;
@@ -605,8 +587,8 @@ export default {
          
     },
     remove(){//删除组织
-      console.log(this.Selection);
-      console.log(this.duibiTable_flag);
+      //console.log(this.Selection);
+      //console.log(this.duibiTable_flag);
       let orgIdList = [];
       for(let i of this.Selection){
         orgIdList.push(i.id);
@@ -634,8 +616,8 @@ export default {
     },
     del_(a,b,c,d,e){  //('perlist_selection','perList','mention','tabledata_perlist','tabledata_perlist_list')
       // console.log(this.first_data_index) ;
-      console.log(this.perlist_selection);
-      console.log(this[e]);
+      //console.log(this.perlist_selection);
+      //console.log(this[e]);
       let _this = this,project_id=GetLocalStorage('current_projectData_A').project_id,arr = [];
       for(let i of this[a]){
         arr.push(i[c]);
@@ -688,7 +670,7 @@ export default {
         }
       },
     rowClick(dta){//dom遍历等
-      console.log(dta)
+      //console.log(dta)
       this.currentOrgName = dta.name.slice(0,dta.name.indexOf('/'));
       this.first_data_index = this.data.findIndex(d => d.name === dta.name);//第一层下标
       this.per_data = dta.perList;
@@ -987,7 +969,6 @@ export default {
     },  
     dropdown_org(command){ this.current_org = command ;},
     second_select(a){ this.second_selection = a ;},
-    date_change (){date_change(this);},
     downloadFile(){ //导出excel
       //填充excel数据 
       let excelData = [];
@@ -1010,7 +991,6 @@ export default {
     },
     downloadArticleFile(flag){//导出文章列表excel
         let Dta = flag == '第一层' ? this.articlelist_selection : this.second_selection;
-        format_time();
         let excelData = [{'标题':'标题','时间':'时间','媒体名称':'媒体名称','链接':'链接'}];
         for(let i of Dta){
           let obj = {};
@@ -1020,8 +1000,11 @@ export default {
           obj['链接'] = i.url;
           excelData.push(obj);
         };
-        console.log(excelData);
+        //console.log(excelData);
         downloadExl(excelData,'文章列表',this,'xlsx',true);//封装完的数据  excel名称 true 列宽格式
+      },
+      dataPickerData(val){//日期组件数据
+        this.time = val
       }
   },
   watch:{

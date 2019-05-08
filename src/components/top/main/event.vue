@@ -96,29 +96,8 @@
       </el-popover>
       
       <span style="position: absolute;left: 464px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span><!-- left: 383px; -->
-       <div class="block" style="display: inline-block" >
-        <el-date-picker
-         @change="date_change"
-         :editable="edit"
-         :clearable="edit"
-         style="position: relative;width:170px;font-size: 12px;margin-left:120px;"
-          v-model="time[0]"
-          type="datetime"
-          placeholder="选择日期时间">
-        </el-date-picker><!-- margin-left:55px; -->
-      </div>
-      <div class="block" style="display: inline-block;margin-top: 12px;" >
-          <span class="demonstration" style="margin: 0 5px;">至</span>
-          <el-date-picker
-          @change="date_change"
-          :editable="edit"
-          :clearable="edit"
-          style="position: relative;width:170px;font-size: 12px;"
-            v-model="time[1]"
-            type="datetime"
-            placeholder="选择日期时间">
-          </el-date-picker>
-      </div>
+      <!-- 日期组件 -->
+      <datePicker @receiveFromDatePicker = "dataPickerData" style="margin-left:95px;"></datePicker>
       <span class="SearchBegin" style="line-height: 45px;margin-left: 30px;" id="search" @click="_start(true,true)" v-loading.fullscreen.lock="loading_start" :element-loading-text="'系统拼命加载中'+'('+programs+'%..)'" element-loading-spinner="el-icon-loading">搜索</span>
       <span class="SearchBegin"   @click="downloadFile()" v-show="data.length != 0">导出excel</span>
 
@@ -229,8 +208,8 @@
         </el-table>
         <span v-show="this.ct_articlelist_selection.length != 0" style="position: absolute;left: 0px; bottom: 6px;padding: 5px 10px;color:#999999">已选（{{ct_articlelist_selection.length}}）</span> 
         <el-button v-show="this.ct_articlelist_selection.length != 0"  type="text" style="position: absolute;left: 83px; bottom: 6px;padding: 7px 3px;color:#999999;" @click="open_del_threeList">删除</el-button>
-        <el-button v-show="this.dialo_title!=='相关文章'" type="danger" :style="{position:'absolute',left: ct_articlelist_selection.length ? '115px' : '0px',bottom:'7px',padding:'5px 5px'}" @click="open_del_per">删除此{{this.entityType == 'key' ? '关键词' : dialo_title.slice(dialo_title.length-4,dialo_title.length-2)}}</el-button>
-        <span class="SearchBegin" :style="{position:'absolute',left: ct_articlelist_selection.length ? '185px' : '0px',bottom:'7px',padding:'5px 5px',lineHeight:'14px'}"  @click="downloadArticleFile()" v-show="this.ct_articlelist_selection.length != 0">导出excel</span>
+        <el-button v-show="this.dialo_title!=='相关文章'" type="danger" :style="{position:'absolute',left: ct_articlelist_selection.length ? '115px' : '0px',bottom:'7px',padding:'4px 4px'}" @click="open_del_per">删除此{{this.entityType == 'key' ? '关键词' : dialo_title.slice(dialo_title.length-4,dialo_title.length-2)}}</el-button>
+        <span class="SearchBegin" :style="{position:'absolute',left: ct_articlelist_selection.length ? '195px' : '0px',bottom:'7px',padding:'5px 5px',lineHeight:'14px'}"  @click="downloadArticleFile()" v-show="this.ct_articlelist_selection.length != 0">导出excel</span>
             <el-pagination
             v-if="pageShow"
             class="page"
@@ -534,9 +513,10 @@
 </template>
 <script >
 import echart from 'echarts'
+import datePicker from '../util/datePicker.vue'
 /*import ecStat from 'echarts-stat'*/
 import _echart from '../../../assets/js/_echart.js'
-import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage,startLoading,endLoading,s2ab,downloadExl}  from '../../../assets/js/map.js'
+import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,tipsMessage,similar,jsonToStrMap,GetLocalStorage,startLoading,endLoading,s2ab,downloadExl}  from '../../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
@@ -584,7 +564,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           page_size:12,
           page_size_list:12,
           page_size_reprint_list:12,
-          edit:false,
           domain_s:[],
           domain_m:[],
           domain:[],
@@ -673,6 +652,9 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
           ctbCompanyNameList:[],//企业数据excel格式
           outFile: '',  // 导出excle文件
         }
+    },
+    components:{
+      datePicker
     },
     mounted : function () {
        
@@ -1386,7 +1368,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         this.currentPage_reprint_list = val;
         this.format_tabledata_('currentPage_reprint_list','page_size_reprint_list','articleList_reprint','articleList_reprint_list');
       },
-      date_change () { date_change(this); },//修改时间验证
       del_ev(i){
         console.log(this.del_duibi_id)
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
@@ -2097,7 +2078,6 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         downloadExl(excelData,'关键议题',this,'xlsx');//封装完的数据  excel名称
       },
       downloadArticleFile(){//导出文章列表excel
-        format_time();
         let excelData = [{'标题':'标题','时间':'时间','媒体名称':'媒体名称','链接':'链接'}];
         for(let i of this.ct_articlelist_selection){
           let obj = {};
@@ -2109,11 +2089,14 @@ import { format_time,Sort,Map,date_change,SetSessionStorage,GetSessionStorage,pu
         };
         console.log(excelData);
         downloadExl(excelData,'议题文章',this,'xlsx',true);//封装完的数据  excel名称 true 列宽格式
+      },
+      dataPickerData(val){
+        this.time = val
       }
     },
   }
 </script>
-<style lang="scss" >
+<style lang="scss">
 .event{
 
   button:hover{

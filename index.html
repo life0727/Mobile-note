@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/css/index.css"/>
     <link rel="shortcut icon" href="/static/img/logo.png">
     <link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/2.4.1/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css">
     <title>RS-舆情</title>
 
     <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script> 
@@ -18,7 +19,8 @@
     <script src="https://cdn.bootcss.com/babel-polyfill/6.0.2/polyfill.min.js"></script>
     <script src="https://cdn.bootcss.com/vuex/2.3.1/vuex.min.js"></script>
 
-     <script src="https://cdn.bootcss.com/xlsx/0.14.0/xlsx.full.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/vue-lazyload/1.2.6/vue-lazyload.js"></script> -->
+    <script src="https://cdn.bootcss.com/xlsx/0.14.0/xlsx.full.min.js"></script>
 
      <!-- <script type="text/javascript" src="/static/js/bootstrap.js"></script> -->
     <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -32,15 +34,8 @@
   </body>
   <script type="text/javascript">
     $('#app').css('height',document.documentElement.clientHeight);
-    /*$('.el-dropdown-menu .el-dropdown-menu__item').hover(function(){
-      $(this).css('background-color','rgba(0, 179, 138,.1)')
-    },function(){
-      $(this).css('background-color','white')
-    });*/
     $('#app').keydown(function(e){
-      if(e.which == 13){
-        e.preventDefault();
-      }
+      e.which == 13 && e.preventDefault();
     });
 
   </script>

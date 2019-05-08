@@ -1,4 +1,4 @@
-<template>
+<template name='app'>
   <div id="app" style="min-width: 1250px">
   <!-- <div style="position: absolute;top: 300px;width: 100px;height: 100px;background: red;"></div> -->
   <!-- <topnav></topnav> -->

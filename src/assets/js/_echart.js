@@ -779,7 +779,7 @@ var echart = {
     },
     build_event_line(domID, Dta) {
         let _echart = echarts.init($('#' + domID + '')[0]);
-        let data = pubilcMap.myCopy(Dta);
+        let data = pubilcMap.deepCopy(Dta);
         data.sort(pubilcMap.Sort('publishTime'));
         let map = new Map(),
             xData = [],
@@ -933,7 +933,7 @@ var echart = {
                 },
                 data: _data,
                 links: _links,
-                lineStyle: {
+                lineStyle: {  
                     normal: {
                         opacity: 0.9,
                         width: 2,
@@ -1253,7 +1253,7 @@ var echart = {
 
         Object.keys(posData).forEach((item, index) => {
             let titleObj = {},
-                seriesObj = pubilcMap.myCopy(seriesOption),
+                seriesObj = pubilcMap.deepCopy(seriesOption),
                 positionX = '',
                 posObj = { name: '正面' },
                 negObj = { name: '负面' };
@@ -1555,7 +1555,7 @@ var echart = {
             data[1] = objToStrMap(mention).get(i).toFixed(2);
             data[2] = dataMap.get(i) == undefined ? '' : dataMap.get(i).toFixed(2);
             data[3] = (objToStrMap(reputation).get(i) * 0.3 + objToStrMap(mention).get(i) * 0.4 + dataMap.get(i) * 0.3); //.toFixed(2)
-            data[3] = (data[3] * (posCountMap[i] / (posCountMap[i] + negCountMap[i]))).toFixed(2);
+            data[3] = (data[3] * (Number.isNaN((posCountMap[i] / (posCountMap[i] + negCountMap[i]))) ? 1 : (posCountMap[i] / (posCountMap[i] + negCountMap[i])))).toFixed(2);
             obj.data = data;
             legendData.push(i);
             seriesData.push(obj)
@@ -1774,16 +1774,13 @@ var echart = {
         class originOption {
             constructor(NewsData) {
                 this.color = ['#C23531','#2d7dc2'],
-                this.tooltip = {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'cross'
-                    }
-                };
                 this.axisPointer = {
                     link: { xAxisIndex: 'all' },
                     label: {
                         backgroundColor: '#777'
+
+
+                        
                     }
                 };
                 this.legend = {
@@ -1799,7 +1796,7 @@ var echart = {
                 this.toolbox = {
                     show: true,
                     feature: {
-                        saveAsImage: {},
+                        saveAsImage: {name:'新闻股价趋势图'},
                         dataZoom: {
                             show:false,
                             yAxisIndex: false
@@ -1839,6 +1836,30 @@ var echart = {
         class classBigOption extends originOption {
             constructor(NewsData, ShareData, xAxisData,start,end,total) {
                 super(NewsData);
+                this.tooltip = {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    },
+                    formatter:function(params){//指到柱状图和k线图prarms会变化 所以要把数据先一固定格式存起来
+                        let arr = [];
+                        params[0].data.length > 5 ? (arr = params[0].data,arr[0]= params[1].data) : (arr = params[1].data,arr[0] = params[0].data)
+                        for(let i = 0 ;i < arr.length;i++){
+                            arr[i] == undefined  && (arr[i] = '-' ) 
+                        }
+                        let string = `${params[1].axisValueLabel}<br>
+                                    新闻：${arr[0]}<br>
+                                    </p>
+                                    股价<br>
+                                    open：${arr[1]}<br>
+                                    close:${arr[2]}<br>
+                                    lowest：${arr[3]}<br>
+                                    higest：${arr[4]}<br>
+                                    floating：${arr[5] == '-' ? '-' : arr[5].toFixed(2) + '%'}<br>
+                                    `
+                        return string            
+                    }
+                };
                 this.dataZoom = [{
                         type: 'inside',
                         xAxisIndex: [0, 1],
@@ -1893,8 +1914,9 @@ var echart = {
                 }, super(NewsData).series_news];
                 this.yAxis = [{
                         ...super(NewsData).buildYAxisObj(),
-                        name: '股价'
+                        name: '股价',
                     },
+                   
                     {
                         ...super(NewsData).buildYAxisObj(),
                         name: `新闻数量(总数:${total})`,
@@ -1926,6 +1948,12 @@ var echart = {
                     start: 98,
                     end: 100
                 }];
+                this.tooltip = {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                };
                 this.xAxis = [{
                         type: 'category',
                         data: xAxisShareData //15min []
@@ -1961,19 +1989,20 @@ var echart = {
             }
         }
 
-        let _option =  arguments.length > 10 ?  new classLittleOption(...arg.slice(1,arg.length)) : _option = new classBigOption(...arg.slice(1,arg.length));
+        let _option =  arguments.length > 10 ?  new classLittleOption(...arg.slice(1,arg.length)) :  new classBigOption(...arg.slice(1,arg.length));
         //arg[arg.length-1] => this
         _option.yAxis[0].name = `股价(${arg[arg.length-1].current_Com.currencyUnit})`; //全局添加港元 美元 元
         delete _option.series_news;
+        arguments.length <= 10 ? arg[arg.length-1].bigOption_ = _option : '';//赋值给this.bigOption_
         _echart.setOption(_option);
-        arguments.length > 10 ? '' : _echart.dispatchAction({
-            type: 'brush',
-            areas: [{
-                brushType: 'lineX',
-                coordRange: [arg[3][arg[3].length-8], arg[3][arg[3].length-1]],
-                xAxisIndex: 0
-            }]
-        });
+        // arguments.length > 10 ? '' : _echart.dispatchAction({
+        //     type: 'brush',
+        //     areas: [{
+        //         brushType: 'lineX',
+        //         coordRange: [arg[3][arg[3].length-8], arg[3][arg[3].length-1]],
+        //         xAxisIndex: 0
+        //     }]
+        // });
         _echart.on('dataZoom',function(params){ //保存缩放的位置
             _option.dataZoom[0].start = params.batch ? params.batch[0].start : params.start;
             _option.dataZoom[0].end = params.batch ? params.batch[0].end : params.end;
@@ -1984,6 +2013,80 @@ var echart = {
             _echart.setOption(_option);
             arg[arg.length-1].newsShare_dialog_articleList(params)//事件传值
         });
+      
+    },
+    ERA(domID,cate,categories,nodes,links,_this){
+        echarts.dispose($('#' + domID + '')[0]);
+        let _echart = echarts.init($('#' + domID + '')[0]);
+        let index = 0;
+        let option = {
+            color: ['#c23531', '#2f4554', '#409eff', '#de9325', '#ffd54f', '#fff176', '#dce775', '#aed581', '#81c784', '#4dc3e1', '#81d4fa'],
+            legend: {  
+                data: cate//此处的数据必须和关系网类别中name相对应  
+            },  
+            toolbox: {
+                feature: {
+                    saveAsImage: {pixelRatio : 2}
+                }
+            },
+            series: [{  
+                type: 'graph',  
+                layout: 'force',  
+                animation: false,  
+                roam: true,
+                label: {  
+                    normal: { 
+                        textStyle: {
+                            fontSize: 10,
+                            color: '#333'
+                        }, 
+                        show:true,  
+                        position: 'bottom'  
+                    }  
+                },  
+                draggable: true,  
+                data: nodes,  
+                categories: categories,  
+                force: {  
+                    edgeLength: 105,//连线的长度  
+                    gravity : 0.03,
+                    repulsion: 100,  //子节点之间的间距  
+                    //layoutAnimation:false
+                },  
+                edges: links,
+                lineStyle: {  
+                    normal: {
+                        opacity: 0.9,
+                        width: 1,
+                        curveness: 0.1
+                    }
+                }
+            }] 
+        };
+        _echart.setOption(option)
+        _echart.on('mouseup',function(params){//保存缩放的位置
+            if(params.dataType == 'edge') return;
+            var _option = _echart.getOption();
+            _option.series[0].data[params.dataIndex].x = params.event.offsetX;
+            _option.series[0].data[params.dataIndex].y = params.event.offsetY;
+            _option.series[0].data[params.dataIndex].fixed = true;
+            _echart.setOption(_option);
+        })
+        _echart.on('dblclick',function(params){ 
+            if(params.dataType == 'edge') return;
+            var _option = _echart.getOption();
+            index >= cate.length - 1 ? index = 0 : index++;
+            _option.series[0].data[params.dataIndex].category = cate[index].name
+            _option.series[0].data[params.dataIndex].symbol = cate[index].icon
+            _echart.setOption(_option);
+        })
+        _echart.on('contextmenu',function(params){
+            if(params.dataType == 'edge') return;
+            var _option = _echart.getOption();
+            _option.series[0].data.splice(params.dataIndex,1);
+            _echart.setOption(_option);
+
+        })
     }
 }
 module.exports = echart;

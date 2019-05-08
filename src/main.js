@@ -7,7 +7,11 @@ import App from './App'
 import router from './router.config.js'
 //import Promise from 'promise-polyfill'
 //import Vuex from 'vuex'
-
+// Vue.use(VueLazyload, {
+//   preLoad: 1.3,
+//   loading: 'static/svg/img_loading.svg',
+//   attempt: 1
+// })
 //Vue.use(ElementUI)
 //Vue.use(Vuex)
 // To add to window 
@@ -22,6 +26,7 @@ import router from './router.config.js'
     }catch(err){
         console.log(err)
       }
+
 
 const vuex_store=new Vuex.Store({
 	state:{
@@ -39,7 +44,8 @@ const vuex_store=new Vuex.Store({
         media_Data:'',
         media_duibiData:'',//媒体的对比数据
         router:'',//声誉分析切换跳转保存路由地址
-        keyword_tab:'_keywordTab'//keyword模块tab切换添加竞品时默认为竞品tab
+        keyword_tab:'_keywordTab',//keyword模块tab切换添加竞品时默认为竞品tab
+        selectERAIdArr:[],//ERA模块总部选中的文章
         /*refer_articleType:'',//提及率的文章类型
         refer_queryType:'',//提及率的检索方式
         refer_time:'',//提及率的搜索时间
@@ -55,7 +61,23 @@ const vuex_store=new Vuex.Store({
         }
     }
 })
+
 Vue.prototype.auitor = 'fqm';
+Date.prototype.Format = function(fmt) {
+  var o = {
+      "M+": this.getMonth() + 1, //月份 
+      "d+": this.getDate(), //日 
+      "h+": this.getHours(), //小时 
+      "m+": this.getMinutes(), //分 
+      "s+": this.getSeconds(), //秒 
+      "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+      "S": this.getMilliseconds() //毫秒 
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
 
 var vm=new Vue({
   el: '#app',
