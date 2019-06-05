@@ -18,16 +18,17 @@
             </el-form>    
             <div class="block" style="margin-top: 15px;" >
                 <div class="filter_event" style="width: 100%;border: 1px solid rgb(228,228,228);background-color:rgb(247,247,247);position:relative;height: 48px;">
-                    <span :style="{position:'absolute',left:'30px',lineHeight:'45px',cursor:'pointer',color: articleType == 2 ? '#00b38a' : '#333'}" @click="mediaData.btn_disabled=false;articleType=2;">微信</span>
-                    <span :style="{position:'absolute',left:'80px',lineHeight:'45px',cursor:'pointer',color: articleType == 1 ? '#00b38a' : '#333'}" @click="mediaData.btn_disabled=true;articleType=1;">新闻</span>
+                    <span :style="{position:'absolute',left:'30px',lineHeight:'45px',cursor:'pointer',zIndex:'5',color: articleType == 2 ? '#00b38a' : '#333'}" @click="mediaData.btn_disabled=false;articleType=2;">微信</span>
+                    <span :style="{position:'absolute',left:'80px',lineHeight:'45px',cursor:'pointer',zIndex:'5',color: articleType == 1 ? '#00b38a' : '#333'}" @click="mediaData.btn_disabled=true;articleType=1;">新闻</span>
                     <span style="position: absolute;left: 140px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
                 
-                    <span :style="{position:'absolute',left:'170px',lineHeight:'45px',cursor:'pointer',color: queryType==0 ? '#00b38a' : '#333'}" @click="queryType=0;">全文</span>
-                    <span :style="{position:'absolute',left:'215px',lineHeight:'45px',cursor:'pointer',color: queryType==1 ? '#00b38a' : '#333'}" @click="queryType=1;">仅标题</span>
+                    <span :style="{position:'absolute',left:'170px',lineHeight:'45px',cursor:'pointer',zIndex:'5',color: queryType==0 ? '#00b38a' : '#333'}" @click="queryType=0;">全文</span>
+                    <span :style="{position:'absolute',left:'215px',lineHeight:'45px',cursor:'pointer',zIndex:'5',color: queryType==1 ? '#00b38a' : '#333'}" @click="queryType=1;">仅标题</span>
 
                     <span style="position: absolute;left: 285px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>  
                    
                     <mediaSlot :mediaDATA="mediaData" @receiveFromMediaSlot = "mediaSlotData"></mediaSlot>
+                    
                     <span style="position: absolute;left: 408px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span>
                     <span style="position: absolute;left: 555px;line-height: 45px;border-left: 1px solid rgb(228,228,228);top: 12px;height: 22px;"></span> 
                     
@@ -109,7 +110,7 @@
             class="page"
             @current-change="handleERACurrentChange"
             :current-page.sync="ERA_currentPage"
-            :page-size="10"
+            :page-size="15"
             :pager-count="5"
             layout="total,  prev, pager, next"
             :total="this.articleTotal"
@@ -202,6 +203,7 @@ export default {
         articleTotal:0,//文章列表总数
         articleList:[], //文章列表
         articlelist_selectIdArr:[], //选中的文章列表id数组
+        articlelist_selection:[], //选中的文章列表数组
         flag:false //点击分页的flag
     }
   },
@@ -211,8 +213,12 @@ export default {
   },
   methods: {
       search(){ //搜索文章
+        this.articlelist_selectIdArr = [];
+        this.data = [];
+        this.ERA_currentPage = 1;
         const criteriaStr = {
             'articleType': this.articleType,
+            //'sortType': 1,
             'queryType' : this.queryType,
             'startTime' : this.time[0].getTime(),
             'endTime' : this.time[1].getTime(),
@@ -223,10 +229,26 @@ export default {
             'pageSize':15
         }
         this.paramsData = criteriaStr;
-        this.handleERACurrentChange(1);
+        this.handleERACurrentChange(this.ERA_currentPage);
       },
       analysis(){//分析文章
-
+        if(this.articlelist_selectIdArr > 100){
+            tipsMessage('文章个数不能超过100个','warning',this);
+            return
+        };
+        const params = {
+            'articleType': this.articleType,
+            'newsIdList': this.articlelist_selectIdArr
+            };
+        const data = {
+          'method': 'POST',
+          'criteriaStr':JSON.stringify(params),
+          'windowSize': this.current_sort_windowSize_article
+        };
+        startLoading();
+        publicSearch('rsa/entitycorrelation/article/correlation',"POST",data).then((data) =>{//ajax
+            this.submitSuccess(data);
+        })
       },
       submitSuccess(data){
         endLoading()
@@ -296,27 +318,7 @@ export default {
       visibleChangeWindowSize(a){this.sort_dropdown_visible_windowSize = !a;},
       visibleChangeEventNum_node(a){this.sort_dropdown_visible_node = !a;},
       articlelist_select(data){ //选择文章 变化事件
-        console.log(data)
-        //   data.forEach(item => {
-        //       this.$store.state.selectERAIdArr.push(item.id);
-        //       this.$store.state.selectERAIdArr = [...new Set(this.$store.state.selectERAIdArr)];
-        //   })
-          
-        //  console.log(data)
-        //  console.log(this.$store.state.selectERAIdArr)
-        //   console.log(data)
-        //   console.log(this.articlelist_selectIdArr.length)
-        //   let resArr = [];
-        //   if(this.$store.state.selectERAIdArr.length < this.articlelist_selectIdArr.length){
-        //       resArr = this.$store.state.selectERAIdArr.filter(item => new Set(this.articlelist_selectIdArr).has(item))
-        //   }
-        //   console.log(resArr)
-          if(!this.flag) this.articlelist_selectIdArr = [];
-          data.forEach(item => { //获取选中的文章的id数组
-              this.articlelist_selectIdArr.push(item.id)
-              this.articlelist_selectIdArr = [...new Set(this.articlelist_selectIdArr)]
-          })
-         //console.log(this.articlelist_selectIdArr)
+        this.articlelist_selection = data;
       },
       handleERACurrentChange(pageNum){ //分页查询
         this.flag = true;
@@ -330,6 +332,7 @@ export default {
             endLoading();
             if(!successBack(data,this)) return;
             this.articleTotal = data.data.total
+            this.articleList = data.data.articleList;
             this.$nextTick(() => { //默认选中
                 data.data.articleList.forEach(item => {
                     if(this.articlelist_selectIdArr.includes(item.id)){
@@ -338,7 +341,7 @@ export default {
                 })
                 
             })
-            this.articleList = data.data.articleList;
+            
         });
         
       },
@@ -359,18 +362,47 @@ export default {
         $('#demo canvas').css('height',document.documentElement.clientHeight + 'px')
         $('#demo div').css('width',document.documentElement.clientWidth + 'px')
         $('#demo canvas').css('width',document.documentElement.clientWidth + 'px')
+        $('.el-tabs').css('display','none')
         this.runERA(this.current_sort,this.current_sort_node);
         this.isBig = true;
       },
       toSmall(){
           this.isBig = false;
+          $('.el-tabs').css('display','block')
           $('#demo').css('width','1218px')
           $('#demo div').css('width','1218px')
           $('#demo canvas').css('width','1218px')
           $('#demo').css('height',document.documentElement.clientHeight -385 + 'px')
           this.runERA(this.current_sort,this.current_sort_node);
       }
-  }
+  },
+  watch:{
+        articlelist_selection:{ //利用articlelist_selection监听来判断是选中还是取消选中 
+            handler(newVal,oldVal){
+                //console.log(newVal)
+                //console.log(oldVal)
+                if(this.flag) return //判断是不是分页操作 分页操作不影响idarr数组变化 因为触发发变动事件所以要判断
+
+                let newIdArr = [],oldIdArr = [];
+                    newVal.forEach(i => newIdArr.push(i.id))//新的数组id
+                    oldVal.forEach(i => oldIdArr.push(i.id))//旧的数组id
+                    
+                if(newVal.length > oldVal.length){ //此时是选中操作  
+                    let result = newIdArr.filter(i => !new Set(oldIdArr).has(i))//取差集
+                    this.articlelist_selectIdArr.push(...result)
+                };
+                if(newVal.length < oldVal.length){ //此时是取消选中操作
+                    let result = oldIdArr.filter(i => !new Set(newIdArr).has(i))//取差集
+                    result.forEach(i => {
+                        this.articlelist_selectIdArr = this.articlelist_selectIdArr.filter(item => item != i)
+                    })   
+                }
+                // console.log(this.flag)
+                //console.log(this.articlelist_selectIdArr)
+            },
+            deep:true
+        }
+    }
 } 
 </script>
 
@@ -431,7 +463,7 @@ export default {
                 opacity: 1;
             }
             .el-pager .active {
-                color: #00b38a;
+                color: $color;
             }
         }
         

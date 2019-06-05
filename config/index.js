@@ -23,7 +23,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/rsa/': {
-            target: 'http://192.168.0.144:8090/rsa/api/v2.0',//0.3 8090
+            target: 'http://192.168.0.3:8090/rsa/api/v2.0',//0.3 8090
             changeOrigin: true,
             pathRewrite: {
               '^/rsa': '/'

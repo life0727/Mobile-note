@@ -12,7 +12,7 @@
         </div>
         <hr style="margin: 10px 0;">
         <el-button type="success" size="large"  style="padding: 5px 20px;font-size: 14px;margin-left: 345px;background-color:  #00b38a;border-color:  #00b38a;border-radius: 4px !important;"  @click="dom_search" >确定</el-button>
-        <span style="position: absolute;left: 313px;line-height: 45px;cursor: pointer" slot="reference">媒体分类 <i :class="domin_popover ? 'fa fa-angle-up' : 'fa fa-angle-down'" style="margin-left: 2px;"></i></span>
+        <span style="position: absolute;left: 313px;line-height: 45px;cursor: pointer;z-index:5" slot="reference">媒体分类 <i :class="domin_popover ? 'fa fa-angle-up' : 'fa fa-angle-down'" style="margin-left: 2px;"></i></span>
     </el-popover>
 </template>
 <script >
