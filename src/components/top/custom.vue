@@ -147,30 +147,30 @@ export default {
   },
   data () {
   	return {
-      tabledata_user:[],
-      projectList:[],
-      dialog_user:false,
-      dialog_project:false,
-      write_obj:'',
-      password_type:'password',
-      name:'',
-      account:'',
-      password:'',
-      phone:'',
-      qq:'',
-      email:'',
-      companyName:'',
-      companyAddress:'',
-      remark:'',
-      selection:[],
-      userbId:'',
-      title:'',
+      tabledata_user:[],//用户总数据
+      projectList:[],//用户项目列表数据
+      dialog_user:false, //模态框显示隐藏控制
+      dialog_project:false, //模态框显示隐藏控制
+      write_obj:'', //确定添加用户时的数据
+      password_type:'password', //输入框的类型
+      name:'', //用户信息
+      account:'', //用户信息
+      password:'', //用户信息
+      phone:'', //用户信息
+      qq:'', //用户信息
+      email:'', //用户信息
+      companyName:'', //用户信息
+      companyAddress:'', //用户信息
+      remark:'', //用户信息
+      selection:[], //单选框
+      userbId:'', //分配用户的id
+      title:'', //客户修改和添加用户的flag
       publicLoading:false, //公共loading
       select_All:false//全选状态绑定
   	}
   },
   methods: {
-    search(){
+    search(){ //查询用户的数据总方法
       let useraID = "123456";//userAId 这个是当前A系统登录的的id,前台取不到的话,可以随意给一个.后台会处理
       let dta = {
         'method':'get'
@@ -202,7 +202,7 @@ export default {
         } 
       })
     },
-    write(a){
+    write(a){ //客户修改
       this.write_obj=a;
       this.title='客户修改';
       this.dialog_user = true;
@@ -218,7 +218,7 @@ export default {
       this.remark=a.remark;
       console.log(a)
     },
-    add_btn(){
+    add_btn(){ //添加客户前操作
       this.dialog_user = true;
       this.title='添加客户';
       this.password_type='password';
@@ -232,7 +232,7 @@ export default {
       this.companyAddress='';
       this.remark='';
     },
-    add(a){
+    add(a){//添加客户方法
       console.log(a)
       let useraId = "123456";
       if(this.name===''||this.account===''||this.password===''){
@@ -312,7 +312,7 @@ export default {
         }
       }
     },
-    fenpei(row){
+    fenpei(row){ //项目分配的相关数据（toggleRowSelection方法是手动修改已经分给当前客户的项目的多选框的dom）
       console.log(row)
       this.userbId = row.id;
       let idarr = [];
@@ -373,7 +373,7 @@ export default {
     select_pro(val){
       this.selection=val;
     },
-    add_(){
+    add_(){ //确定分配后的操作
       //console.log(this.selection)
       let idarr = [];
       for(let i of this.selection){
@@ -410,7 +410,7 @@ export default {
         }
       })  
     },
-    del(Dta){
+    del(Dta){// 删除项目
       let userBIds = [],useraId = "123456";
       if(Dta == 'all'){
         for(let i of this.tabledata_user){
@@ -454,7 +454,7 @@ export default {
                   }); 
                 }).catch(() => { tipsMessage('取消删除','warning',this) });
     },
-    look_password(){
+    look_password(){ //切换密码框的可见不可见
       if(this.password_type==='text'){
         this.password_type='password'
       }else{

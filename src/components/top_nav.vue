@@ -106,22 +106,22 @@ export default{
   components:{dialogList},
   data: function () {
   	return {
-      data:'',
-      sum:'',
-      current_item:'',
+      data:'', //组件总数据
+      sum:'', //未使用
+      current_item:'', //当前项目
       item:'', //GetLocalStorage('current_projectData_A').project_list,
-      account:GetLocalStorage('account_A') == null ? '未登录' : GetLocalStorage('account_A'),
+      account:GetLocalStorage('account_A') == null ? '未登录' : GetLocalStorage('account_A'), //显示用户名
       listDATA:''//dialogList数据
   	}
   },
-  beforeCreate(){
+  beforeCreate(){ //钩子函数 /判断登录状态 
     publicSearch('rsa/authentication',"GET",'').then((data) =>{//判断登录状态 
       if(successBack(data,this)){
         this.search();
       }
     });
   },
-  mounted  :function () {
+  mounted  :function () { //钩子函数 页面加载完成时的调用方法
     //this.account = GetLocalStorage('account_A') == null ? '未登录' : GetLocalStorage('account_A');
     console.log(GetLocalStorage('account_A'))
     $('#admin li').not('.divider').hover(function(){
@@ -139,7 +139,7 @@ export default{
          
   },
   methods:{
-    search(){
+    search(){ //查询项目方法
      // console.log(GetLocalStorage('current_projectData_A').project_id)
         if(GetLocalStorage('current_projectData_A') == null || GetLocalStorage('current_projectData_A').project_list == null || GetLocalStorage('current_projectData_A').project_list.length == 0){
             tipsMessage('当前无项目，请先添加','warning',this);
@@ -172,7 +172,7 @@ export default{
         }
       });*/
     },
-    handleCommand_xiaoxi (command) {
+    handleCommand_xiaoxi (command) { //点击项目未查看的消息
       this.data=this.data.filter(item => { return command.indexOf(item.name) === -1; });//点击消息后删除
       window.location.reload();
       if(this.$route.path!=='/main/list'){
@@ -180,7 +180,7 @@ export default{
         //window.location.href="#/main/list"
       }   
     },
-    handleCommand(command){
+    handleCommand(command){ //点击切换项目方法
       if(command == undefined){
         this.show_more(command);
         return
@@ -204,7 +204,7 @@ export default{
         sessionStorage.removeItem('time1');
         window.location.reload();
       },
-    del_item(a) {
+    del_item(a) {//删除项目
         this.$confirm('是否删除'+' '+a.name+' '+'项目?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -250,13 +250,13 @@ export default{
           tipsMessage('取消删除','info',this)         
         });
       },
-    logout () {
+    logout () { //登出
       publicSearch('rsa/logout',"POST",'').then((data) =>{
         successBack(data,this);
       })
     },
-    show_more(a){
-     this.listDATA = {
+    show_more(a){ //显示更多项目列表
+     this.listDATA = { //c传递给子组件的数据
         mainName:'项目名称',
         title:'项目列表',
         switch:true,
@@ -266,12 +266,12 @@ export default{
         pagerCount:5
       }
     },
-    DialoglistData(val){
+    DialoglistData(val){ //从子组件传递来的数据
       this.handleCommand(val.name)
     }  
   },
-  watch:{
-    $route (to,from){
+  watch:{ //监听路由 维护跳转页面的数据
+    $route (to,from){  //to：跳转到哪里去 from：从哪里来的路由
       //console.log(from)
       if(from.fullPath == '/index/clever/clever_content'){
         this.item = GetLocalStorage('current_projectData_A').project_list;

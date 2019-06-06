@@ -215,13 +215,13 @@ export default {
       sort_dropdown_visible_Sentimen:true,//true为显示false为隐藏
       industry:'',//行业input
       enterprise:'',//企业input
-      enterpriseData:[],    
-      loading:false,
-      data:'',
-      reputation : '',
-      mention :'',
+      enterpriseData:[],   //企业关键词数据 
+      loading:false, //loading效果展示
+      data:'',//总数据
+      reputation : '',//声量份额
+      mention :'',//提及份额
       bar_pie:'饼',
-      selectData:[],
+      selectData:[],//选中的数据
       refer_dialog_articleList_switch:false, //相关文章模态框   
       refer_currentPage:1,//默认页码
       dialogRelateArticleData:{'listData':[],'data':'','pageShow':true,'articleType':''},//子组件数据
@@ -229,12 +229,12 @@ export default {
       dialogMention:false,//实体过滤对比模态框
       perList:[],//实体人物过滤前数组
       similar_perList:[],//实体人物过滤前与过滤后重复数组
-      keywordList:[],
-      similar_keywordList:[],
-      locList:[],
-      similar_locList:[],
-      orgList:[],
-      similar_orgList:[],
+      keywordList:[],//关键词
+      similar_keywordList:[],//相近关键词
+      locList:[],//地点
+      similar_locList:[],//相似地点
+      orgList:[],//组织
+      similar_orgList:[],//相似组织
       echartShow:'refer_volumn',//控制echart的显示层级
       outFile: '',  // 导出excle文件
     }
@@ -245,7 +245,7 @@ export default {
     mediaSlot
   },
   methods: {
-    search(){
+    search(){ //搜索按钮查询
       let _this = this; 
       if(this.enterpriseData.findIndex((n) => n == '') != -1 || this.industry == ''){
         tipsMessage('关键词不能为空','warning',this);
@@ -351,7 +351,7 @@ export default {
       _echart.build_refer_bar2('refer_mentinFirst',this.selectData);//议题领导力
       _echart.build_refer_competNum('refer_competNum',this.selectData,this.reputation,this.mention,this.posCountMap,this.negCountMap);//声誉竞争力
     },
-    refer_export(){
+    refer_export(){//导出word
       if(this.selectData.length == 0){
         tipsMessage('请选择议题','warning',this);
         return;
@@ -398,7 +398,7 @@ export default {
           })
       });
     },
-    refer_dialog_sentiment_articleList(data){
+    refer_dialog_sentiment_articleList(data){//情感分析文章列表
       if(!data.value) return;
       let dta = {
                   'id':this.selectData[0].id.slice(0,this.selectData[0].id.length-1),
@@ -422,7 +422,7 @@ export default {
           })
       });
     },
-    refer_writeName(data){
+    refer_writeName(data){ //修改议题标题
       this.$prompt('', '请输入修改后的标题', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -446,7 +446,7 @@ export default {
           tipsMessage('取消修改','info',this);      
         });
     },
-    refer_card_click(dta){
+    refer_card_click(dta){ //议题里面的相关信息展示按钮
       //console.log(dta);
       this.dialogMention = true;
       this.perList = dta.perList;
@@ -458,24 +458,24 @@ export default {
       this.similar_keywordList = similar(dta.keywordScreenList,dta.keywordList,'mention');
       this.similar_orgList = similar(dta.orgScreenList,dta.orgList,'mention');
     },
-    Mover_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "#00a17c"; },
-    Mout_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "rgb(72,87,106)"; },
-    addEnterpriseData(){ this.enterpriseData.push({keywordList: ''}); },
+    Mover_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "#00a17c"; }, //样式方法
+    Mout_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "rgb(72,87,106)"; },//样式方法
+    addEnterpriseData(){ this.enterpriseData.push({keywordList: ''}); },//样式方法
     delEnterpriseData(i){ this.enterpriseData.splice(i, 1);},//shanchu
-    moverFromItem(i){  i != 0 ? this.$refs.delEnterprise[i].style.display="inline-block" : '' },
-    moutFromItem(i){ this.$refs.delEnterprise[i].style.display="none"},
-    Mover (a) { this.$refs.list[a].style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)'; },
-    Mout (a) { this.$refs.list[a].style.boxShadow = ''; },
-    writeIndustry(){ this.$refs.industry.style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)';},
-    writeEnterprise(){ this.$refs.enterprise.style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)';},
-    sort_dropdown (command) { this.current_sort = command;},
-    visibleChangeRefer(a){ this.sort_dropdown_visible_refer = !a;}, 
-    dropdown_loose(command){ this.current_loose = command ;},
-    dropdown_Sentimen(command){ this.current_Sentimen = command ;this.current_Sentimen == '排负' ? this.echartShow = 'refer_mentinFirst' : ''},
-    visibleChangemediaLoose(a){
+    moverFromItem(i){  i != 0 ? this.$refs.delEnterprise[i].style.display="inline-block" : '' },//样式方法
+    moutFromItem(i){ this.$refs.delEnterprise[i].style.display="none"},//样式方法
+    Mover (a) { this.$refs.list[a].style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)'; },//样式方法
+    Mout (a) { this.$refs.list[a].style.boxShadow = ''; },//样式方法
+    writeIndustry(){ this.$refs.industry.style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)';},//样式方法
+    writeEnterprise(){ this.$refs.enterprise.style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)';},//样式方法
+    sort_dropdown (command) { this.current_sort = command;},//或和且下拉
+    visibleChangeRefer(a){ this.sort_dropdown_visible_refer = !a;}, //样式方法
+    dropdown_loose(command){ this.current_loose = command ;},//tight -- loose下拉选中
+    dropdown_Sentimen(command){ this.current_Sentimen = command ;this.current_Sentimen == '排负' ? this.echartShow = 'refer_mentinFirst' : ''}, //是否排除负面
+    visibleChangemediaLoose(a){//样式方法
       this.sort_dropdown_visible_loose = !a;
     },
-    visibleChangemediaSentimen(a){
+    visibleChangemediaSentimen(a){//样式方法
       this.sort_dropdown_visible_Sentimen = !a;
     },
     downloadFile(){ //导出excel
@@ -502,7 +502,7 @@ export default {
         //console.log(data);
         downloadExl(data, '声誉竞争力指数',this);//封装完的数据  excel名称
     },
-    downloadArticleFile(){
+    downloadArticleFile(){ //导出表格
       let Dta = this.dialogRelateArticleData.listData;
       let excelData = [{'标题':'标题','时间':'时间','媒体名称':'媒体名称','链接':'链接'}];
         for(let i of Dta){

@@ -168,9 +168,9 @@ export default {
   },
   data () {
     return {
-        articleType:2,
-        queryType:0,
-        keyWordList:{
+        articleType:2, //文章类型 1新闻 2微信
+        queryType:0, // 0全文 1仅标题
+        keyWordList:{ //关键词与排除词
             mustkw:'',
             kw:'',
             t_notkw:'',
@@ -180,23 +180,23 @@ export default {
             btn_disabled:false
         },
         domain_arr:[],//媒体分类数据展示
-        time:[new Date(new Date().getTime()-604800000), new Date()],
-        data:[],
-        current_sort:1,
-        current_sort_windowSize_upload:1,
-        current_sort_windowSize_article:1,
-        current_sort_node:1,
-        dropdown_sort:[1,2,3,4],
-        dropdown_sort_windowSize:[1,2,3,4,5],
-        dropdown_sort_node:[1,2,3,4],
+        time:[new Date(new Date().getTime()-604800000), new Date()], //时间
+        data:[], //主数据
+        current_sort:1, //共现频次
+        current_sort_windowSize_upload:1, //上传文本分析-共现窗口
+        current_sort_windowSize_article:1,//搜索文本分析-共现窗口
+        current_sort_node:1, //出现频次
+        dropdown_sort:[1,2,3,4],//共现频次下拉
+        dropdown_sort_windowSize:[1,2,3,4,5],//上传文本分析-共现窗口下拉
+        dropdown_sort_node:[1,2,3,4],//搜索文本分析-共现窗口下拉
         sort_dropdown_visible_eventNum:true,//true为显示false为隐藏
-        sort_dropdown_visible_windowSize:true,
-        sort_dropdown_visible_node:true,
+        sort_dropdown_visible_windowSize:true,//true为显示false为隐藏
+        sort_dropdown_visible_node:true,//true为显示false为隐藏
         isBig:false, //画布是否全屏
-        cate:['实体'],
-        categories:[{'name':'实体'}],
-        nodes:[],
-        links:[],
+        cate:['实体'],//ecarts分类
+        categories:[{'name':'实体'}],//ecarts分类
+        nodes:[],//echarts节点
+        links:[],//echarts连线
         paramsData:'',//查询文章参数
         activeName:'searchArticle', //默认文章分析tab
         ERA_currentPage:1,//当前页码
@@ -250,7 +250,7 @@ export default {
             this.submitSuccess(data);
         })
       },
-      submitSuccess(data){
+      submitSuccess(data){//提交成功后的回调
         endLoading()
         if(data.code != 200){
             tipsMessage(data.message, 'warning', this);
@@ -272,10 +272,10 @@ export default {
         })
 
       },
-      submitErr(res){
+      submitErr(res){//提交失败后的回调
          tipsMessage('上传失败', 'warning', this);
       },
-      beforeUpload(res){
+      beforeUpload(res){ //上传前的回调
           if(!res){
             tipsMessage('上传失败', 'warning', this);
             return
@@ -307,16 +307,16 @@ export default {
             return target.filter(i => i.num >= num) //贡献次数
         }
       },
-      sort_dropdown (command) { this.current_sort = command;this.runERA(command,this.current_sort_node)}, 
-      sort_dropdown_windowSize (command) { 
+      sort_dropdown (command) { this.current_sort = command;this.runERA(command,this.current_sort_node)}, //控制共现频次
+      sort_dropdown_windowSize (command) {  //控制共现窗口
           this.activeName == 'searchArticle' ? this.current_sort_windowSize_article = command : this.current_sort_windowSize_upload = command       
       }, 
-      sort_dropdown_node (command) { this.current_sort_node = command;this.runERA(this.current_sort,command)}, 
-      visibleChangeEventNum(a){
+      sort_dropdown_node (command) { this.current_sort_node = command;this.runERA(this.current_sort,command)}, //控制节点
+      visibleChangeEventNum(a){ //控制下拉箭头
         this.sort_dropdown_visible_eventNum = !a;
       },
-      visibleChangeWindowSize(a){this.sort_dropdown_visible_windowSize = !a;},
-      visibleChangeEventNum_node(a){this.sort_dropdown_visible_node = !a;},
+      visibleChangeWindowSize(a){this.sort_dropdown_visible_windowSize = !a;},  //控制下拉箭头
+      visibleChangeEventNum_node(a){this.sort_dropdown_visible_node = !a;},  //控制下拉箭头
       articlelist_select(data){ //选择文章 变化事件
         this.articlelist_selection = data;
       },

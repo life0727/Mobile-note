@@ -339,28 +339,27 @@ export default {
   data () {
     return {
         time:[new Date(new Date().getTime()-604800000), new Date()],
-        articleType:2,
-        data:[],
+        articleType:2, //w文章类型
+        data:[],//搜索后总数据
         tableData:[],//自身表格datalist
-        page_size_media:10,
-        page_size_selfmedia:10,
-        currentPage_media:1,
-        currentPage_selfmedia:1,
-        dialo_media:false,
-        dialo_duibi:false,
-        current_media:20,
-        currentPage_ky:1,
-        currentPage_art:1,
-        page_size:10 ,
-        second_tabledata_list:[],
-        second_selection:[],
-        first_data_index:'',
-        data_label:'',
-        search_flag:false,
+        page_size_media:10,//页码数
+        page_size_selfmedia:10,//页码数
+        currentPage_media:1, //当前页码
+        currentPage_selfmedia:1,//当前页码
+        dialo_media:false,//相关新闻模态开关
+        dialo_duibi:false,//对比模态开关
+        current_media:20,//当前媒体展示数量
+        currentPage_art:1,//当前文章页码
+        page_size:10 ,//页码数
+        second_tabledata_list:[],//二级模态框显示数据
+        second_selection:[],//二级模态框选中数据
+        first_data_index:'',//第一层下标
+        data_label:'',//perList ?  keywordlist
+        search_flag:false,//是否继续搜索
         duibiList:[],//项目下的竞品数组
-        duibiData:[{'name':'','id':'','mediaList':''}], 
+        duibiData:[{'name':'','id':'','mediaList':''}], //对比数据格式
         duibiTable_flag:false,//false 则为点击的自身项目下的媒体 true 为点击竞品项目下的媒体
-        currentProId:'',
+        currentProId:'',//当前显示的项目id
         currentMention:'',//自身或竞品的实体名称
         media_articleTableLoading:false,//模态框里的相关文章loading
         mediaId:'',//媒体的id 查找媒体下的相关文章
@@ -396,8 +395,8 @@ export default {
         }
     },
   methods: {
-    //改变页数的表格数据变化
-    format_tabledata_ (crrtpage,pageSize,dta,dtaList) {
+    
+    format_tabledata_ (crrtpage,pageSize,dta,dtaList) {//改变页数的表格数据变化
         let newdata=[],
         pageNum=this[crrtpage]-1;
         for(let i=this[pageSize]*pageNum;i<this[pageSize]*pageNum+this[pageSize];i++ ){
@@ -405,10 +404,9 @@ export default {
         }
         this[dtaList]=newdata;       
     },
-      //初始化表格
-    format_table (a,b) {
+      
+    format_table (a,b) {//初始化表格
       this.currentPage=1;
-      this.currentPage_ky=1;
       this[a].length > 10 ? this[b] = this[a].slice(0,10) : this[b] = this[a] ;
     },
     Tab_card(Id,Name){//切换项目查看事件
@@ -429,7 +427,7 @@ export default {
       this.tableData = this.data.length > 10 ? this.data.slice(0,10) : this.data;
       this.rowClick(this.data[0]);
     },
-    add_duibiName(Dta){
+    add_duibiName(Dta){ //添加对比项目名称
       console.log(Dta)
       console.log(this.duibiData)
       if(this.duibiData.length >= 3 && Dta){
@@ -450,19 +448,11 @@ export default {
         this.popover2_show = false;
         this.Tab_card(Dta.id);
       };
-      /*if(Dta){
-        this.duibiTable_flag = true;
-        this.currentProId = Dta.id;
-        this.currentDuibiData = Dta;
-        this.search(this.duibiTable_flag,this.currentProId);
-      };*/
-      /*if(this.duibiTable_flag){
-        this.duibiData = this.$store.state.ev_duibiData;
-      }*/
+
       
       console.log(this.duibiData)
     },
-    look(){
+    look(){ //查看对比图
       this.dialo_duibi = true;
       let idarr = [];
       for(let i of this.selectDuibiData){
@@ -485,7 +475,7 @@ export default {
         };
        });   
     },
-    add_duibi(){
+    add_duibi(){ //获取对比数据
       let idArr = [];
       for(let i of this.duibiData){
         idArr.push(i.id);
@@ -503,7 +493,7 @@ export default {
           }
         });
     },  
-    _search(){
+    _search(){ //搜索前缀
       if(this.search_flag){
       this.$confirm('当前搜索结果已修改，是否导出？', '提示', {
           confirmButtonText: '导出',
@@ -679,7 +669,7 @@ export default {
       this.currentPage_art = 1;
       this.handleCurrentChange_article(this.currentPage_art);
     },
-    table_click(a,b,c){
+    table_click(a,b,c){ //表格点击
       console.log(a);
       if(b.label == "篇章数" || b.label == "出现频次"){
         return;
@@ -785,7 +775,7 @@ export default {
           });  
     },
     
-    save(){
+    save(){ //导出
       console.log(this.selectDuibiData)
       if(this.duibiData[0].mediaList.length == 0 && this.selectDuibiData.length == 1){
         tipsMessage('没有可导出的结果','warning',this);
@@ -847,7 +837,7 @@ export default {
           });
         }).catch(() => {})   
     },
-    handleCurrentChange_selfmedia(val){
+    handleCurrentChange_selfmedia(val){ //切换页码操作
       this.select_All = false;
       this.currentPage_selfmedia = val;
       this.format_tabledata_('currentPage_selfmedia','page_size_selfmedia','data','tableData');
@@ -874,7 +864,7 @@ export default {
         }
       })    
     },
-    handleCurrentChange_media (val) {
+    handleCurrentChange_media (val) {//ajax 获取文章列表
       this.currentPage_media = val;
       startLoading();
       this.dialo_media = true;
@@ -908,8 +898,8 @@ export default {
       this.Selection = val;
       this.Selection.length == 0 ? this.select_All = false : '';
     },
-    //筛选条件里的属性与下拉列表的dom数据以及保存
-      dom_search(){
+    
+      dom_search(){//筛选条件里的属性与下拉列表的dom数据以及保存
         this.domin_popover = false;
         let domain_arr=[];
         let domain=$('.domain .warning').not('.domain .domain_all');
@@ -929,7 +919,7 @@ export default {
         this.domain_arr=domain_arr;
         this.custom_arr=custom_arr;   
       },
-      domain_click(a,b){
+      domain_click(a,b){//媒体分类选择点击事件
         $('.'+b+''+' '+'.'+b+'_all'+'').removeClass('warning');
          if(a.target.className=='btn'){
           a.target.className="btn warning"
@@ -937,36 +927,36 @@ export default {
           a.target.className="btn"
         }
       },
-    visibleChangemediaNum(a){
+    visibleChangemediaNum(a){ //箭头样式
       this.sort_dropdown_visible_mediaNum = !a;
     },
-    delCompet(i){
+    delCompet(i){//删除竞品
       this.selectDuibiData = [];
       this.duibiData = this.duibiData.filter(item => { return [i.id].indexOf(item.id) === -1;});
       this.duibiData.map(x => x.check ? this.selectDuibiData.push(x) : '');
       console.log(this.selectDuibiData)
       console.log(this.selectDuibiData.length)
     },  
-    checkboxChange(a){
+    checkboxChange(a){ //多选框切换
       a.check ? a.check = false : a.check = true;
       this.selectDuibiData = [];
       this.duibiData.map(x => x.check ? this.selectDuibiData.push(x) : '');
       //console.log(this.duibiData)
     },
-    perlist_select(a){ 
+    perlist_select(a){ //实体选中
       this.perlist_selection = a ;
       this.perlist_selection.length == 0 ? this.select_All_per = false : '';
     },
-    keywordlist_select(a){ 
+    keywordlist_select(a){ //实体选中
       this.keywordlist_selection = a ;
       this.keywordlist_selection.length == 0 ? this.select_All_key = false : '';
     },
-    articlelist_select(a){ 
+    articlelist_select(a){ //实体选中
       this.articlelist_selection = a ;
       this.articlelist_selection.length == 0 ? this.select_All_article = false : '';
     },  
-    dropdown_media(command){ this.current_media = command ;},
-    second_select(a){ this.second_selection = a ;},
+    dropdown_media(command){ this.current_media = command ;},//下拉表选中
+    second_select(a){ this.second_selection = a ;},//实体选中
     downloadFile(){ //导出excel
       //填充excel数据 this.excelData
       let excelData = [];

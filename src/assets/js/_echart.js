@@ -1,3 +1,14 @@
+
+/***
+ * huanhang 字符串换行方法
+ * endLoading 结束loading
+ * Map 通用map方法 es6以后已经集成
+ * date_change  通用验证时间方法
+ * deepCopy 数据深拷贝方法
+ * echart{
+ *      各个组件的echart图
+ * }
+ * ***/
 const pubilcMap = require('./map') //map.js方法
 const echarts = require('echarts');
 const color = ['#243591', '#2d7dc2', '#7055a2', '#52a4bc', '#cbcbcb', '#196883'];

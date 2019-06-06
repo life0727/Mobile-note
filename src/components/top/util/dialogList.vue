@@ -40,13 +40,13 @@ import {deepCopy}  from '../../../assets/js/map.js'
     props: ['listData'],
     data : function(){ 
         return{
-            data:[],
-            currentPage:1,
-            search_input:''
+            data:[], //列表表格数据
+            currentPage:1, //当前页码
+            search_input:'' //搜索框
         }
     },
     methods:{
-        handleCurrentChange(val,data = this.listData.data ){
+        handleCurrentChange(val,data = this.listData.data ){ //页面变化方法
             this.currentPage = val;
             this.data = data.length > (val - 1) * this.listData.pageSize ? data.slice((val - 1) * this.listData.pageSize , (val - 1) * this.listData.pageSize + this.listData.pageSize) : data;
         },
@@ -57,7 +57,7 @@ import {deepCopy}  from '../../../assets/js/map.js'
         }
     },
     watch: {
-        listData: {
+        listData: { //监听列表数据
             handler(val) {
                 this.search_input = '';
                 this.data = deepCopy(val.data)
@@ -66,7 +66,7 @@ import {deepCopy}  from '../../../assets/js/map.js'
             deep: true,
             //immediate:true  //是否立即执行  
         },
-        search_input(val){
+        search_input(val){ //监听输入框的数据
             this.data = val ? this.listData.data.filter(item => item[this.listData.key].toLowerCase().indexOf(val.toLowerCase()) != -1 ) : this.listData.data
             this.handleCurrentChange(this.currentPage,this.data)                  
         }

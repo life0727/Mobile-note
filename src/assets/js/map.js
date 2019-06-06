@@ -1,3 +1,11 @@
+
+/***
+ * startLoading 开始loading
+ * endLoading 结束loading
+ * Map 通用map方法 es6以后已经集成
+ * date_change  通用验证时间方法
+ * deepCopy 数据深拷贝方法
+ * ***/
 import { Loading } from 'element-ui'
 export function startLoading(text  = '系统拼命加载中') { //Loading
     Loading.service({ 'text': text, 'spinner': 'el-icon-loading' });
@@ -227,7 +235,7 @@ export function successBack(data, _this) { //判断成功回调
         });
 } */
 
-export function tipsMessage(message, type, _this) { //提示
+export function tipsMessage(message, type, _this) { //提示信息
     //console.log(_this)
     return _this.$message({
         message,

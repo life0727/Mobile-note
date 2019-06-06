@@ -32,13 +32,13 @@ import { changePage,successBack }  from '../../../assets/js/map.js'
     props: ['childMsg'],
     data : function(){ 
         return{
-          refer_currentPage:1,
-          loading:false,
-          articleType:2
+          refer_currentPage:1,//当前页面
+          loading:false,//loading展示
+          articleType:2 //文章类型 1新闻 2微信
         }
     },
     methods:{
-      refer_pageChange(val){
+      refer_pageChange(val){ //页码变化后的事件
         this.loading = true;
         this.articleType = this.childMsg.articleType;
         changePage(this,this.childMsg.data,10,val,this.childMsg.data.polar ? 'sentiment' : null).then((data) =>{
@@ -49,8 +49,8 @@ import { changePage,successBack }  from '../../../assets/js/map.js'
           };
         });
       },
-      Mover_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "#00a17c";},
-      Mout_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "rgb(72,87,106)"; }
+      Mover_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "#00a17c";}, //页面样式
+      Mout_articleList (i) { this.$refs.dialog_xw_articlelist[i].style.color = "rgb(72,87,106)"; } //页面样式
     }
   }
 </script>

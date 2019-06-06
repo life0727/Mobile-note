@@ -1,4 +1,5 @@
-<template>  
+
+<template> 
 <div>
   <creatProject></creatProject>
   <!-- 首页头部strat -->
@@ -54,11 +55,7 @@
        $('#index_btn_group button').click(function(){
         $(this).addClass('focus').parent().siblings().children().removeClass('focus');
        });
-       $('#test').click(function(){
-        console.log('1111111111111111111111-------------------------')
-        var session = '${user.id}'
-        console.log(session)
-      })
+
        $('.el-tabs__item').click(function(){
         $(this).addClass('is-active');
         $(this).parent().parent().find('.el-tabs__item').not($(this)).removeClass('is-active')

@@ -99,11 +99,11 @@ export default {
         fontSize:'',   //股票下拉适配   
         stockNameList:[],//股票列表
         marketindexinfoList:[],//大盘基本信息列表
-        SortArtileList:['默认排序','时间正序','时间倒序'],
-        current_Com:'',
-        current_marketindexinfo:'',
+        SortArtileList:['默认排序','时间正序','时间倒序'],//排序方式
+        current_Com:'',//股价名称
+        current_marketindexinfo:'',//大盘名称
         current_SortArtileList:'默认排序',
-        time:[new Date(new Date().getTime()-604800000), new Date()],
+        time:[new Date(new Date().getTime()-604800000), new Date()],//时间
         sort_dropdown_visible_Com:true,//true为显示false为隐藏
         sort_dropdown_visible_SortArticleList:true,//true为显示false为隐藏
         sort_dropdown_visible_marketindexinfo:true,//true为显示false为隐藏
@@ -137,7 +137,7 @@ export default {
          this.current_marketindexinfo = this.marketindexinfoList[0];
       })
     },
-    search() {
+    search() { //查询总数据方法
       this.data = [];
       startLoading();
       let NewsData = [], //新闻数据数组
@@ -211,7 +211,7 @@ export default {
         }
       })
     },
-    newsShare_dialog_articleList(data){
+    newsShare_dialog_articleList(data){ //展示新闻dialog
       if(data.componentSubType != 'bar') return; //非新闻
       this.paramsData = {'startTime': data.name.length == 13 ? new Date(data.name.replace(/-/g,'/') + ':00') : new Date(data.name.replace(/-/g,'/')),
                           'timeType': data.name.length == 13 ? 0 : 1,
@@ -220,7 +220,7 @@ export default {
       this.NewsShare_currentPage = 1;
       this.handleNewsShareCurrentChange(this.NewsShare_currentPage);
     },
-    handleNewsShareCurrentChange(val){
+    handleNewsShareCurrentChange(val){ //获取新闻列表的方法
       this.NewsShare_currentPage = val;
       let params = Object.assign({},{...this.paramsData,'pageNum':val});
       startLoading();
@@ -234,8 +234,8 @@ export default {
          this.NewsShare_articleList = data.data.articleList;
       })
     },
-    dropdown_Com(command){command != undefined ? this.current_Com = command : this.show_more()},
-    dropdown_SortArtileList(command){
+    dropdown_Com(command){command != undefined ? this.current_Com = command : this.show_more()},//下拉股价列表的方法
+    dropdown_SortArtileList(command){ //文章列表排序规则
       this.current_SortArtileList = command;
     },
     dropdown_MmarketIndexInfo(command){ //动态加载echarts
@@ -318,10 +318,10 @@ export default {
         });
       })
     },
-    visibleChangemediaCom(a){ this.sort_dropdown_visible_Com = !a;},
-    visibleChangeSortArticle(a){ this.sort_dropdown_visible_SortArticleList = !a;},
-    visibleChangeMmarketIndexInfo(a){ this.sort_dropdown_visible_marketindexinfo = !a;},
-    show_more(){
+    visibleChangemediaCom(a){ this.sort_dropdown_visible_Com = !a;},//下拉箭头展示效果
+    visibleChangeSortArticle(a){ this.sort_dropdown_visible_SortArticleList = !a;},//下拉箭头展示效果
+    visibleChangeMmarketIndexInfo(a){ this.sort_dropdown_visible_marketindexinfo = !a;},//下拉箭头展示效果
+    show_more(){ //给股票子组件的数据
       this.listDATA = {
         mainName:'股票名称',
         title:'股票列表',

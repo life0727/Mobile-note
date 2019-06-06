@@ -94,14 +94,14 @@
   export default{
     data : function(){ 
       return{
-        current_item:'',
+        current_item:'',//当前二级标题
         item: '',
-        translateX:''
+        translateX:'' //tab绿色块的位置
       }
     },
     methods:{
     },
-    mounted:function (){
+    mounted:function (){ //页面加载完的回调函数
       switch(this.$route.path)  
                 {
                   case '/main/event':
@@ -125,7 +125,7 @@
       });*/  
   },
   watch:{
-    $route (to,from){
+    $route (to,from){ //监听路由 to到哪里去
       //console.log(to)
       switch(to.path)  
                 {

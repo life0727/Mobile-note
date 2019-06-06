@@ -156,25 +156,25 @@ export default {
   },
   data () {
   	return {
-          orginData:'',
-          activeName:this.$store.state.keyword_tab,
-          project_name:GetLocalStorage('current_projectData_A') == null ? '' : GetLocalStorage('current_projectData_A').project_name,
+          orginData:'', //之前保留数据用的 toString 
+          activeName:this.$store.state.keyword_tab,//用来切换tab
+          project_name:GetLocalStorage('current_projectData_A') == null ? '' : GetLocalStorage('current_projectData_A').project_name, //项目名称
           projectUser:'',//项目管理者
           projectBrief:'',//项目简介
           //tags: [],
-          kw:'',
+          kw:'', //关键词
           //notags:[],
-          notkw:'',
+          notkw:'',//排除词
           //t_notags:[],
-          t_notkw:'',
+          t_notkw:'',//标题排除词
           //mustags:[],
-          mustkw:'',
-          show_moren:1,
-          keyword_flag:false
+          mustkw:'', //必须包含关键词
+          show_moren:1,//是否添加默认排除词：
+          keyword_flag:false //用来监测是否修改关键词的flag
       }
   	},
   methods: {
-    add_moren(){
+    add_moren(){ //添加默认排除词
         publicSearch('rsa/defaultExcludeKeyword/',"POST",{"method": 'get'}).then((data) =>{//ajax
           if(successBack(data,this)){
             this.notkw =  Array.from(new Set([...this.notkw.replace(/，/ig,',').split(','),...this.notkw.replace(/，/ig,',').split(','),...data.data.defaultExcludeKeywords].filter(x => x&&$.trim(x).length > 0))).toString();;
@@ -183,7 +183,7 @@ export default {
           }    
         });  
       },
-    to_list () {
+    to_list () {//保存后跳转
       if(this.mustkw.length + this.kw.length == 0){
         tipsMessage('必须包含关键词和关键词不能同时为空','warning',this)
         return;
@@ -217,7 +217,7 @@ export default {
         tipsMessage('未修改','warning',this)
       }    
     },
-    create_tag () {
+    create_tag () { //关键词生成想要的格式
         this.kw = Array.from(new Set(this.kw.replace(/，/ig,',').split(','))).filter(x => x&&$.trim(x).length > 0).toString();
         let Tag = [...this.mustkw.replace(/，/ig,',').split(','),...this.notkw.replace(/，/ig,',').split(','),...this.t_notkw.replace(/，/ig,',').split(',')].filter(x => x&&$.trim(x).length > 0);
         if(this.kw.length){
@@ -231,7 +231,7 @@ export default {
         };
         this.kw === this.orginData.includeKeywordList.toString() ? this.keyword_flag = false : this.keyword_flag = true;
     },
-    notcreate_notag () {
+    notcreate_notag () {//排除词生成
         this.notkw = Array.from(new Set(this.notkw.replace(/，/ig,',').split(','))).filter(x => x&&$.trim(x).length > 0).toString();
         let Tag = [...this.mustkw.replace(/，/ig,',').split(','),...this.kw.replace(/，/ig,',').split(',')].filter(x => x&&$.trim(x).length > 0);
         if(this.notkw.length){
@@ -245,7 +245,7 @@ export default {
         };
         this.notkw === this.orginData.contentExcludeKeywordList.toString() ? this.keyword_flag = false : this.keyword_flag = true;
     },
-    t_notcreate_notag () {
+    t_notcreate_notag () { //标题排除词生成
       this.t_notkw = Array.from(new Set(this.t_notkw.replace(/，/ig,',').split(','))).filter(x => x&&$.trim(x).length > 0).toString();
       let Tag = [...this.mustkw.replace(/，/ig,',').split(','),...this.kw.replace(/，/ig,',').split(',')].filter(x => x&&$.trim(x).length > 0);
       if(this.t_notkw.length){
@@ -259,7 +259,7 @@ export default {
       };
       this.t_notkw === this.orginData.titleExcludeKeywordList.toString() ? this.keyword_flag = false : this.keyword_flag = true;
     },
-    mustcreate_notag () {
+    mustcreate_notag () { //必须包含词生成
       this.mustkw = Array.from(new Set(this.mustkw.replace(/，/ig,',').split(','))).filter(x => x&&$.trim(x).length > 0).toString();
       let Tag = [...this.kw.replace(/，/ig,',').split(','),...this.notkw.replace(/，/ig,',').split(','),...this.t_notkw.replace(/，/ig,',').split(',')].filter(x => x&&$.trim(x).length > 0)
       if(this.mustkw.length){
@@ -273,13 +273,13 @@ export default {
       };
       this.mustkw === this.orginData.mustIncludeKeywordList.toString() ? this.keyword_flag = false : this.keyword_flag = true; 
     },
-    focus (n) {
+    focus (n) {//点击获取焦点
         $('#'+n+'').focus();
     },
     save_basicUser(){
 
     },
-    Tabclick(tab){
+    Tabclick(tab){ //切换tab
       this.$store.state.keyword_tab = tab.name;
       console.log(tab)
     }

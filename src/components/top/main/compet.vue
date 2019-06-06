@@ -102,27 +102,28 @@ export default {
   },
   data () {
   	return {
-      data:[],
-      dialog_add:false,
-      name:'',
-      mustIncludeKeywords:[],
-      mustIncludeKeyword:'',
-      includeKeywords:[],
-      includeKeyword:'',
-      titleExcludeKeywords:[],
-      titleExcludeKeyword:'',
-      contentExcludeKeywords:[],
-      contentExcludeKeyword:'',
-      remark:'',
-      title:'',
-      edit_data:'',
+      data:[],//搜索后的主数据
+      dialog_add:false,//添加竞品模态框
+      name:'',//竞品名称
+      mustIncludeKeywords:[],//竞品必须包含关键词数据
+      mustIncludeKeyword:'',//竞品必须包含关键词的内容
+      includeKeywords:[],//同上
+      includeKeyword:'',//同上
+      titleExcludeKeywords:[],//同上
+      titleExcludeKeyword:'',//同上
+      contentExcludeKeywords:[],//同上
+      contentExcludeKeyword:'',//同上
+      mustags:[],//同上
+      mustkw:'',//同上
+      remark:'',//备注
+      title:'',//模态框标题
+      edit_data:'',//添加或修改的数据
       select_All:false,//全选状态绑定
-      mustags:[],
-      mustkw:'',
+     
   	}
   },
   methods: {
-    search(){
+    search(){ //主数据搜索
       let data = {
         "method": 'get',
         "project" : {
@@ -135,7 +136,7 @@ export default {
         }
       }); 
     },
-    add(dta){
+    add(dta){ //添加竞品和修改竞品的确定后的操作
       console.log(dta)
       let includeKeywords = Array.from(new Set(this.includeKeyword.replace(/，/ig,',').split(','))).filter(x =>  x!='');
       let mustIncludeKeywords = Array.from(new Set(this.mustIncludeKeyword.replace(/，/ig,',').split(','))).filter(x =>  x!='');
@@ -191,7 +192,7 @@ export default {
               } 
             }  
     },
-    add_btn(){
+    add_btn(){ //添加竞品按钮点击事件
       this.title = '添加竞品';
       this.dialog_add = true;
       this.name = '';
@@ -201,7 +202,7 @@ export default {
       this.contentExcludeKeyword = '';
       this.remark = '';
     },
-    write(a){
+    write(a){ //项目修改按钮点击事件
       this.title = '项目修改';
       this.dialog_add = true;
       this.name = a.name;
@@ -213,7 +214,7 @@ export default {
       this.edit_data = a;
       console.log(this.mustIncludeKeyword)
     },
-    del(dta){
+    del(dta){ //删除项目
       let projectIdList = [],msg = '';
       if(dta == 'all'){
         for(let i of this.data){
@@ -244,11 +245,11 @@ export default {
               })  
             })
     },
-   musthandleClose(tag){
+   musthandleClose(tag){ //废弃
       this.mustags.splice(this.mustags.indexOf(tag), 1);
       this.keyword_flag = true;
     },
-  mustcreate_notag () {
+  mustcreate_notag () {//废弃
         let mustkw = this.mustkw;
         let Tag = [...this.mustags,...this.notags,...this.tags,...this.t_notags];
         if (mustkw) {

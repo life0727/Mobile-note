@@ -21,12 +21,12 @@ import { publicSearch,successBack }  from '../../../assets/js/map.js'
     props: ['mediaDATA'],
     data : function(){ 
         return{
-            domin_popover : false,
+            domin_popover : false, //是否可以显示
             domain:[],//全部媒体分类
             domainSelect:[] //选择媒体分类
         }
     },
-    mounted() {
+    mounted() { //页面加载完成时获取所有媒体分类
         publicSearch('rsa/wxaccount/domain',"GET",{"method":"get"}).then((data) =>{//ajax
             if(!successBack(data,this)) return;
             data.data.forEach(item => {
@@ -35,7 +35,7 @@ import { publicSearch,successBack }  from '../../../assets/js/map.js'
         });
     },  
     methods:{
-        allSelect(){
+        allSelect(){ //全选操作
             if(this.domainSelect.length == this.domain.length){ //全部选中了
                 this.domain.forEach(i => {i.isSelect = false});
                 this.domainSelect = [];
@@ -47,11 +47,11 @@ import { publicSearch,successBack }  from '../../../assets/js/map.js'
                 });
             }
         },
-        dom_search(){
+        dom_search(){ //确定选中的操作
             this.domin_popover = false;
             this.$emit('receiveFromMediaSlot',this.domainSelect.length == this.domain.length ? [] : this.domainSelect) //默认空值是全部
         },
-        domain_click(item){
+        domain_click(item){ //点击媒体按钮的操作
             this.domainSelect = [];
             item.isSelect = !item.isSelect;
             this.domain.forEach(i => {

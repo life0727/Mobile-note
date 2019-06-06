@@ -30,12 +30,12 @@ import {deepCopy,date_change}  from '../../../assets/js/map.js'
   export default{
     data : function(){ 
         return{
-            edit:false,
+            edit:false, //是否手动修改日期
             time:[new Date(new Date().getTime()-604800000), new Date()],
         }
     },
     methods:{
-        date_change (){
+        date_change (){ //时间变化后的事件
            date_change.call(this);
         },
     },

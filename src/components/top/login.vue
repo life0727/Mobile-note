@@ -33,8 +33,8 @@ import { tipsMessage,publicSearch,successBack,SetLocalStorage}  from '../../asse
   export default{
     data : function(){ 
       return{
-         username:'',
-         password:''   
+         username:'', //用户名
+         password:''   //密码
       }
     },
     methods:{

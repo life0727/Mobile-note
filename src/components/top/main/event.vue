@@ -520,62 +520,45 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
   export default{
     data : function(){ 
         return{
-          data:[],
-          olddata:'',
-          personSet:[],
-          locationSet:[],
-          orgSet:[],
-          articleList:'',
-          articleList_reprint:'',
-          articleList_es:'',
-          dialoglist:false,
-          dialog_reprint:false,
-          dialogEchart:false,
-          dialo_es:false,
-          dialogCt:false,
+          data:[],//搜索后的主数据
+          personSet:[],//人物图的数据
+          locationSet:[],//地点图的数据
+          orgSet:[], //组织图的数据
+          articleList_reprint:'',//转发文章数据
+          dialog_reprint:false,//相关转发模态框显示开关
+          dialogEchart:false,//详情图模态框显示开关
+          dialogCt:false,//文章列表模态框显示开关
           dialogEchartLine:false,//议题新闻走势
-          dialogDuibiList:false,
-          dialog_look_duibiProject:false,
-          dialogDuibiMethod:false,
-          dialogSimilar:false,
-          size:0,
-          articleType:2,
-          current_sort:GetSessionStorage('current_sort')||'6',
-          current_sort_loc:GetSessionStorage('current_sort_loc')||'10',
-          current_sort_per:GetSessionStorage('current_sort_per')||'10',
-          current_sort_org:GetSessionStorage('current_sort_org')||'10',
-          dropdown_sort:['2','3','4','5','6','7','8','9','10'],
-          sj:[1,2,3,4,5,6,7,8,9,10],
-          time: GetSessionStorage('time0')!=null ? [new Date(GetSessionStorage('time0')),new Date(GetSessionStorage('time1'))] : [new Date(new Date().getTime()-604800000), new Date()],
-          fimg:require("../../../assets/icon/xiangguanwenzhang.png"),
-          imgf:require("../../../assets/icon/xiangguanwenzhang1.png"),
-          ct_size:'',
-          ct_name:'',
-          ct_url:'',
-          ct_data:[],
-          list_type:'',
-          ct_data_list:[],
-          ct_data_total:'',
-          articleList_list:[],
-          articleList_reprint_list:[],
-          currentPage:1,
-          currentPage_list:1,
-          currentPage_reprint_list:1,
-          page_size:12,
-          page_size_list:12,
-          page_size_reprint_list:12,
-          domain_s:[],
-          domain_m:[],
-          domain:[],
+          dialogDuibiList:false,//选择对比项目模态框显示开关
+          dialog_look_duibiProject:false,//查看对比项目模态框显示开关
+          dialogDuibiMethod:false,//对比方法模态框显示开关
+          dialogSimilar:false,//相似实体模态框显示开关
+          articleType:2,//文章类型
+          current_sort:GetSessionStorage('current_sort')||'6', //议题个数下拉
+          current_sort_loc:GetSessionStorage('current_sort_loc')||'10',//地点图下拉
+          current_sort_per:GetSessionStorage('current_sort_per')||'10',//人物图下拉
+          current_sort_org:GetSessionStorage('current_sort_org')||'10',//组织图下拉
+          dropdown_sort:['2','3','4','5','6','7','8','9','10'],//议题个数下拉
+          time: GetSessionStorage('time0')!=null ? [new Date(GetSessionStorage('time0')),new Date(GetSessionStorage('time1'))] : [new Date(new Date().getTime()-604800000), new Date()],//时间
+          fimg:require("../../../assets/icon/xiangguanwenzhang.png"),//转发小图已废弃
+          imgf:require("../../../assets/icon/xiangguanwenzhang1.png"),//转发小图已废弃
+          ct_data:[],//文章列表数据
+          ct_data_list:[],//显示的文章列表数据
+          ct_data_total:'',//文章列表总数
+          articleList_reprint_list:[],//转发文章数据列表
+          currentPage:1,//当前页
+          currentPage_reprint_list:1,//当前页
+          page_size:12,//页码大小
+          page_size_list:12,//页码大小
+          page_size_reprint_list:12,//页码大小
+          domain:[],//媒体分类数据
           domin_popover:false,//媒体分类显示
           qiye_popover:false,//企业分类显示
-          domain_arr:[],
-          custom_s:[],
-          custom_m:[],
-          custom:[],
-          custom_arr:[],
-          dropdown_sort_num:['5','10','15','20'],
-          btn_disabled:false,
+          domain_arr:[],//显示已选中的媒体分类
+          custom:[],//已废弃
+          custom_arr:[],//已废弃
+          dropdown_sort_num:['5','10','15','20'],//关键词下拉
+          btn_disabled:false,//媒体分类显示开关 新闻关 微信开
           data_articleList_index:'',//删除相关文章列表的时候获取到他的总数据的index
           articleList_idarr:[],//删除相关文章列表的id数组
           perList_idarr:[],//删除地点人物组织数组相关文章列表的id数组
@@ -583,45 +566,40 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           qipao_idarr:[],//删除气泡图数组
           data_Per_index:0,//点击卡片获取相对应总数据的index
           data_second_index:'',//点击人物组织圆点获取index
-          dropdown_jushuNum:['1','2','3','5','全部'],
-          dropdown_cixingNum:['所有词性','仅动/名词'],
-          current_jushuNum:GetSessionStorage('current_jushuNum') || 3,
-          current_cixing:GetSessionStorage('current_cixing') || '所有词性',
-          loading_start:false,
-          visible_per:false,
-          dialo_title:'',
-          ct_articlelist_selection:[],
-          duibi_show:GetSessionStorage('duibi_show')!=null ? GetSessionStorage('duibi_show') : false,
-          duibiData:[{'name':'','id':'','topicList':''}],
-          del_duibi_flag:false,
-          del_duibi_id:'',
-          duibiList:[],
-          radio_duibi:'',
+          loading_start:false,//loading显示开过
+          dialo_title:'',//模态框 动态标题
+          ct_articlelist_selection:[],//新闻列表选择文章
+          duibi_show:GetSessionStorage('duibi_show')!=null ? GetSessionStorage('duibi_show') : false,//是否对比显示开关
+          duibiData:[{'name':'','id':'','topicList':''}],//对比数据格式
+          del_duibi_flag:false,//对比数据是删除时 区分自己和竞品的flag
+          del_duibi_id:'', //竞品id
+          duibiList:[], //对比列表
+          radio_duibi:'',//对比单选框
           current_project_dom_name:'',//当前项目名称
-          tableData:[],
-          radio_duibi_Method:2,
-          duibiMethodList:[{"type":1,"name":"jaccard "},{"type":2,"name":"cosine"},{"type":3,"name":"generative"},{"type":4,"name":"kl"}],
-          radio_duibi_Percent:'0.2',
-          duibiPercentList:['0.05','0.1','0.2','0.5'],
-          table_compet_name:'',
-          table_compet_data:[],
-          table_own_name:'',
-          colspan:'',
-          rowspan:'',
+          tableData:[],//对比表格数据
+          radio_duibi_Method:2,//对比方法
+          duibiMethodList:[{"type":1,"name":"jaccard "},{"type":2,"name":"cosine"},{"type":3,"name":"generative"},{"type":4,"name":"kl"}],//对比方法
+          radio_duibi_Percent:'0.2',//对比方法参数
+          duibiPercentList:['0.05','0.1','0.2','0.5'],//对比方法参数
+          table_compet_name:'',//表格竞品项目名称
+          table_compet_data:[],//表格竞品数据
+          table_own_name:'', //表格自己项目名称
+          colspan:'',//表格列合并
+          rowspan:'',//表格行合并
           table_select:[],//相似表格选中
           similarData_per:[],//查看相似的自身和竞品的信息-----往下
-          similarData_per_list:[],
-          similarData_per_currentPage:1,
-          similarData_per_pageSize:10,
-          similarData_loc:[],
-          similarData_loc_list:[],
-          similarData_loc_currentPage:1,
-          similarData_org:[],
-          similarData_org_list:[],
-          similarData_org_currentPage:1,
-          similarData_key:[],
-          similarData_key_list:[],
-          similarData_key_currentPage:1,
+          similarData_per_list:[],//同上
+          similarData_per_currentPage:1,//同上
+          similarData_per_pageSize:10,//同上
+          similarData_loc:[],//同上
+          similarData_loc_list:[],//同上
+          similarData_loc_currentPage:1,//同上
+          similarData_org:[],//同上
+          similarData_org_list:[],//同上
+          similarData_org_currentPage:1,//同上
+          similarData_key:[],//同上
+          similarData_key_list:[],//同上
+          similarData_key_currentPage:1,//同上
           similarData_arc_total:'',//相似度表格里面自身文章列表的总数
           similarData_arc_total_cpa:'',//相似度表格里面競品文章列表的总数
           //similarData_arc:[],
@@ -630,10 +608,10 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           similarData_arc_currentPage:1,
           similarData_arc_currentPage_cpa:1,//相似度表格里面競品文章列表的當前頁碼
           similarData_arc_pageSize:7,
-          similar_per_arr:[],
-          similar_loc_arr:[],
-          similar_org_arr:[],
-          similar_key_arr:[],
+          similar_per_arr:[],//相似的人物数组
+          similar_loc_arr:[],//相似的地点数组
+          similar_org_arr:[],//相似的组织数组
+          similar_key_arr:[],//相似的关键词数组
           //similar_arc_arr:[],
           entityType:'',//获取文章需要的参数--实体类型
           entityName:'',//获取文章需要的参数--实体名称
@@ -656,7 +634,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
     components:{
       datePicker
     },
-    mounted : function () {
+    mounted : function () { //样式逻辑 以及默认搜索
        
         GetLocalStorage();
         let _this = this,project_id = GetLocalStorage('current_projectData_A').project_id;
@@ -688,7 +666,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
        this.outFile = document.getElementById('downlink');//导出excel所需要的数据元素
        $('#type  button').click(function(){ $(this).addClass('warning').siblings().removeClass('warning');});
 
-       $('#dialog_list_es .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialo_es = false;});
+      
 
        $('#dialog_DuibiList .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialogDuibiList = false;});
                
@@ -699,7 +677,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
        $('#dialog_similar .el-dialog .el-dialog__header .el-dialog__headerbtn').click(function(){ _this.dialogSimilar=false;}); 
 
        $('.el-dialog__headerbtn').not('#dialog_list_es .el-dialog__headerbtn').click(function(){
-        _this.dialoglist = false;
+   
         _this.dialogEchart = false;
         _this.dialogCt = false;
         _this.dialogEchartLine = false;
@@ -716,36 +694,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           }
         });    
         
-         //获取行业属性
-        /*$.ajax({
-          type: "GET",
-          url: 'rsa/project/'+project_id+'/wxAccount/domain',
-          traditional: true,
-          success: function(data){
-          _this.domain=data.data;
-          if(_this.domain.length>15){
-            _this.domain_s=_this.domain.slice(0,15);
-            _this.domain_m=_this.domain.slice(15,_this.domain.length);
-            }else{
-               _this.domain_s=_this.domain;
-            }
-          }
-        })
-      //获取公众号类型
-      $.ajax({
-          type: "GET",
-          url: 'rsa/project/'+project_id+'/wxAccount/customType',
-          traditional: true,
-          success: function(data){
-            _this.custom=data.data;
-            if(_this.custom.length>9){
-              _this.custom_s=_this.custom.slice(0,9);
-              _this.custom_m=_this.custom.slice(9,_this.custom.length);
-            }else{
-               _this.custom_s=_this.custom;
-            };
-          }
-        });*/
+
         this._start(true,true);    
     },
     methods:{
@@ -968,7 +917,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         }
       })                      
     },
-    dialog_articleList_reprint(a,b,c){  
+    dialog_articleList_reprint(a,b,c){  //转发模态框显示
       if(b.label==='转发'){
         if(a.reprintList){
           this.dialog_reprint=true;
@@ -981,7 +930,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         }
       };
     },
-    dialog_articleList (i,a,echartLine){
+    dialog_articleList (i,a,echartLine){  //所有相关文章模态框显示
         console.log(i)
         this.entityType = '';//区分点击实体还是议题里的相关文章的标识
         this.data_articleList_index = a;//点击相关文章列表的时候获取到他的总数据的index
@@ -993,7 +942,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         this.currentPage = 1;  
         this.handleCurrentChange(this.currentPage,false,false,echartLine);
       },
-      echart_click (a) { 
+      echart_click (a) { //点击关键词图的显示
         let _this = this;
         this.dialogEchart = true;
         this.$nextTick(function () {
@@ -1046,7 +995,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           });
         }) 
       }, 
-      del_keywordList(c,d,e){
+      del_keywordList(c,d,e){ //删除关键词事件
          let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
          let params = {
           "method": 'POST',
@@ -1056,41 +1005,39 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         };
         return publicSearch('rsa/project/'+project_id+'/topic/entity',"POST",params);
       },
-      Mover_ct (i) {
+      Mover_ct (i) { //css样式
           this.$refs.ct[i].style.boxShadow='2px 2px 2px rgba(72,87,106,.8)';
           this.$refs.ct[i].style.transition='all 0.5s';
       },
-      Mover_ct_loc (i) {
+      Mover_ct_loc (i) {//css样式
           this.$refs.ct_loc[i].style.boxShadow='2px 2px 2px rgba(72,87,106,.8)';
           this.$refs.ct_loc[i].style.transition='all 0.5s';
       },
-      Mover_ct_org (i) {
+      Mover_ct_org (i) {//css样式
           this.$refs.ct_org[i].style.boxShadow='2px 2px 2px rgba(72,87,106,.8)';
           this.$refs.ct_org[i].style.transition='all 0.5s';
       },
-      click_ct_list (i) { window.open(i.url); },
-      Mover (a) { this.$refs.list[a].style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)'; },
-      Mout (a) { this.$refs.list[a].style.boxShadow = ''; },
-      Mover_articleList (i) { this.$refs.articlelist[i].style.color = "#00a17c"; },
-      Mover_articleList_reprint (i) { this.$refs.articlelist_reprint[i].style.color = "#00a17c";  },
-      Mover_ct_list (i) { this.$refs.ct_list[i].style.color = "#00a17c"; },
-      Mout_ct (i) { this.$refs.ct[i].style.boxShadow = ''; },
-      Mout_ct_loc (i) { this.$refs.ct_loc[i].style.boxShadow = ''; },
-      Mout_ct_org (i) { this.$refs.ct_org[i].style.boxShadow = ''; },
-      Mout_articleList (i) {  this.$refs.articlelist[i].style.color = "rgb(72,87,106)"; },
-      Mout_articleList_reprint (i) { this.$refs.articlelist_reprint[i].style.color = "rgb(72,87,106)"; },  
-      Mout_ct_list (i) { this.$refs.ct_list[i].style.color = "#999"; }, 
-      dropdown_jushu (command) { this.current_jushuNum = command; },
-      dropdown_cixing (command) { this.current_cixing = command; },
-      sort_dropdown (command) { this.current_sort = command;}, 
-      sort_dropdown_keyword(command){
+      click_ct_list (i) { window.open(i.url); },//点击跳转
+      Mover (a) { this.$refs.list[a].style.boxShadow = '2px 2px 3px rgba(0,0,0,.2)'; },//css样式
+      Mout (a) { this.$refs.list[a].style.boxShadow = ''; },//css样式
+      Mover_articleList (i) { this.$refs.articlelist[i].style.color = "#00a17c"; },//css样式
+      Mover_articleList_reprint (i) { this.$refs.articlelist_reprint[i].style.color = "#00a17c";  },//css样式
+      Mover_ct_list (i) { this.$refs.ct_list[i].style.color = "#00a17c"; },//css样式
+      Mout_ct (i) { this.$refs.ct[i].style.boxShadow = ''; },//css样式
+      Mout_ct_loc (i) { this.$refs.ct_loc[i].style.boxShadow = ''; },//css样式
+      Mout_ct_org (i) { this.$refs.ct_org[i].style.boxShadow = ''; },//css样式
+      Mout_articleList (i) {  this.$refs.articlelist[i].style.color = "rgb(72,87,106)"; },//css样式
+      Mout_articleList_reprint (i) { this.$refs.articlelist_reprint[i].style.color = "rgb(72,87,106)"; },  //css样式
+      Mout_ct_list (i) { this.$refs.ct_list[i].style.color = "#999"; }, //css样式
+      sort_dropdown (command) { this.current_sort = command;}, //下拉列表点击事件
+      sort_dropdown_keyword(command){ //下拉列表点击事件
         let indx = command.slice(command.length-1,command.length);
         let num = command.slice(0,command.length-1);
         this.data[indx].sortArr = num;
          console.log(command);
         _echart.build_event_qipao(this,indx,num);
       },
-      sort_dropdown_per (command) {
+      sort_dropdown_per (command) { //下拉列表点击事件
         this.current_sort_per = command;
         this.personSet = this.data[this.data_Per_index].perList;
         if(this.personSet.length < this.current_sort_per){
@@ -1100,7 +1047,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           _echart.build_event_scatter(false,'personSet','人物','current_sort_per',this)
         }
       },
-      sort_dropdown_loc (command) {
+      sort_dropdown_loc (command) { //下拉列表点击事件
         this.current_sort_loc = command;
         this.locationSet = this.data[this.data_Per_index].locList;
         if(this.locationSet.length < this.current_sort_loc){
@@ -1110,7 +1057,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           _echart.build_event_scatter(false,'locationSet','地点','current_sort_loc',this)
         }
       },
-      sort_dropdown_org(command) {
+      sort_dropdown_org(command) { //下拉列表点击事件
         this.current_sort_org = command;
         this.orgSet = this.data[this.data_Per_index].orgList;
         if(this.orgSet.length<this.current_sort_org){
@@ -1120,7 +1067,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           _echart.build_event_scatter(false,'orgSet','组织','current_sort_org',this)
         }
       },
-      del_articleList(arr){
+      del_articleList(arr){ 
           let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
           let params = {
             "method": 'POST',
@@ -1144,7 +1091,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
             };
           });  
       },
-      del_threeList(arr){
+      del_threeList(arr){ //删除实体关键词等
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         let params = {
             "method": 'POST',
@@ -1175,7 +1122,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
             };
           });  
       },
-      del_per(t,a,b,c,e){
+      del_per(t,a,b,c,e){ //t = 实体，a = 实体列表数据，  b='personSet';c='perList';e='current_sort_per';
         let _this=this;
         console.log(this.data)
         console.log(this[b])
@@ -1206,10 +1153,8 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           };
         });  
       },
-      blur_input (i){
-        console.log(this.data[i]);
-        console.log(this.$store.state.ev_duibiData);
-        console.log(this.$store.state.data);
+      blur_input (i){//改变标题后的事件
+       
         this.$refs.inpt[i].type = 'button';
         this.data[i].titleTooltip = false;
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
@@ -1229,11 +1174,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
                   if(j.id == this.del_duibi_id){
                     j.data.topicList[i].name = params.newTitle;
                   };
-                  /*for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                    if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
-                        _this.$store.state.ev_duibiData[h].data[i].label=_this.$refs.inpt[i].value;
-                      }
-                    }*/
+
                 };
               }else{
                 this.data[i].name = params.newTitle;
@@ -1241,31 +1182,10 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
               };
             };
          });   
-         /* $.ajax({
-              url:"rsa/project/"+project_id+"/event/label",
-              type:"POST",
-              data:{
-                "method":"PUT", //http方法
-                "proId":project_id, //项目id
-                "eventId":_this.data[i].id, //组织id
-                "label":_this.$refs.inpt[i].value
-                },
-              success:function(data){
-                console.log(data)
-                if(_this.del_duibi_flag){//自身与竞品的数据分支
-                  for(let h=0;h<_this.$store.state.ev_duibiData.length;h++){
-                    if(_this.$store.state.ev_duibiData[h].id==_this.del_duibi_id){
-                        _this.$store.state.ev_duibiData[h].data[i].label=_this.$refs.inpt[i].value;
-                      }
-                    }
-                }else{
-                  _this.data[i].label=_this.$refs.inpt[i].value;
-                };
-              }
-          });*/
+
         }
       },
-      blur_table(dta,i,flag){
+      blur_table(dta,i,flag){//改变议题标题后的事件
         console.log(dta)
         let project_id = dta.proId == undefined ? dta.project_id : dta.proId;
         let inp = flag ? 'cp_inpt' : '_inpt';
@@ -1296,7 +1216,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         console.log(dta)
       },
       
-      handleCurrentChange (val,entityType,entityName,echartLine) {
+      handleCurrentChange (val,entityType,entityName,echartLine) { //查询文章列表 val = 当前页 entitytype = 实体类型 entityName =  实体名称  echartLine 事件走势图flag
         this.currentPage = val;
         //console.log(this.data_Per_index)
         let proID = '';
@@ -1364,11 +1284,11 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           }
         })
       },
-      handleCurrentChange_reprint_list(val){
+      handleCurrentChange_reprint_list(val){ //转发文章 已废弃
         this.currentPage_reprint_list = val;
         this.format_tabledata_('currentPage_reprint_list','page_size_reprint_list','articleList_reprint','articleList_reprint_list');
       },
-      del_ev(i){
+      del_ev(i){ //删除事件
         console.log(this.del_duibi_id)
         let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
         let params = {
@@ -1406,54 +1326,10 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           };
           
         });  
-        /*let _this=this;
-        let project_id = this.del_duibi_flag ? this.del_duibi_id : GetLocalStorage('current_projectData_A').project_id;
-        $.ajax({
-              url:"rsa/project/"+project_id+"/event2 ",
-              type:"POST",
-              traditional:true,
-              data:{
-                "method":"DELETE", //http方法
-                "proId":project_id, //项目id
-                "eventIdArr":[i.id] //议题id数组
-          },
-          success:function(data){
-            console.log(data)
-            _this.data=_this.data.filter(item => { return [i.id].indexOf(item.id) === -1; });//前台删除
-            _echart.build_event_qipao(_this);
-            if(_this.del_duibi_flag){//自身与竞品的数据分支
-              for(let i=0;i<_this.$store.state.ev_duibiData.length;i++){
-                if(_this.$store.state.ev_duibiData[i].id==_this.del_duibi_id){
-                  _this.$store.state.ev_duibiData[i].data=_this.data;
-                }
-              }
-            }else{
-              _this.$store.state.data=_this.data;
-            }
-          }
-        });*/
+
       },
-      show_domain(){
-        $('#domain_m').css('display','block');
-        $('#show_btn').css('display','none');
-        $('#hide_btn').css('display','inline-block');
-      },
-      hide_domain(){
-        $('#domain_m').css('display','none');
-        $('#show_btn').css('display','inline-block');
-        $('#hide_btn').css('display','none');
-      },
-      show_custom(){
-        $('#custom_m').css('display','block');
-        $('#show_btn_custom').css('display','none');
-        $('#hide_btn_custom').css('display','inline-block');
-      },
-      hide_custom(){
-        $('#custom_m').css('display','none');
-        $('#show_btn_custom').css('display','inline-block');
-        $('#hide_btn_custom').css('display','none');
-      },
-       domain_click(a,b){
+
+       domain_click(a,b){//媒体分类选择点击事件
         $('.'+b+''+' '+'.'+b+'_all'+'').removeClass('warning');
          if(a.target.className=='btn'){
           a.target.className="btn warning"
@@ -1461,7 +1337,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           a.target.className="btn"
         }
       },
-      open_del_threeList(){
+      open_del_threeList(){ //删除文章列表
         if(this.dialo_title!=='相关文章'){
           let arr=[];
           for(let i=0;i<this.ct_articlelist_selection.length;i++){
@@ -1476,7 +1352,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           this.del_articleList(arr);
         };  
       },
-      open_del_per(){
+      open_del_per(){//删除实体
         if(this.entityType == 'key'){
           this.del_keywordList(this.data_Per_index,this.entityName,[this.entityName]).then((data) =>{
                     if(successBack(data,this)){
@@ -1516,8 +1392,8 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         //console.log(this.data[this.data_Per_index].commonResult[d])
         
       },
-      ct_articlelist_select(a){ this.ct_articlelist_selection = a ;},
-      add_duibi(){
+      ct_articlelist_select(a){ this.ct_articlelist_selection = a ;},//选中事件文章列表
+      add_duibi(){ //查找对比数据
         //this.dialogDuibiList=true;
         let data = {
           "method": 'get',
@@ -1531,7 +1407,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           }
         }); 
       },
-      add_duibiName(Dta){
+      add_duibiName(Dta){ //添加对比项目
         console.log(Dta)
         //this.duibiData = [];
         //let obj = {};
@@ -1550,7 +1426,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         
         console.log(this.duibiData)
       },
-      look_venn(index,dta){
+      look_venn(index,dta){ //对比的维恩图
         console.log(dta)
         console.log(index)
         console.log(this.duibiData)
@@ -1607,26 +1483,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         this.pageShow = false;  
         this.similarData_arc_currentPage_cpa = 1;  
         this.similarData_arc_handleCurrentChange_cpa(this.similarData_arc_currentPage_cpa);
-        /*for(let i of similar_arc){
-          let index = data.eventArticleList.findIndex(function(value){
-              return value.id == i;
-          });
-          similar_arc_title.push(data.eventArticleList[index].title);
-          similar_arc_url.push(data.eventArticleList[index].url);
-        };*/
-        //this.similar_arc_arr = similar_arc_title;
-        /*for(let i = 0;i < arcSize;i++){//匹配到相似的id然后转化成title
-          let obj = {};
-          obj.arc = data.eventArticleList[i] == undefined ? '' : data.eventArticleList[i].title;
-          obj.arc_url = data.eventArticleList[i] == undefined ? '' : data.eventArticleList[i].url;
-          obj.cp_arc = cp_data.eventArticleList[i] == undefined ? '' : cp_data.eventArticleList[i].title;
-          obj.cp_arc_url = cp_data.eventArticleList[i] == undefined ? '' : cp_data.eventArticleList[i].url;
-          obj.similar_arc_title = similar_arc_title[i] == undefined ? '' : similar_arc_title[i];
-          obj.similar_arc_title_url = similar_arc_url[i] == undefined ? '' : similar_arc_url[i];
-          arcData.push(obj);
-        };*/
-        /*console.log(perSize)
-        console.log(perData)*/
+
         _this.similarData_per=perData;
         _this.format_firstTableData('similarData_per','similarData_per_list',_this.similarData_per_pageSize);
         _this.similarData_loc=locData;
@@ -1638,7 +1495,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         //_this.similarData_arc=arcData;
         //_this.format_firstTableData('similarData_arc','similarData_arc_list',_this.similarData_arc_pageSize);
       },
-      save(){
+      save(){//导出事件
         /*console.log(this.$store.state.data.topicList)
         console.log(this.$store.state.ev_duibiData)
         console.log(this.table_select);*/
@@ -1710,7 +1567,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         }).catch(() => {})
         console.log(this.table_select)
       },
-      handleCheckedCitiesChange(index,dta,table,data){
+      handleCheckedCitiesChange(index,dta,table,data){//当对比表格选中事件的时候触发的函数
           //console.log(table.checked)
           if(table.checked == true){//加入到table_select
             if(this.table_select.length > 1){//判断是否选中两个
@@ -1786,14 +1643,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
               };
                this.table_select.splice(this.table_select.findIndex(item => item.own_eventId===dta.eventId&&item.compet_eventId===this.duibiData[1].data.topicList[index].id), 1);
           }
-        //console.log(index)
-        //console.log(dta)//自身
-        //console.log(table)//自身
-       // console.log(data)//自身
-        //console.log(this.duibiData[1].data[index])//竞品
-        /*console.log(this.duibiData[0])
-        console.log(this.duibiData[1])
-        console.log(this.table_select)*/
+
         /*展示图*/
         let cateList = [],linkList = [],dataList = [],selectIdArr = [];
         //cateList
@@ -1898,8 +1748,8 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         });
         
       },
-      //改变页数的表格数据变化
-      card_click (a) {
+      
+      card_click (a) {//改变页数的表格数据变化
         let _this=this;
         _this.data_Per_index=a;
         if(_this.data[a].perList!=null&&_this.data[a].perList.length>0){
@@ -1915,7 +1765,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           _this.event_scatter().org();
         };    
       },
-      format_tabledata_ (crrtpage,pageSize,dta,dtaList) {
+      format_tabledata_ (crrtpage,pageSize,dta,dtaList) {//初始表格数据
         let newdata=[],
         pageNum=this[crrtpage]-1;
         for(let i=this[pageSize]*pageNum;i<this[pageSize]*pageNum+this[pageSize];i++ ){
@@ -1923,15 +1773,15 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         }
         this[dtaList]=newdata;       
       },
-      //初始表格数据
-      format_firstTableData(dta,dtaList,pageSize){
+      
+      format_firstTableData(dta,dtaList,pageSize){//初始表格数据
         this[dtaList]=this[dta].length > pageSize ? this[dta].slice(0,pageSize) : this[dta];
       },
-      visibleChangeEventNum(a){
+      visibleChangeEventNum(a){ //下拉箭头样式
         this.sort_dropdown_visible_eventNum = !a;
       },
-      //筛选条件里的属性与下拉列表的dom数据以及保存
-      dom_search(){
+      
+      dom_search(){ //筛选条件里的属性与下拉列表的dom数据以及保存
         this.domin_popover = false;
         let domain_arr=[];
         let domain=$('.domain .warning').not('.domain .domain_all');
@@ -1950,17 +1800,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         }
         this.domain_arr=domain_arr;
         this.custom_arr=custom_arr;
-        console.log(this.domain_arr)
-        /*SetSessionStorage('current_sort',this.current_sort);
-        SetSessionStorage('current_sort_per',this.current_sort_per);
-        SetSessionStorage('current_sort_loc',this.current_sort_loc);
-        SetSessionStorage('current_sort_org',this.current_sort_org);
-        SetSessionStorage('current_jushuNum',this.current_jushuNum);
-        SetSessionStorage('current_cixing',this.current_cixing);
-        SetSessionStorage('time0',this.time[0].getTime());
-        SetSessionStorage('time1',this.time[1].getTime());
-        SetSessionStorage('custom_arr',custom_arr);
-        SetSessionStorage('domain_arr',domain_arr);*/     
+  
       },
       qiye_search(){//筛选企业A和企业B
         this.qiye_popover = false;
@@ -1968,8 +1808,8 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         this.ctbCompanyNameList[1] = this.companyData.companyB;
         console.log(this.ctbCompanyNameList)
       },
-      //查询到文章遍历到dom操作
-      dom_write(data){
+      
+      dom_write(data){//查询到文章遍历到dom操作
         if(data.topicList==null||data.topicList.length==0){
           tipsMessage('查询到的文章数量太少,无法生成议题。请调整时间区间或增加关键词后再试。','warning',this); 
           return;
@@ -1995,8 +1835,8 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
           this.event_scatter().org();
         };
       },
-      //人物组织地点散点图
-      event_scatter(){
+     
+      event_scatter(){  //人物组织地点散点图
         let _this =this;
           return{
               per(){
@@ -2015,23 +1855,23 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
              }
           }
       },
-      similarData_per_handleCurrentChange(val){
+      similarData_per_handleCurrentChange(val){ //切换页面的数据展示
         this.similarData_per_currentPage = val;
         this.format_tabledata_('similarData_per_currentPage','similarData_per_pageSize','similarData_per','similarData_per_list');
       },
-      similarData_loc_handleCurrentChange(val){
+      similarData_loc_handleCurrentChange(val){//切换页面的数据展示
         this.similarData_loc_currentPage = val;
         this.format_tabledata_('similarData_loc_currentPage','similarData_per_pageSize','similarData_loc','similarData_loc_list');
       },
-      similarData_org_handleCurrentChange(val){
+      similarData_org_handleCurrentChange(val){//切换页面的数据展示
         this.similarData_org_currentPage = val;
         this.format_tabledata_('similarData_org_currentPage','similarData_per_pageSize','similarData_org','similarData_org_list');
       },
-      similarData_key_handleCurrentChange(val){
+      similarData_key_handleCurrentChange(val){//切换页面的数据展示
         this.similarData_key_currentPage = val;
         this.format_tabledata_('similarData_key_currentPage','similarData_per_pageSize','similarData_key','similarData_key_list');
       },
-      input_write(i){
+      input_write(i){//双击点击编辑文章标题
         this.$refs.inpt[i].type = 'text';
         this.data[i].titleTooltip = true;
       },
@@ -2090,7 +1930,7 @@ import {Sort,Map,SetSessionStorage,GetSessionStorage,publicSearch,successBack,ti
         console.log(excelData);
         downloadExl(excelData,'议题文章',this,'xlsx',true);//封装完的数据  excel名称 true 列宽格式
       },
-      dataPickerData(val){
+      dataPickerData(val){ //子组件数据
         this.time = val
       }
     },
